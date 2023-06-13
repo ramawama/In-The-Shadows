@@ -2,7 +2,7 @@ import pygame
 
 
 def inButton(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
-    if button.get_rect().collidepoint(pos):
+    if button.collidepoint(pos):
         return True
     else:
         return False
@@ -37,7 +37,9 @@ def main():
                 pygame.quit()
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 # if left-clicked
-                if quit_width - 64 <= mouse[0] <= quit_width and quit_height <= mouse[1] <= quit_height + 32:
+                #if quit_width - 64 <= mouse[0] <= quit_width and quit_height <= mouse[1] <= quit_height + 32:
+                 #   pygame.quit()
+                if inButton(mouse, quit_rect):
                     pygame.quit()
 
         screen.fill(black)
