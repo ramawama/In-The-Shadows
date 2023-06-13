@@ -1,4 +1,5 @@
 import pygame
+from pygame import Surface
 
 
 def inButton(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
@@ -69,24 +70,42 @@ def main():
     pygame.display.flip()
     pygame.font.init()
     font = pygame.font.get_default_font()
-    font = pygame.font.Font(font, 32)
+    font = pygame.font.Font(font, 90)
     text = font.render('IN THE SHADOWS', True, white)
     text_rect = text.get_rect()
-    text_rect.center = (width // 2, 32)
+    text_rect.center = (width // 2, 128)
+    font = pygame.font.get_default_font()
+    font = pygame.font.Font(font, 70)
     start_text = font.render('START', True, white)
     start_text_rect = start_text.get_rect()
     start_text_rect.center = (start_width, start_height)
     quit_text = font.render('QUIT', True, white)
-    quit_rect = pygame.Rect(quit_width, quit_height, 64, 32)
-    quit_rect.center = (quit_width - 8, quit_height)
+    quit_text_rect = quit_text.get_rect()
+    quit_text_rect.center = (quit_width, quit_height + 10)
+
+    background = pygame.image.load("./assets/graphics/background.png")
 
     screen.fill(black)
-    square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
-    square2.fill(red)
-    screen.blit(square2, (50, 50))
+    screen.blit(background, (0, 0))
+    #square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
+    #square2.fill(red)
+    #screen.blit(square2, (50, 50))
+
+    image = Surface(text_rect.size)
+    image.fill(black, text_rect)
+    screen.blit(image, (text_rect.x, text_rect.y))
+
+    image2 = Surface(start_text_rect.size)
+    image2.fill(black, start_text_rect)
+    screen.blit(image2, (start_text_rect.x, start_text_rect.y))
+
+    image3 = Surface(quit_text_rect.size)
+    image3.fill(black, quit_text_rect)
+    screen.blit(image3, (quit_text_rect.x, quit_text_rect.y))
+
     screen.blit(text, text_rect)
     screen.blit(start_text, start_text_rect)
-    screen.blit(quit_text, quit_rect)
+    screen.blit(quit_text, quit_text_rect)
 
     pygame.mixer.init()
     music = True
@@ -99,8 +118,8 @@ def main():
                 running = False
             elif ev.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
-                if inButton(mouse, quit_rect):
-                    running = False
+                if inButton(mouse, quit_text_rect):
+                    pygame.quit()
                 elif inButton(mouse, start_text_rect):
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
