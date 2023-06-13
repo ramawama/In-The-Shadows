@@ -1,5 +1,6 @@
 import pygame
 from pygame import Surface
+from pygame.locals import *
 
 
 def inButton(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
@@ -64,16 +65,17 @@ def main():
     red = (255, 0, 0)
     (width, height) = (896, 504)
     (start_width, start_height) = (width // 2, height // 2)
-    (quit_width, quit_height) = (start_width, start_height + 64)
-
-    screen = pygame.display.set_mode((width, height))
+    (quit_width, quit_height) = (start_width, start_height + start_height // 4)
+    # TODO: make buttons move when the window is resized!
+    real_screen = pygame.display.set_mode((width, height), HWSURFACE|DOUBLEBUF|RESIZABLE)
+    screen = real_screen.copy()
     pygame.display.flip()
     pygame.font.init()
     font = pygame.font.get_default_font()
     font = pygame.font.Font(font, 90)
     text = font.render('IN THE SHADOWS', True, white)
     text_rect = text.get_rect()
-    text_rect.center = (width // 2, 128)
+    text_rect.center = (width // 2, height // 4)
     font = pygame.font.get_default_font()
     font = pygame.font.Font(font, 70)
     start_text = font.render('START', True, white)
@@ -81,7 +83,7 @@ def main():
     start_text_rect.center = (start_width, start_height)
     quit_text = font.render('QUIT', True, white)
     quit_text_rect = quit_text.get_rect()
-    quit_text_rect.center = (quit_width, quit_height + 10)
+    quit_text_rect.center = (quit_width, quit_height + quit_height // 4)
 
     background = pygame.image.load("./assets/graphics/background.png")
 
@@ -113,6 +115,7 @@ def main():
     playMusic(current_music)
     running = True
     while running:
+        real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 running = False
@@ -132,6 +135,8 @@ def main():
                     else:
                         playMusic()
                         music = True
+            elif ev.type == pygame.VIDEORESIZE:
+                real_screen = pygame.display.set_mode(ev.size, HWSURFACE | DOUBLEBUF | RESIZABLE)
         pygame.display.update()
     pygame.quit()
 
