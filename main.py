@@ -1,6 +1,5 @@
 import pygame
 from pygame import Surface
-from pygame.locals import *
 
 
 def inButton(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
@@ -66,7 +65,7 @@ def drawMenu(width=896, height=504):
     red = (255, 0, 0)
     (start_width, start_height) = (width // 2, height // 2)
     (quit_width, quit_height) = (start_width, start_height + start_height // 4)
-    real_screen = pygame.display.set_mode((width, height), HWSURFACE | DOUBLEBUF | RESIZABLE)
+    real_screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
     screen = real_screen.copy()
     screen.fill(black)
     pygame.display.flip()
@@ -115,6 +114,7 @@ def main():
 
     real_screen, screen, quit_text_rect, start_text_rect = drawMenu()
 
+    pygame.display.set_caption("In the Shadows")
     pygame.mixer.init()
     music = True
     current_music = "menu"
@@ -142,9 +142,8 @@ def main():
                         playMusic()
                         music = True
             elif ev.type == pygame.VIDEORESIZE:
-                real_screen = pygame.display.set_mode(ev.size, HWSURFACE | DOUBLEBUF | RESIZABLE)
-                screen = real_screen.copy()
-                drawMenu(real_screen.get_width(), real_screen.get_height())
+                real_screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
+                real_screen, screen, quit_text_rect, start_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
         pygame.display.update()
     pygame.quit()
 
