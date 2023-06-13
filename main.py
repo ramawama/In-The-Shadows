@@ -1,6 +1,13 @@
 import pygame
 
 
+def inButton(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
+    if button.get_rect().collidepoint(pos):
+        return True
+    else:
+        return False
+
+
 def main():
     white = (255, 255, 255)
     black = (0, 0, 0)
@@ -16,11 +23,11 @@ def main():
     textRect = text.get_rect()
     textRect.center = (width // 2, height // 2)
 
-
     while True:
         screen.fill(white)
         square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
         square2.fill(red)
+        square2.get_rect().collidepoint()
         screen.blit(square2, (50, 50))
         screen.blit(text, textRect)
         pygame.display.update()
