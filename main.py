@@ -59,16 +59,16 @@ def startGame(screen, music, width, height):
     # loadLevel()
 
 
-def main():
+def drawMenu(width=896, height=504):
+
     white = (255, 255, 255)
     black = (0, 0, 0)
     red = (255, 0, 0)
-    (width, height) = (896, 504)
     (start_width, start_height) = (width // 2, height // 2)
     (quit_width, quit_height) = (start_width, start_height + start_height // 4)
-    # TODO: make buttons move when the window is resized!
-    real_screen = pygame.display.set_mode((width, height), HWSURFACE|DOUBLEBUF|RESIZABLE)
+    real_screen = pygame.display.set_mode((width, height), HWSURFACE | DOUBLEBUF | RESIZABLE)
     screen = real_screen.copy()
+    screen.fill(black)
     pygame.display.flip()
     pygame.font.init()
     font = pygame.font.get_default_font()
@@ -89,9 +89,9 @@ def main():
 
     screen.fill(black)
     screen.blit(background, (0, 0))
-    #square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
-    #square2.fill(red)
-    #screen.blit(square2, (50, 50))
+    # square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
+    # square2.fill(red)
+    # screen.blit(square2, (50, 50))
 
     image = Surface(text_rect.size)
     image.fill(black, text_rect)
@@ -108,6 +108,12 @@ def main():
     screen.blit(text, text_rect)
     screen.blit(start_text, start_text_rect)
     screen.blit(quit_text, quit_text_rect)
+
+    return real_screen, screen, quit_text_rect, start_text_rect
+
+def main():
+
+    real_screen, screen, quit_text_rect, start_text_rect = drawMenu()
 
     pygame.mixer.init()
     music = True
@@ -126,7 +132,7 @@ def main():
                 elif inButton(mouse, start_text_rect):
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
-                    startGame(screen, music, width, height)
+                    startGame(screen, music, real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_m:
                     if music:
@@ -137,6 +143,8 @@ def main():
                         music = True
             elif ev.type == pygame.VIDEORESIZE:
                 real_screen = pygame.display.set_mode(ev.size, HWSURFACE | DOUBLEBUF | RESIZABLE)
+                screen = real_screen.copy()
+                drawMenu(real_screen.get_width(), real_screen.get_height())
         pygame.display.update()
     pygame.quit()
 
