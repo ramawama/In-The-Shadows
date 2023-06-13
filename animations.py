@@ -2,8 +2,8 @@ import pygame
 
 
 # def moveRight(screen, x, y, distance, speed):
-#     guard = [pygame.image.load("assets/graphics/Ninja.png"),
-#              pygame.image.load("assets/graphics/Ninja_walk.png")]
+#     guard = [pygame.image.load("assets/graphics/Rogue.png"),
+#              pygame.image.load("assets/graphics/Rogue_walk.png")]
 #     size = 32
 #     guard = [pygame.transform.scale(guard[0], (size, size)), pygame.transform.scale(guard[1], (size, size))]
 #     guard_right = [pygame.transform.scale(guard[0], (size, size)), pygame.transform.scale(guard[1], (size, size))]
@@ -30,11 +30,11 @@ def main():
     pygame.display.flip()
     pygame.font.init()
 
-    guard = [pygame.image.load("assets/graphics/Rogue.png"),
-             pygame.image.load("assets/graphics/Rogue_walk.png")]
+    guard = [pygame.image.load("assets/graphics/Rogue/Rogue.png"),
+             pygame.image.load("assets/graphics/Rogue/Rogue_walk.png")]
 
-    torch = [pygame.image.load("assets/graphics/Torch_small.png"),
-             pygame.image.load("assets/graphics/Torch_big.png")]
+    torch = [pygame.image.load("assets/graphics/Torch/Torch_small.png"),
+             pygame.image.load("assets/graphics/Torch/Torch_big.png")]
 
     size = 32
     guard = [pygame.transform.scale(guard[0], (size, size)), pygame.transform.scale(guard[1], (size, size))]
