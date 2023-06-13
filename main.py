@@ -85,6 +85,7 @@ def drawMenu(width=896, height=504):
     quit_text_rect.center = (quit_width, quit_height + quit_height // 4)
 
     background = pygame.image.load("./assets/graphics/background.png")
+    background = pygame.transform.scale(background, (width, height))
 
     screen.fill(black)
     screen.blit(background, (0, 0))
