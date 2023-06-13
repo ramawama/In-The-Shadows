@@ -1,6 +1,13 @@
 import pygame
 
 
+def inButton(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
+    if button.get_rect().collidepoint(pos):
+        return True
+    else:
+        return False
+
+
 def main():
     white = (255, 255, 255)
     black = (0, 0, 0)
@@ -23,7 +30,6 @@ def main():
     quit_text = font.render('QUIT', True, white)
     quit_rect = pygame.Rect(quit_width, quit_height, 64, 32)
     quit_rect.center = (quit_width - 8, quit_height)
-
 
     while True:
         for ev in pygame.event.get():
