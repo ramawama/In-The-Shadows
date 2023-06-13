@@ -38,6 +38,25 @@ def pauseMusic():
     pygame.mixer.music.pause()
 
 
+def startGame(screen, music, width, height):
+    screen.fill((0, 0, 0))
+    pygame.display.update()
+
+    if music:
+        playMusic("game")
+
+    font = pygame.font.get_default_font()
+    font = pygame.font.Font(font, 32)
+    text = font.render('LOADING LEVEL...', True, (255, 255, 255))
+    text_rect = text.get_rect()
+    text_rect.center = (width // 2, height // 2)
+    screen.blit(text, text_rect)
+
+    pygame.display.update()
+    # TODO: make a load level function
+    # loadLevel()
+
+
 def main():
     white = (255, 255, 255)
     black = (0, 0, 0)
@@ -61,21 +80,20 @@ def main():
     quit_rect = pygame.Rect(quit_width, quit_height, 64, 32)
     quit_rect.center = (quit_width - 8, quit_height)
 
+    screen.fill(black)
+    square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
+    square2.fill(red)
+    screen.blit(square2, (50, 50))
+    screen.blit(text, text_rect)
+    screen.blit(start_text, start_text_rect)
+    screen.blit(quit_text, quit_rect)
+
     pygame.mixer.init()
     music = True
     current_music = "menu"
     playMusic(current_music)
 
     while True:
-
-        screen.fill(black)
-        square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
-        square2.fill(red)
-        screen.blit(square2, (50, 50))
-        screen.blit(text, text_rect)
-        screen.blit(start_text, start_text_rect)
-        screen.blit(quit_text, quit_rect)
-
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 pygame.quit()
@@ -83,6 +101,10 @@ def main():
                 mouse = pygame.mouse.get_pos()
                 if inButton(mouse, quit_rect):
                     pygame.quit()
+                elif inButton(mouse, start_text_rect):
+                    screen.fill((0, 0, 0, 0))
+                    pygame.display.update()
+                    startGame(screen, music, width, height)
             if ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_m:
                     if music:
