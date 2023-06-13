@@ -22,8 +22,8 @@ def main():
     font = pygame.font.get_default_font()
     font = pygame.font.Font(font, 32)
     text = font.render('IN THE SHADOWS', True, white)
-    textRect = text.get_rect()
-    textRect.center = (width // 2, 32)
+    text_rect = text.get_rect()
+    text_rect.center = (width // 2, 32)
     start_text = font.render('START', True, white)
     start_text_rect = start_text.get_rect()
     start_text_rect.center = (start_width, start_height)
@@ -36,9 +36,6 @@ def main():
             if ev.type == pygame.QUIT:
                 pygame.quit()
             if ev.type == pygame.MOUSEBUTTONDOWN:
-                # if left-clicked
-                #if quit_width - 64 <= mouse[0] <= quit_width and quit_height <= mouse[1] <= quit_height + 32:
-                 #   pygame.quit()
                 if inButton(mouse, quit_rect):
                     pygame.quit()
 
@@ -47,7 +44,7 @@ def main():
         square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
         square2.fill(red)
         screen.blit(square2, (50, 50))
-        screen.blit(text, textRect)
+        screen.blit(text, text_rect)
         screen.blit(start_text, start_text_rect)
         screen.blit(quit_text, quit_rect)
         pygame.display.update()
