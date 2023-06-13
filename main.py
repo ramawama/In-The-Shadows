@@ -8,13 +8,43 @@ def inButton(pos, button):  # pass in pygame.mouse.get_pos() and the "square" su
         return False
 
 
+def playMusic(choice="unpause"):
+    if choice == 'menu':
+        pygame.mixer.music.stop()
+        pygame.mixer.music.unload()
+        pygame.mixer.music.load("./assets/sounds/menu.wav")
+        pygame.mixer.music.play(-1)
+    elif choice == 'game':
+        pygame.mixer.music.stop()
+        pygame.mixer.music.unload()
+        pygame.mixer.music.load("./assets/sounds/game.wav")
+        pygame.mixer.music.play(-1)
+    elif choice == 'game_over':
+        pygame.mixer.music.stop()
+        pygame.mixer.music.unload()
+        pygame.mixer.music.load("./assets/sounds/game_over.wav")
+        pygame.mixer.music.play(-1)
+    elif choice == 'unpause':
+        pygame.mixer.music.unpause()
+    else:
+        print("Unexpected music input! Playing game music")
+        pygame.mixer.music.stop()
+        pygame.mixer.music.unload()
+        pygame.mixer.music.load("game.wav")
+        pygame.mixer.music.play(-1)
+
+
+def pauseMusic():
+    pygame.mixer.music.pause()
+
+
 def main():
     white = (255, 255, 255)
     black = (0, 0, 0)
     red = (255, 0, 0)
     (width, height) = (896, 504)
     (start_width, start_height) = (width // 2, height // 2)
-    (quit_width, quit_height) = (start_width , start_height + 64)
+    (quit_width, quit_height) = (start_width, start_height + 64)
 
     screen = pygame.display.set_mode((width, height))
     pygame.display.flip()
@@ -31,24 +61,38 @@ def main():
     quit_rect = pygame.Rect(quit_width, quit_height, 64, 32)
     quit_rect.center = (quit_width - 8, quit_height)
 
+    pygame.mixer.init()
+    music = True
+    current_music = "menu"
+    playMusic(current_music)
+
     while True:
-        for ev in pygame.event.get():
-            if ev.type == pygame.QUIT:
-                pygame.quit()
-            if ev.type == pygame.MOUSEBUTTONDOWN:
-                if inButton(mouse, quit_rect):
-                    pygame.quit()
 
         screen.fill(black)
-        mouse = pygame.mouse.get_pos()
         square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
         square2.fill(red)
         screen.blit(square2, (50, 50))
         screen.blit(text, text_rect)
         screen.blit(start_text, start_text_rect)
         screen.blit(quit_text, quit_rect)
-        pygame.display.update()
 
+        for ev in pygame.event.get():
+            if ev.type == pygame.QUIT:
+                pygame.quit()
+            if ev.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+                if inButton(mouse, quit_rect):
+                    pygame.quit()
+            if ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_m:
+                    if music:
+                        pauseMusic()
+                        music = False
+                    else:
+                        playMusic()
+                        music = True
+
+        pygame.display.update()
 
 
 if __name__ == "__main__":
