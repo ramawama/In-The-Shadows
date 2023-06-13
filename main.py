@@ -92,20 +92,20 @@ def main():
     music = True
     current_music = "menu"
     playMusic(current_music)
-
-    while True:
+    running = True
+    while running:
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
-                pygame.quit()
-            if ev.type == pygame.MOUSEBUTTONDOWN:
+                running = False
+            elif ev.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
                 if inButton(mouse, quit_rect):
-                    pygame.quit()
+                    running = False
                 elif inButton(mouse, start_text_rect):
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
                     startGame(screen, music, width, height)
-            if ev.type == pygame.KEYDOWN:
+            elif ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_m:
                     if music:
                         pauseMusic()
@@ -113,8 +113,8 @@ def main():
                     else:
                         playMusic()
                         music = True
-
         pygame.display.update()
+    pygame.quit()
 
 
 if __name__ == "__main__":
