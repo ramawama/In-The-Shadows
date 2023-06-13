@@ -119,7 +119,7 @@ def main():
             elif ev.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
                 if inButton(mouse, quit_text_rect):
-                    pygame.quit()
+                    running = False
                 elif inButton(mouse, start_text_rect):
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
