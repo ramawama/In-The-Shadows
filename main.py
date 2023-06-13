@@ -27,7 +27,6 @@ def main():
         screen.fill(white)
         square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
         square2.fill(red)
-        square2.get_rect().collidepoint()
         screen.blit(square2, (50, 50))
         screen.blit(text, textRect)
         pygame.display.update()
