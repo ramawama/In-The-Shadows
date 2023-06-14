@@ -97,42 +97,80 @@ def startGame(screen, music, width, height):
     drawLevel(level, screen, width, height)
 
 
+
 def drawMenu(width=896, height=504):
     pygame.mixer.init()
 
     current_music = "menu"
     playMusic(current_music)
 
+def optionsMenu(screen, music, width, height):
+    background = pygame.image.load("assets/graphics/woodBackground.png")
+    background = pygame.transform.scale(background, (width, height))
+    screen.fill((0, 0, 0))
+    screen.blit(background, (0, 0))
+    pygame.display.update()
+
+    if music:
+        playMusic("menu")
+    font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height*0.2))
+    #font = pygame.font.Font(font, 90)
+    text = font.render('OPTIONS', True, (255, 255, 255))
+    text_rect = text.get_rect()
+    text_rect.center = (width // 2, height // 8)
+    screen.blit(text, text_rect)
+    pygame.display.update()
+
+
+
+def drawMenu(width=896, height=504):
     white = (255, 255, 255)
     black = (0, 0, 0)
     red = (255, 0, 0)
     (start_width, start_height) = (width // 2, height // 2)
+    (options_width, options_height) = (start_width, start_height + start_height // 32)
     (quit_width, quit_height) = (start_width, start_height + start_height // 4)
     real_screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
     screen = real_screen.copy()
     screen.fill(black)
     pygame.display.flip()
+
     pygame.font.init()
-    font = pygame.font.get_default_font()
-    font = pygame.font.Font(font, 90)
-    text = font.render('IN THE SHADOWS', True, white)
+    big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height*0.2))
+    small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height*0.15))
+
+    text = big_font.render('IN  THE  SHADOWS', True, white)
+
     text_rect = text.get_rect()
     text_rect.center = (width // 2, height // 4)
-    font = pygame.font.get_default_font()
-    font = pygame.font.Font(font, 70)
-    start_text = font.render('START', True, white)
+    start_text = small_font.render('START', True, white)
     start_text_rect = start_text.get_rect()
-    start_text_rect.center = (start_width, start_height)
-    quit_text = font.render('QUIT', True, white)
+    start_text_rect.center = (start_width,
+                              start_height + 1)  # had to add one or there will be a gap between options and no gap between quit and options
+    options_text = small_font.render('OPTIONS', True, white)
+    options_text_rect = options_text.get_rect()
+    options_text_rect.center = (options_width, options_height + options_height // 4)
+    quit_text = small_font.render('QUIT', True, white)
     quit_text_rect = quit_text.get_rect()
     quit_text_rect.center = (quit_width, quit_height + quit_height // 4)
 
-    background = pygame.image.load("./assets/graphics/background.png")
+    background = pygame.image.load("./assets/graphics/dungeon.jpg")
     background = pygame.transform.scale(background, (width, height))
 
     screen.fill(black)
     screen.blit(background, (0, 0))
 
+    # square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
+    # square2.fill(red)
+    # screen.blit(square2, (50, 50))
+    screen.blit(text, text_rect)
+    screen.blit(start_text, start_text_rect)
+    screen.blit(options_text, options_text_rect)
+    screen.blit(quit_text, quit_text_rect)
+
+
+    return real_screen, screen, quit_text_rect, start_text_rect, options_text_rect
+    '''
     image = Surface(text_rect.size)
     image.fill(black, text_rect)
     screen.blit(image, (text_rect.x, text_rect.y))
@@ -145,16 +183,18 @@ def drawMenu(width=896, height=504):
     image3.fill(black, quit_text_rect)
     screen.blit(image3, (quit_text_rect.x, quit_text_rect.y))
 
-    screen.blit(text, text_rect)
-    screen.blit(start_text, start_text_rect)
-    screen.blit(quit_text, quit_text_rect)
+    image4 = Surface(options_text_rect.size)
+    image4.fill(black, options_text_rect)
+    screen.blit(image4, (options_text_rect.x, options_text_rect.y))
+    '''
 
-    return real_screen, screen, quit_text_rect, start_text_rect
 
 def main():
     music = True
 
-    real_screen, screen, quit_text_rect, start_text_rect = drawMenu()
+
+def main():
+    real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu()
 
     pygame.display.set_caption("In the Shadows")
 
@@ -172,6 +212,11 @@ def main():
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
                     startGame(screen, music, real_screen.get_width(), real_screen.get_height())
+                elif inButton(mouse, options_text_rect):
+                    print("options")
+                    screen.fill((0, 0, 0, 0))
+                    pygame.display.update()
+                    optionsMenu(screen, music, real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_m:
                     if music:
@@ -184,7 +229,8 @@ def main():
                     real_screen, screen, quit_text_rect, start_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.VIDEORESIZE:
                 real_screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
-                real_screen, screen, quit_text_rect, start_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
+                real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
+                    real_screen.get_width(), real_screen.get_height())
         pygame.display.update()
     pygame.quit()
 
