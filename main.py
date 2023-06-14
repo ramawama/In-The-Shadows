@@ -57,6 +57,23 @@ def startGame(screen, music, width, height):
     # TODO: make a load level function
     # loadLevel()
 
+def optionsMenu(screen, music, width, height):
+    background = pygame.image.load("assets/graphics/woodBackground.png")
+    background = pygame.transform.scale(background, (width, height))
+    screen.fill((0, 0, 0))
+    screen.blit(background, (0, 0))
+    pygame.display.update()
+
+    if music:
+        playMusic("menu")
+    font = pygame.font.get_default_font()
+    font = pygame.font.Font(font, 32)
+    text = font.render('OPTIONS', True, (255, 255, 255))
+    text_rect = text.get_rect()
+    text_rect.center = (width // 2, height // 4)
+    screen.blit(text, text_rect)
+    pygame.display.update()
+
 
 def drawMenu(width=896, height=504):
 
@@ -143,6 +160,11 @@ def main():
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
                     startGame(screen, music, real_screen.get_width(), real_screen.get_height())
+                elif inButton(mouse, options_text_rect):
+                    print("options")
+                    screen.fill((0, 0, 0, 0))
+                    pygame.display.update()
+                    optionsMenu(screen, music, real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_m:
                     if music:
