@@ -1,5 +1,6 @@
 import pygame
 from pygame import Surface
+from entities.tile import Tile
 
 
 def inButton(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
@@ -39,6 +40,42 @@ def pauseMusic():
     pygame.mixer.music.pause()
 
 
+def loadLevel(name="level_TEST"):
+    try:
+        with open("./levels/" + name, "r") as file:
+            level_name = file.readline().strip()
+            tile_array = []
+            for line in file:
+                row_array = []
+                for char in line.strip():
+                    row_array.append(Tile(char))
+                tile_array.append(row_array)
+            file.close()
+            return tile_array
+
+    except IOError:
+        print("Error from loadLevel function!")
+
+
+def drawLevel(level, screen, width, height):
+    screen.fill((0, 0, 0))
+    pygame.display.update()
+
+    rows = 15
+    cols = 28
+
+    scale_factor = min(width // (cols * 32), height // (rows * 32))
+
+    for row in range(rows):
+        for col in range(cols):
+            tile_x = col * 32 * scale_factor
+            tile_y = row * 32 * scale_factor
+
+            scaled_tile_image = pygame.transform.scale(level[row][col].image, (32 * scale_factor, 32 * scale_factor))
+
+            screen.blit(scaled_tile_image, (tile_x, tile_y))
+    pygame.display.update()
+
 def startGame(screen, music, width, height):
     screen.fill((0, 0, 0))
     pygame.display.update()
@@ -54,9 +91,18 @@ def startGame(screen, music, width, height):
     screen.blit(text, text_rect)
 
     pygame.display.update()
-    # TODO: make a load level function
-    # loadLevel()
 
+    level = loadLevel()
+
+    drawLevel(level, screen, width, height)
+
+
+
+def drawMenu(width=896, height=504):
+    pygame.mixer.init()
+
+    current_music = "menu"
+    playMusic(current_music)
 
 def optionsMenu(screen, music, width, height):
     background = pygame.image.load("assets/graphics/woodBackground.png")
@@ -74,6 +120,7 @@ def optionsMenu(screen, music, width, height):
     text_rect.center = (width // 2, height // 8)
     screen.blit(text, text_rect)
     pygame.display.update()
+
 
 
 def drawMenu(width=896, height=504):
@@ -112,6 +159,7 @@ def drawMenu(width=896, height=504):
 
     screen.fill(black)
     screen.blit(background, (0, 0))
+
     # square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
     # square2.fill(red)
     # screen.blit(square2, (50, 50))
@@ -119,6 +167,7 @@ def drawMenu(width=896, height=504):
     screen.blit(start_text, start_text_rect)
     screen.blit(options_text, options_text_rect)
     screen.blit(quit_text, quit_text_rect)
+
 
     return real_screen, screen, quit_text_rect, start_text_rect, options_text_rect
     '''
@@ -140,15 +189,15 @@ def drawMenu(width=896, height=504):
     '''
 
 
+def main():
+    music = True
+
 
 def main():
     real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu()
 
     pygame.display.set_caption("In the Shadows")
-    pygame.mixer.init()
-    music = True
-    current_music = "menu"
-    playMusic(current_music)
+
     running = True
     while running:
         real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
@@ -176,6 +225,8 @@ def main():
                     else:
                         playMusic()
                         music = True
+                if ev.key == pygame.K_ESCAPE:
+                    real_screen, screen, quit_text_rect, start_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.VIDEORESIZE:
                 real_screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
                 real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
