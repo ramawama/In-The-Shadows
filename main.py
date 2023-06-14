@@ -97,15 +97,13 @@ def startGame(screen, music, width, height):
     drawLevel(level, screen, width, height)
 
 
-def optionsMenu(screen, music, width, height):
+def optionsMenu(screen, width, height):
     background = pygame.image.load("assets/graphics/woodBackground.png")
     background = pygame.transform.scale(background, (width, height))
     screen.fill((0, 0, 0))
     screen.blit(background, (0, 0))
     pygame.display.update()
 
-    #if music:
-        #playMusic("menu")
     font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height * 0.2))
     text = font.render('OPTIONS', True, (255, 255, 255))
     text_rect = text.get_rect()
@@ -189,7 +187,7 @@ def main():
                     screen_state = "options"
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
-                    optionsMenu(screen, music, real_screen.get_width(), real_screen.get_height())
+                    optionsMenu(screen, real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_m:
                     if music:
@@ -206,7 +204,18 @@ def main():
                         real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.VIDEORESIZE:
                 real_screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
-                real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
+                match screen_state:
+                    case "menu":
+                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
+                            real_screen.get_width(), real_screen.get_height())
+                    case "options":
+                        optionsMenu(real_screen, real_screen.get_width(), real_screen.get_height())
+                        # test options menu later with inputs
+                    case "game":
+                        pass
+                        #startGame(real_screen, music, real_screen.get_width(), real_screen.get_height())
+                        #just reloads game with new size, will prob be issue later
+
         pygame.display.update()
     pygame.quit()
 
