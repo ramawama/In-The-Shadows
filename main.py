@@ -94,8 +94,6 @@ def startGame(screen, music, width, height):
 
     level = loadLevel()
 
-    print(level)
-
     drawLevel(level, screen, width, height)
 
 
