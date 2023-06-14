@@ -115,10 +115,6 @@ def optionsMenu(screen, music, width, height):
 
 
 def drawMenu(width=896, height=504):
-    pygame.mixer.init()
-
-    current_music = "menu"
-    playMusic(current_music)
 
     white = (255, 255, 255)
     black = (0, 0, 0)
@@ -169,7 +165,12 @@ def main():
     pygame.display.set_caption("In the Shadows")
 
     music = True
+    pygame.mixer.init()
+    current_music = "menu"
+    playMusic(current_music)
+
     running = True
+    screen_state = "menu"
     while running:
         real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
         for ev in pygame.event.get():
@@ -180,10 +181,12 @@ def main():
                 if inButton(mouse, quit_text_rect):
                     running = False
                 elif inButton(mouse, start_text_rect):
+                    screen_state = "game"
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
                     startGame(screen, music, real_screen.get_width(), real_screen.get_height())
                 elif inButton(mouse, options_text_rect):
+                    screen_state = "options"
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
                     optionsMenu(screen, music, real_screen.get_width(), real_screen.get_height())
@@ -196,7 +199,11 @@ def main():
                         playMusic()
                         music = True
                 if ev.key == pygame.K_ESCAPE:
-                    real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
+                    if screen_state == 'options':
+                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
+                    elif screen_state == 'game':
+                        playMusic("menu")
+                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.VIDEORESIZE:
                 real_screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
                 real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
