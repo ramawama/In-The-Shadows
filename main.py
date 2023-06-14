@@ -1,5 +1,4 @@
 import pygame
-from pygame import Surface
 from entities.tile import Tile
 
 
@@ -43,7 +42,7 @@ def pauseMusic():
 def loadLevel(name="level_TEST"):
     try:
         with open("./levels/" + name, "r") as file:
-            level_name = file.readline().strip()
+            file.readline().strip() # this is the level name if you want it
             tile_array = []
             for line in file:
                 row_array = []
@@ -76,6 +75,7 @@ def drawLevel(level, screen, width, height):
             screen.blit(scaled_tile_image, (tile_x, tile_y))
     pygame.display.update()
 
+
 def startGame(screen, music, width, height):
     screen.fill((0, 0, 0))
     pygame.display.update()
@@ -97,13 +97,6 @@ def startGame(screen, music, width, height):
     drawLevel(level, screen, width, height)
 
 
-
-def drawMenu(width=896, height=504):
-    pygame.mixer.init()
-
-    current_music = "menu"
-    playMusic(current_music)
-
 def optionsMenu(screen, music, width, height):
     background = pygame.image.load("assets/graphics/woodBackground.png")
     background = pygame.transform.scale(background, (width, height))
@@ -113,8 +106,7 @@ def optionsMenu(screen, music, width, height):
 
     if music:
         playMusic("menu")
-    font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height*0.2))
-    #font = pygame.font.Font(font, 90)
+    font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height * 0.2))
     text = font.render('OPTIONS', True, (255, 255, 255))
     text_rect = text.get_rect()
     text_rect.center = (width // 2, height // 8)
@@ -122,11 +114,14 @@ def optionsMenu(screen, music, width, height):
     pygame.display.update()
 
 
-
 def drawMenu(width=896, height=504):
+    pygame.mixer.init()
+
+    current_music = "menu"
+    playMusic(current_music)
+
     white = (255, 255, 255)
     black = (0, 0, 0)
-    red = (255, 0, 0)
     (start_width, start_height) = (width // 2, height // 2)
     (options_width, options_height) = (start_width, start_height + start_height // 32)
     (quit_width, quit_height) = (start_width, start_height + start_height // 4)
@@ -136,8 +131,8 @@ def drawMenu(width=896, height=504):
     pygame.display.flip()
 
     pygame.font.init()
-    big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height*0.2))
-    small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height*0.15))
+    big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height * 0.2))
+    small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height * 0.15))
 
     text = big_font.render('IN  THE  SHADOWS', True, white)
 
@@ -160,37 +155,12 @@ def drawMenu(width=896, height=504):
     screen.fill(black)
     screen.blit(background, (0, 0))
 
-    # square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
-    # square2.fill(red)
-    # screen.blit(square2, (50, 50))
     screen.blit(text, text_rect)
     screen.blit(start_text, start_text_rect)
     screen.blit(options_text, options_text_rect)
     screen.blit(quit_text, quit_text_rect)
 
-
     return real_screen, screen, quit_text_rect, start_text_rect, options_text_rect
-    '''
-    image = Surface(text_rect.size)
-    image.fill(black, text_rect)
-    screen.blit(image, (text_rect.x, text_rect.y))
-
-    image2 = Surface(start_text_rect.size)
-    image2.fill(black, start_text_rect)
-    screen.blit(image2, (start_text_rect.x, start_text_rect.y))
-
-    image3 = Surface(quit_text_rect.size)
-    image3.fill(black, quit_text_rect)
-    screen.blit(image3, (quit_text_rect.x, quit_text_rect.y))
-
-    image4 = Surface(options_text_rect.size)
-    image4.fill(black, options_text_rect)
-    screen.blit(image4, (options_text_rect.x, options_text_rect.y))
-    '''
-
-
-def main():
-    music = True
 
 
 def main():
@@ -198,6 +168,7 @@ def main():
 
     pygame.display.set_caption("In the Shadows")
 
+    music = True
     running = True
     while running:
         real_screen.blit(pygame.transform.scale(screen, real_screen.get_rect().size), (0, 0))
@@ -226,11 +197,10 @@ def main():
                         playMusic()
                         music = True
                 if ev.key == pygame.K_ESCAPE:
-                    real_screen, screen, quit_text_rect, start_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
+                    real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.VIDEORESIZE:
                 real_screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
-                real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
-                    real_screen.get_width(), real_screen.get_height())
+                real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
         pygame.display.update()
     pygame.quit()
 
