@@ -64,6 +64,7 @@ def drawMenu(width=896, height=504):
     black = (0, 0, 0)
     red = (255, 0, 0)
     (start_width, start_height) = (width // 2, height // 2)
+    (options_width, options_height) = (start_width, start_height + start_height // 32)
     (quit_width, quit_height) = (start_width, start_height + start_height // 4)
     real_screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
     screen = real_screen.copy()
@@ -79,7 +80,10 @@ def drawMenu(width=896, height=504):
     font = pygame.font.Font(font, 70)
     start_text = font.render('START', True, white)
     start_text_rect = start_text.get_rect()
-    start_text_rect.center = (start_width, start_height)
+    start_text_rect.center = (start_width, start_height + 1) # had to add one or there will be a gap between options and no gap between quit and options
+    options_text = font.render('OPTIONS', True, white)
+    options_text_rect = options_text.get_rect()
+    options_text_rect.center = (options_width, options_height + options_height // 4 )
     quit_text = font.render('QUIT', True, white)
     quit_text_rect = quit_text.get_rect()
     quit_text_rect.center = (quit_width, quit_height + quit_height // 4)
@@ -105,15 +109,20 @@ def drawMenu(width=896, height=504):
     image3.fill(black, quit_text_rect)
     screen.blit(image3, (quit_text_rect.x, quit_text_rect.y))
 
+    image4 = Surface(options_text_rect.size)
+    image4.fill(black, options_text_rect)
+    screen.blit(image4, (options_text_rect.x, options_text_rect.y))
+
     screen.blit(text, text_rect)
     screen.blit(start_text, start_text_rect)
+    screen.blit(options_text, options_text_rect)
     screen.blit(quit_text, quit_text_rect)
 
-    return real_screen, screen, quit_text_rect, start_text_rect
+    return real_screen, screen, quit_text_rect, start_text_rect, options_text_rect
 
 def main():
 
-    real_screen, screen, quit_text_rect, start_text_rect = drawMenu()
+    real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu()
 
     pygame.display.set_caption("In the Shadows")
     pygame.mixer.init()
@@ -144,7 +153,7 @@ def main():
                         music = True
             elif ev.type == pygame.VIDEORESIZE:
                 real_screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
-                real_screen, screen, quit_text_rect, start_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
+                real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
         pygame.display.update()
     pygame.quit()
 
