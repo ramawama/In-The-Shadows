@@ -104,8 +104,8 @@ def optionsMenu(screen, music, width, height):
     screen.blit(background, (0, 0))
     pygame.display.update()
 
-    if music:
-        playMusic("menu")
+    #if music:
+        #playMusic("menu")
     font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height * 0.2))
     text = font.render('OPTIONS', True, (255, 255, 255))
     text_rect = text.get_rect()
@@ -184,7 +184,6 @@ def main():
                     pygame.display.update()
                     startGame(screen, music, real_screen.get_width(), real_screen.get_height())
                 elif inButton(mouse, options_text_rect):
-                    print("options")
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
                     optionsMenu(screen, music, real_screen.get_width(), real_screen.get_height())
