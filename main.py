@@ -67,8 +67,7 @@ def optionsMenu(screen, music, width, height):
 
     if music:
         playMusic("menu")
-    font = pygame.font.Font('assets/fonts/Enchanted Land.otf', 90)
-    print(pygame.font.get_fonts())
+    font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height*0.2))
     #font = pygame.font.Font(font, 90)
     text = font.render('OPTIONS', True, (255, 255, 255))
     text_rect = text.get_rect()
@@ -88,24 +87,27 @@ def drawMenu(width=896, height=504):
     screen = real_screen.copy()
     screen.fill(black)
     pygame.display.flip()
+
     pygame.font.init()
-    font = pygame.font.Font('assets/fonts/Enchanted Land.otf', 90)
-    text = font.render('IN  THE  SHADOWS', True, white)
+    big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height*0.2))
+    small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height*0.15))
+
+    text = big_font.render('IN  THE  SHADOWS', True, white)
+
     text_rect = text.get_rect()
     text_rect.center = (width // 2, height // 4)
-    font = pygame.font.Font('assets/fonts/Enchanted Land.otf', 70)
-    start_text = font.render('START', True, white)
+    start_text = small_font.render('START', True, white)
     start_text_rect = start_text.get_rect()
     start_text_rect.center = (start_width,
                               start_height + 1)  # had to add one or there will be a gap between options and no gap between quit and options
-    options_text = font.render('OPTIONS', True, white)
+    options_text = small_font.render('OPTIONS', True, white)
     options_text_rect = options_text.get_rect()
     options_text_rect.center = (options_width, options_height + options_height // 4)
-    quit_text = font.render('QUIT', True, white)
+    quit_text = small_font.render('QUIT', True, white)
     quit_text_rect = quit_text.get_rect()
     quit_text_rect.center = (quit_width, quit_height + quit_height // 4)
 
-    background = pygame.image.load("./assets/graphics/background.png")
+    background = pygame.image.load("./assets/graphics/dungeon.jpg")
     background = pygame.transform.scale(background, (width, height))
 
     screen.fill(black)
@@ -113,7 +115,13 @@ def drawMenu(width=896, height=504):
     # square2 = pygame.transform.scale(pygame.Surface((16, 16)), (64, 64))
     # square2.fill(red)
     # screen.blit(square2, (50, 50))
+    screen.blit(text, text_rect)
+    screen.blit(start_text, start_text_rect)
+    screen.blit(options_text, options_text_rect)
+    screen.blit(quit_text, quit_text_rect)
 
+    return real_screen, screen, quit_text_rect, start_text_rect, options_text_rect
+    '''
     image = Surface(text_rect.size)
     image.fill(black, text_rect)
     screen.blit(image, (text_rect.x, text_rect.y))
@@ -129,13 +137,8 @@ def drawMenu(width=896, height=504):
     image4 = Surface(options_text_rect.size)
     image4.fill(black, options_text_rect)
     screen.blit(image4, (options_text_rect.x, options_text_rect.y))
+    '''
 
-    screen.blit(text, text_rect)
-    screen.blit(start_text, start_text_rect)
-    screen.blit(options_text, options_text_rect)
-    screen.blit(quit_text, quit_text_rect)
-
-    return real_screen, screen, quit_text_rect, start_text_rect, options_text_rect
 
 
 def main():
