@@ -61,6 +61,7 @@ def main():
 
     rogue = [pygame.image.load("assets/graphics/Rogue/Rogue.png"),
              pygame.image.load("assets/graphics/Rogue/Rogue_walk.png")]
+    rogue = [pygame.transform.flip(rogue[0], True, False), pygame.transform.flip(rogue[1], True, False)]
     background = pygame.image.load("assets/graphics/o.png")
     x, y = 20, 20
     quit_game = False
