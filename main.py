@@ -41,29 +41,18 @@ def pauseMusic():
 
 def analyzeLevel(level):
     for row in range(len(level)):
-        for col in range(row):
+        for col in range(len(level[row])):
             if level[row][col].type == "t":
-                if row >= 1 and col >= 1:
-                    level[row+1][col].light()
-                    level[row+1][col-1].light()
-                    level[row+1][col+1].light()
-                    level[row-1][col].light()
-                    level[row - 1][col-1].light()
-                    level[row - 1][col+1].light()
-                    level[row][col-1].light()
-                    level[row][col + 1].light()
-                elif row == 0 and col >= 1:
+                level[row+1][col].light()
+                level[row+1][col-1].light()
+                level[row+1][col+1].light()
+                level[row-1][col].light()
+                level[row - 1][col-1].light()
+                level[row - 1][col+1].light()
+                level[row][col-1].light()
+                level[row][col + 1].light()
 
-                elif row >= 1 and col == 0:
-
-                elif row == 0 and col == 0:
-
-                elif row == len(level) and col >= 0:
-
-                elif row >= 0 and col == len(level[row]):
-
-                elif row == len(level) and col == len(level[row]):
-
+    return level
 
 
 def loadLevel(name="level_TEST"):
