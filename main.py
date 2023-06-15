@@ -91,9 +91,13 @@ def draw_level(level, screen, width, height):
             tile_y = row * tile_height
 
             scaled_tile_image = pygame.transform.scale(level[row][col].image, (tile_width, tile_height))
-            scaled_floor_image = pygame.transform.scale(Tile().image, (tile_width, tile_height))
+            if level[row][col].type != "o":
+                if level[row][col].lit:
+                    scaled_floor_image = pygame.transform.scale(Tile("o", True).image, (tile_width, tile_height))
+                else:
+                    scaled_floor_image = pygame.transform.scale(Tile().image, (tile_width, tile_height))
+                screen.blit(scaled_floor_image, (tile_x, tile_y))
 
-            screen.blit(scaled_floor_image, (tile_x, tile_y))
             screen.blit(scaled_tile_image, (tile_x, tile_y))
 
     pygame.display.update()
@@ -232,7 +236,7 @@ def drawMenu(width=896, height=504):
     quit_text_rect = quit_text.get_rect()
     quit_text_rect.center = (quit_width, quit_height + quit_height // 4)
 
-    background = pygame.image.load("./assets/graphics/dungeon.jpg")
+    background = pygame.image.load("assets/graphics/Backgrounds/dungeon.jpg")
     background = pygame.transform.scale(background, (width, height))
 
     screen.fill(black)
