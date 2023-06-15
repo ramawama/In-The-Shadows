@@ -1,15 +1,17 @@
 import pygame
 from entities.tile import Tile
 from entities.player import Player
+import options
 
-def inButton(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
+
+def in_button(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
     if button.collidepoint(pos):
         return True
     else:
         return False
 
 
-def playMusic(choice="unpause"):
+def play_music(choice="unpause"):
     if choice == 'menu':
         pygame.mixer.music.stop()
         pygame.mixer.music.unload()
@@ -35,27 +37,27 @@ def playMusic(choice="unpause"):
         pygame.mixer.music.play(-1)
 
 
-def pauseMusic():
+def pause_music():
     pygame.mixer.music.pause()
 
 
-def analyzeLevel(level):
+def analyze_level(level):
     for row in range(len(level)):
         for col in range(len(level[row])):
             if level[row][col].type == "t":
-                level[row+1][col].light()
-                level[row+1][col-1].light()
-                level[row+1][col+1].light()
-                level[row-1][col].light()
-                level[row - 1][col-1].light()
-                level[row - 1][col+1].light()
-                level[row][col-1].light()
+                level[row + 1][col].light()
+                level[row + 1][col - 1].light()
+                level[row + 1][col + 1].light()
+                level[row - 1][col].light()
+                level[row - 1][col - 1].light()
+                level[row - 1][col + 1].light()
+                level[row][col - 1].light()
                 level[row][col + 1].light()
 
     return level
 
 
-def loadLevel(name="level_TEST"):
+def load_level(name="level_TEST"):
     try:
         with open("./levels/" + name, "r") as file:
             file.readline().strip()  # this is the level name if you want it
@@ -66,14 +68,14 @@ def loadLevel(name="level_TEST"):
                     row_array.append(Tile(char))
                 tile_array.append(row_array)
             file.close()
-            tile_array = analyzeLevel(tile_array)
+            tile_array = analyze_level(tile_array)
             return tile_array, None
 
     except IOError:
         print("Error from loadLevel function!")
 
 
-def drawLevel(level, screen, width, height):
+def draw_level(level, screen, width, height):
     screen.fill((0, 0, 0))
     pygame.display.update()
 
@@ -101,12 +103,12 @@ def drawLevel(level, screen, width, height):
     pygame.display.update()
 
 
-def startGame(screen, music, width, height):
+def start_game(screen, music, width, height):
     screen.fill((0, 0, 0))
     pygame.display.update()
 
     if music:
-        playMusic("game")
+        play_music("game")
 
     font = pygame.font.get_default_font()
     font = pygame.font.Font(font, 32)
@@ -117,7 +119,7 @@ def startGame(screen, music, width, height):
 
     pygame.display.update()
 
-    level, guard_routes = loadLevel()
+    level, guard_routes = load_level()
     """
     note: my idea for guard movement is after the map data in the level text documents, 
     for each guard we should define their starting position and default patrol routes.
@@ -127,7 +129,7 @@ def startGame(screen, music, width, height):
     (i.e. UUDD for up up down down)
     then we can use modulo to iterate through this array on a looping basis
     """
-    drawLevel(level, screen, width, height)
+    draw_level(level, screen, width, height)
     # play_level(level, guard_routes)
 
 
@@ -179,7 +181,7 @@ def move(game_board, current_x, current_y, player):
                             # redraw player here
                             return current_x, current_y - 1
                         else:
-                            print ("THIS GUYT RIED TO WALK INTO A WALL!!!")
+                            print("THIS GUYT RIED TO WALK INTO A WALL!!!")
                     case pygame.K_a | pygame.K_LEFT:
                         if not is_wall(game_board, current_x - 1, current_y):
                             player.direction = "left"
@@ -202,21 +204,6 @@ def move(game_board, current_x, current_y, player):
 
 def enemy_move():
     return None
-
-
-def optionsMenu(screen, width, height):
-    background = pygame.image.load("assets/graphics/Backgrounds/woodBackground.png")
-    background = pygame.transform.scale(background, (width, height))
-    screen.fill((0, 0, 0))
-    screen.blit(background, (0, 0))
-    pygame.display.update()
-
-    font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(height * 0.2))
-    text = font.render('OPTIONS', True, (255, 255, 255))
-    text_rect = text.get_rect()
-    text_rect.center = (width // 2, height // 8)
-    screen.blit(text, text_rect)
-    pygame.display.update()
 
 
 def drawMenu(width=896, height=504):
@@ -271,7 +258,7 @@ def main():
     music = True
     pygame.mixer.init()
     current_music = "menu"
-    playMusic(current_music)
+    play_music(current_music)
 
     running = True
     screen_state = "menu"
@@ -282,25 +269,25 @@ def main():
                 running = False
             elif ev.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
-                if inButton(mouse, quit_text_rect):
+                if in_button(mouse, quit_text_rect):
                     running = False
-                elif inButton(mouse, start_text_rect):
+                elif in_button(mouse, start_text_rect):
                     screen_state = "game"
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
-                    startGame(screen, music, real_screen.get_width(), real_screen.get_height())
-                elif inButton(mouse, options_text_rect):
+                    start_game(screen, music, real_screen.get_width(), real_screen.get_height())
+                elif in_button(mouse, options_text_rect):
                     screen_state = "options"
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
-                    optionsMenu(screen, real_screen.get_width(), real_screen.get_height())
+                    easy_rect, med_rect, hard_rect = options.settings_menu(screen, real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_m:
                     if music:
-                        pauseMusic()
+                        pause_music()
                         music = False
                     else:
-                        playMusic()
+                        play_music()
                         music = True
                 if ev.key == pygame.K_ESCAPE:
                     if screen_state == 'options':
@@ -309,7 +296,7 @@ def main():
                             real_screen.get_width(), real_screen.get_height())
                     elif screen_state == 'game':
                         screen_state = 'menu'
-                        playMusic("menu")
+                        play_music("menu")
                         real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
                             real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.VIDEORESIZE:
@@ -319,7 +306,9 @@ def main():
                         real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
                             real_screen.get_width(), real_screen.get_height())
                     case "options":
-                        optionsMenu(real_screen, real_screen.get_width(), real_screen.get_height())
+                        easy_rect, med_rect, hard_rect = options.settings_menu(real_screen, real_screen.get_width(),
+                                                                               real_screen.get_height())
+
                         # test options menu later with inputs
                     case "game":
                         pass
