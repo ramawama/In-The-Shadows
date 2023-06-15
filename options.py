@@ -2,6 +2,8 @@ import pygame
 
 
 def settings_menu(screen, width, height):
+    diff = "easy"
+
     background = pygame.image.load("assets/graphics/Backgrounds/woodBackground.png")
     background = pygame.transform.scale(background, (width, height))
     screen.fill((0, 0, 0))
@@ -43,13 +45,41 @@ def settings_menu(screen, width, height):
     screen.blit(hard_difficulty, hard_difficulty_rect)
 
     pygame.display.update()
-    return easy_difficulty_rect, medium_difficulty_rect, hard_difficulty_rect
+
+    running = True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False  # Exit the loop and stop the options menu
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                if in_button(pos, easy_difficulty_rect):
+                    diff = "easy"
+                    display_difficulty(screen, width, height, diff)
+                if in_button(pos, medium_difficulty_rect):
+                    diff = "medium"
+                    display_difficulty(screen, width, height, diff)
+                if in_button(pos, hard_difficulty_rect):
+                    diff = "hard"
+                    display_difficulty(screen, width, height, diff)
+
+        pygame.display.update()
+
+    return diff
 
 
 def display_difficulty(screen, width, height, diff):
     font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(screen.get_height() * 0.10))
-    text = font.render(diff + " CHOSEN!", True, (255, 255, 255))
+    text = font.render(diff + " MODE CHOSEN!", True, (255, 255, 255))
     text_rect = text.get_rect()
     text_rect.center = (width // 2, height - height // 2)
     screen.blit(text, text_rect)
     pygame.display.update()
+
+
+def in_button(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
+    if button.collidepoint(pos):
+        return True
+    else:
+        return False
