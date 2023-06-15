@@ -1,5 +1,6 @@
 import pygame
 
+
 class Player():
     def __init__(self, direction="Down"):
         self._state = "Alive"  # alive or dead
