@@ -2,7 +2,7 @@ import pygame
 
 
 def settings_menu(screen, width, height):
-    background = pygame.image.load("assets/graphics/woodBackground.png")
+    background = pygame.image.load("assets/graphics/Backgrounds/woodBackground.png")
     background = pygame.transform.scale(background, (width, height))
     screen.fill((0, 0, 0))
     screen.blit(background, (0, 0))
