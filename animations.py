@@ -16,8 +16,6 @@ import pygame
 #         x += 8
 
 
-
-
 def main():
     white = (255, 255, 255)
     black = (0, 0, 0)

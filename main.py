@@ -206,7 +206,7 @@ def enemy_move():
     return None
 
 
-def drawMenu(width=896, height=504):
+def draw_menu(width=896, height=504):
     white = (255, 255, 255)
     black = (0, 0, 0)
     (start_width, start_height) = (width // 2, height // 2)
@@ -251,7 +251,7 @@ def drawMenu(width=896, height=504):
 
 
 def main():
-    real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu()
+    real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = draw_menu()
 
     pygame.display.set_caption("In the Shadows")
 
@@ -292,18 +292,18 @@ def main():
                 if ev.key == pygame.K_ESCAPE:
                     if screen_state == 'options':
                         screen_state = "menu"
-                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
+                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = draw_menu(
                             real_screen.get_width(), real_screen.get_height())
                     elif screen_state == 'game':
                         screen_state = 'menu'
                         play_music("menu")
-                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
+                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = draw_menu(
                             real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.VIDEORESIZE:
                 real_screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
                 match screen_state:
                     case "menu":
-                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
+                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = draw_menu(
                             real_screen.get_width(), real_screen.get_height())
                     case "options":
                         easy_rect, med_rect, hard_rect = options.settings_menu(real_screen, real_screen.get_width(),

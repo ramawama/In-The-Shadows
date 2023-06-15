@@ -44,3 +44,12 @@ def settings_menu(screen, width, height):
 
     pygame.display.update()
     return easy_difficulty_rect, medium_difficulty_rect, hard_difficulty_rect
+
+
+def display_difficulty(screen, width, height, diff):
+    font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(screen.get_height() * 0.10))
+    text = font.render(diff + " CHOSEN!", True, (255, 255, 255))
+    text_rect = text.get_rect()
+    text_rect.center = (width // 2, height - height // 2)
+    screen.blit(text, text_rect)
+    pygame.display.update()
