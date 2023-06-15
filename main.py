@@ -252,7 +252,7 @@ def draw_menu(width=896, height=504):
 
 def main():
     real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = draw_menu()
-    diff_mode = "easy"
+    diff_mode = "EASY"
     pygame.display.set_caption("In the Shadows")
 
     music = True
@@ -280,7 +280,17 @@ def main():
                     screen_state = "options"
                     screen.fill((0, 0, 0, 0))
                     pygame.display.update()
-                    diff_mode = options.settings_menu(screen, real_screen.get_width(), real_screen.get_height())
+                    easy_rect, med_rect, hard_rect = options.settings_menu(screen, real_screen.get_width(), real_screen.get_height())
+                    options.display_difficulty(screen, real_screen.get_width(), real_screen.get_height(), diff_mode)
+                elif in_button(mouse, easy_rect):
+                    diff_mode = "EASY"
+                    options.display_difficulty(screen, real_screen.get_width(), real_screen.get_height(), diff_mode)
+                elif in_button(mouse, med_rect):
+                    diff_mode = "MEDIUM"
+                    options.display_difficulty(screen, real_screen.get_width(), real_screen.get_height(), diff_mode)
+                elif in_button(mouse, hard_rect):
+                    diff_mode = "HARD"
+                    options.display_difficulty(screen, real_screen.get_width(), real_screen.get_height(), diff_mode)
 
             elif ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_m:
@@ -307,7 +317,7 @@ def main():
                         real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = draw_menu(
                             real_screen.get_width(), real_screen.get_height())
                     case "options":
-                        diff_mode = options.settings_menu(real_screen, real_screen.get_width(),
+                        easy_rect, med_rect, hard_rect = options.settings_menu(real_screen, real_screen.get_width(),
                                                                                real_screen.get_height())
 
                         # test options menu later with inputs
