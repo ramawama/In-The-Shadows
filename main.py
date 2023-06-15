@@ -1,6 +1,7 @@
 import pygame
 from entities.tile import Tile
 from entities.player import Player
+from animations import moveRight
 import options
 
 
@@ -62,12 +63,20 @@ def load_level(name="level_TEST"):
         with open("./levels/" + name, "r") as file:
             file.readline().strip()  # this is the level name if you want it
             tile_array = []
-            for line in file:
+            # read in tiles
+            lines = file.readlines()
+            file.close()
+            for line in lines:
+                if line.strip() == "END":
+                    break
                 row_array = []
                 for char in line.strip():
                     row_array.append(Tile(char))
                 tile_array.append(row_array)
-            file.close()
+            # read in guard routes
+            guard_routes = []
+            for i in range(len(tile_array) + 1, len(lines), 3):
+                guard_routes.append((lines[i], lines[i+1], lines[i+2]))
             tile_array = analyze_level(tile_array)
             return tile_array, None
 
@@ -134,7 +143,7 @@ def start_game(screen, music, width, height):
 
 
 def play_level(game_board, guard_routes):
-    player = Player()  # create player asset
+    player = Player()  # create player asset, update this later in the loop below to initiate location
     turn_counter = 1
     current_x, current_y, exit_x, exit_y = -1
     for y in game_board:
@@ -156,7 +165,7 @@ def play_level(game_board, guard_routes):
             # you can add a condition like need key here or something
             break
         guard_status = check_guard_status()
-        enemy_move()
+        enemy_move(guard_routes)
         turn_counter = turn_counter + 1
         guard_status = check_guard_status()
 
@@ -197,16 +206,17 @@ def move(game_board, current_x, current_y, player):
                     case pygame.K_d | pygame.K_RIGHT:
                         if not is_wall(game_board, current_x + 1, current_y):
                             player.direction = "right"
+
                             return current_x + 1, current_y
                         else:
                             print("THIS GUYT RIED TO WALK INTO A WALL!!!")
 
 
-def enemy_move():
+def enemy_move(enemies, guard_routes, turn_counter):
     return None
 
 
-def draw_menu(width=896, height=504):
+def drawMenu(width=896, height=504):
     white = (255, 255, 255)
     black = (0, 0, 0)
     (start_width, start_height) = (width // 2, height // 2)
