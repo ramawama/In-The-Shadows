@@ -124,11 +124,14 @@ def play_level(level, guard_routes):
         enemy_move()
         turn_counter = turn_counter + 1
 
+
 def move():
     return None
 
+
 def enemy_move():
     return None
+
 
 def optionsMenu(screen, width, height):
     background = pygame.image.load("assets/graphics/woodBackground.png")
@@ -146,7 +149,6 @@ def optionsMenu(screen, width, height):
 
 
 def drawMenu(width=896, height=504):
-
     white = (255, 255, 255)
     black = (0, 0, 0)
     (start_width, start_height) = (width // 2, height // 2)
@@ -231,10 +233,12 @@ def main():
                         music = True
                 if ev.key == pygame.K_ESCAPE:
                     if screen_state == 'options':
-                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
+                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
+                            real_screen.get_width(), real_screen.get_height())
                     elif screen_state == 'game':
                         playMusic("menu")
-                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(real_screen.get_width(), real_screen.get_height())
+                        real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
+                            real_screen.get_width(), real_screen.get_height())
             elif ev.type == pygame.VIDEORESIZE:
                 real_screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
                 match screen_state:
@@ -246,8 +250,8 @@ def main():
                         # test options menu later with inputs
                     case "game":
                         pass
-                        #startGame(real_screen, music, real_screen.get_width(), real_screen.get_height())
-                        #just reloads game with new size, will prob be issue later
+                        # startGame(real_screen, music, real_screen.get_width(), real_screen.get_height())
+                        # just reloads game with new size, will prob be issue later
 
         pygame.display.update()
     pygame.quit()
