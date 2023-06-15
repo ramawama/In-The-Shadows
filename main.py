@@ -216,7 +216,7 @@ def enemy_move(enemies, guard_routes, turn_counter):
     return None
 
 
-def drawMenu(width=896, height=504):
+def draw_menu(width=896, height=504):
     white = (255, 255, 255)
     black = (0, 0, 0)
     (start_width, start_height) = (width // 2, height // 2)
