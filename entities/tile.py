@@ -4,7 +4,6 @@ import pygame
 class Tile():
     def __init__(self, tile_type="o", behind_torch=False):
         self._tile_type = tile_type
-        print(tile_type)
         match tile_type:
             case "t":
                 self._image = pygame.image.load("./assets/graphics/Level Elements/Torch/Torch_small.png")

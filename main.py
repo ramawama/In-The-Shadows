@@ -89,12 +89,13 @@ def drawLevel(level, screen, width, height):
             tile_y = row * tile_height
 
             scaled_tile_image = pygame.transform.scale(level[row][col].image, (tile_width, tile_height))
-            if level[row][col].lit:
-                scaled_floor_image = pygame.transform.scale(Tile("o", True).image, (tile_width, tile_height))
-            else:
-                scaled_floor_image = pygame.transform.scale(Tile().image, (tile_width, tile_height))
+            if level[row][col].type != "o":
+                if level[row][col].lit:
+                    scaled_floor_image = pygame.transform.scale(Tile("o", True).image, (tile_width, tile_height))
+                else:
+                    scaled_floor_image = pygame.transform.scale(Tile().image, (tile_width, tile_height))
+                screen.blit(scaled_floor_image, (tile_x, tile_y))
 
-            screen.blit(scaled_floor_image, (tile_x, tile_y))
             screen.blit(scaled_tile_image, (tile_x, tile_y))
 
     pygame.display.update()
