@@ -42,7 +42,7 @@ def pauseMusic():
 def loadLevel(name="level_TEST"):
     try:
         with open("./levels/" + name, "r") as file:
-            file.readline().strip() # this is the level name if you want it
+            file.readline().strip()  # this is the level name if you want it
             tile_array = []
             for line in file:
                 row_array = []
@@ -50,7 +50,7 @@ def loadLevel(name="level_TEST"):
                     row_array.append(Tile(char))
                 tile_array.append(row_array)
             file.close()
-            return tile_array
+            return tile_array, None
 
     except IOError:
         print("Error from loadLevel function!")
@@ -60,8 +60,8 @@ def drawLevel(level, screen, width, height):
     screen.fill((0, 0, 0))
     pygame.display.update()
 
-    rows = 15
-    cols = 28
+    rows = len(level)
+    cols = len(level[0])
 
     scale_factor = min(width // (cols * 32), height // (rows * 32))
 
@@ -92,10 +92,43 @@ def startGame(screen, music, width, height):
 
     pygame.display.update()
 
-    level = loadLevel()
-
+    level, guard_routes = loadLevel()
+    """
+    note: my idea for guard movement is after the map data in the level text documents, 
+    for each guard we should define their starting position and default patrol routes.
+    guard route should be formatted as a tuple with guard_route[0] being the
+    starting position (will be updated with guard's current position during game loop)
+    and guard_route[1] should be an array of the guard's routes in direction form
+    (i.e. UUDD for up up down down)
+    then we can use modulo to iterate through this array on a looping basis
+    """
     drawLevel(level, screen, width, height)
+    # play_level(level, guard_routes)
 
+
+def play_level(level, guard_routes):
+    turn_counter = 1
+    for y in level:
+        for x in y:
+            if level[y][x] == 's':
+                current_x = x
+                current_y = y
+            if level[y][x] == 'e':
+                exit_x = x
+                exit_y = y
+    while True:
+        move()
+        if current_x == exit_x and current_y == exit_y:  # player reached exit tile
+            # you can add a condition like need key here or something
+            break
+        enemy_move()
+        turn_counter = turn_counter + 1
+
+def move():
+    return None
+
+def enemy_move():
+    return None
 
 def optionsMenu(screen, width, height):
     background = pygame.image.load("assets/graphics/woodBackground.png")
