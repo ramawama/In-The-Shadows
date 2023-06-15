@@ -40,6 +40,7 @@ class Tile():
     def lit(self):
         return self._lit
 
+    # Sets a tile as lit
     def light(self):
         self._lit = True
         if self.type == "o":

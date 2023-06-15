@@ -1,12 +1,14 @@
 import pygame
 from tile import Tile
 
+# Class for the game board (collection of all tiles)
 class Board():
     def __init__(self, screen):
         self.__tiles = []
         self.__screen = screen
         self.__loaded = False
     
+    # Load the level from a file
     def load_level(self, name="level_TEST"):
         if not self.__loaded:
             try:
@@ -26,6 +28,7 @@ class Board():
             except IOError:
                 print("Error from load_tiles function!")
 
+    # Illuminates tiles near torches
     def __torch_check(self):
         for row in range(len(self.__tiles)):
             for col in range(len(self.__tiles[row])):
@@ -39,6 +42,7 @@ class Board():
                     self.__tiles[row][col - 1].light()
                     self.__tiles[row][col + 1].light()
 
+    # Draws tiles on background_surface
     def draw_level(self):
         self.__screen.background_surface.fill((0, 0, 0))
         self.__screen.foreground_surface.fill((0, 0, 0, 0))
@@ -63,6 +67,7 @@ class Board():
                     self.__screen.background_surface.blit(scaled_floor, (tile_x, tile_y))
                 self.__screen.foreground_surface.blit(scaled_tile, (tile_x, tile_y))
     
+    # Returns array of tiles
     @property
     def tiles(self):
         return self.__tiles
