@@ -63,18 +63,20 @@ def drawLevel(level, screen, width, height):
     rows = len(level)
     cols = len(level[0])
 
-    scale_factor = min(width // (cols * 32), height // (rows * 32))
+    tile_width = width // cols
+    tile_height = height // rows
 
     for row in range(rows):
         for col in range(cols):
-            tile_x = col * 32 * scale_factor
-            tile_y = row * 32 * scale_factor
+            tile_x = col * tile_width
+            tile_y = row * tile_height
 
-            scaled_tile_image = pygame.transform.scale(level[row][col].image, (32 * scale_factor, 32 * scale_factor))
-            scaled_floor_image = pygame.transform.scale(Tile().image, (32 * scale_factor, 32 * scale_factor))
+            scaled_tile_image = pygame.transform.scale(level[row][col].image, (tile_width, tile_height))
+            scaled_floor_image = pygame.transform.scale(Tile().image, (tile_width, tile_height))
 
             screen.blit(scaled_floor_image, (tile_x, tile_y))
             screen.blit(scaled_tile_image, (tile_x, tile_y))
+
     pygame.display.update()
 
 
