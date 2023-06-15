@@ -25,4 +25,3 @@ class Player():
     @direction.setter
     def direction(self, direction):
         self._direction = direction
-
