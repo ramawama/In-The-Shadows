@@ -1,0 +1,22 @@
+import pygame
+
+class Music():
+    def __init__(self):
+        # Start menu music
+        self.__current_music = 'init'
+        self.__music = True
+        pygame.mixer.init()
+
+    def toggle(self):
+        pygame.mixer.music.pause() if self.__music else pygame.mixer.music.unpause()
+        self.__music = not self.__music
+
+    def play_music(self, choice):
+        if choice != self.__current_music:
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load('./assets/sounds/' + choice + '.wav')
+            pygame.mixer.music.play(-1)
+            if not self.__music:
+                pygame.mixer.music.pause()
+            self.__current_music = choice
