@@ -1,7 +1,6 @@
 import pygame
 from entities.tile import Tile
 from entities.player import Player
-from entities.easy_guard import Easy_Guard
 
 def inButton(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
     if button.collidepoint(pos):
@@ -123,9 +122,9 @@ def play_level(game_board, guard_routes):
             if game_board[y][x] == 'e':
                 exit_x = x
                 exit_y = y
-    if current_x is -1:
+    if current_x == -1:
         raise IOError("Imported level does not contain a starting point")
-    if exit_x is -1:
+    if exit_x == -1:
         raise IOError("Imported level does not contain an exit point")
     guard_status = check_guard_status()
     while True:
@@ -144,7 +143,7 @@ def check_guard_status():
 
 
 def is_wall(game_board, x, y):
-    return game_board[x][y] is 'W'
+    return game_board[x][y] == 'W'
 
 
 def move(game_board, current_x, current_y, player):
