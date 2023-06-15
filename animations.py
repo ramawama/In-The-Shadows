@@ -33,8 +33,8 @@ def main():
     guard = [pygame.image.load("assets/graphics/Rogue/Rogue.png"),
              pygame.image.load("assets/graphics/Rogue/Rogue_walk.png")]
 
-    torch = [pygame.image.load("assets/graphics/Torch/Torch_small.png"),
-             pygame.image.load("assets/graphics/Torch/Torch_big.png")]
+    torch = [pygame.image.load("assets/graphics/Level Elements/Torch/Torch_small.png"),
+             pygame.image.load("assets/graphics/Level Elements/Torch/Torch_big.png")]
 
     size = 32
     guard = [pygame.transform.scale(guard[0], (size, size)), pygame.transform.scale(guard[1], (size, size))]
