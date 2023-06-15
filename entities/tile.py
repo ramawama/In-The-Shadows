@@ -20,6 +20,5 @@ class Tile():
 
     def light(self):
         self._lit = True
-        print(self.type)
         if self.type == "o":
             self._image = pygame.image.load("./assets/graphics/" + self.type + "_lit.png")
