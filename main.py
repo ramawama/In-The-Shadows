@@ -39,6 +39,22 @@ def pauseMusic():
     pygame.mixer.music.pause()
 
 
+def analyzeLevel(level):
+    for row in range(len(level)):
+        for col in range(len(level[row])):
+            if level[row][col].type == "t":
+                level[row+1][col].light()
+                level[row+1][col-1].light()
+                level[row+1][col+1].light()
+                level[row-1][col].light()
+                level[row - 1][col-1].light()
+                level[row - 1][col+1].light()
+                level[row][col-1].light()
+                level[row][col + 1].light()
+
+    return level
+
+
 def loadLevel(name="level_TEST"):
     try:
         with open("./levels/" + name, "r") as file:
@@ -50,6 +66,7 @@ def loadLevel(name="level_TEST"):
                     row_array.append(Tile(char))
                 tile_array.append(row_array)
             file.close()
+            tile_array = analyzeLevel(tile_array)
             return tile_array, None
 
     except IOError:
