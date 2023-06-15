@@ -1,6 +1,6 @@
 import pygame
 from entities.tile import Tile
-
+from entities.player import Player
 
 def inButton(pos, button):  # pass in pygame.mouse.get_pos() and the "square" surface object
     if button.collidepoint(pos):
@@ -110,27 +110,73 @@ def startGame(screen, music, width, height):
     # play_level(level, guard_routes)
 
 
-def play_level(level, guard_routes):
+def play_level(game_board, guard_routes):
+    player = Player()  # create player asset
     turn_counter = 1
-    for y in level:
+    current_x, current_y, exit_x, exit_y = -1
+    for y in game_board:
         for x in y:
-            if level[y][x] == 's':
+            if game_board[y][x] == 's':
                 current_x = x
                 current_y = y
-            if level[y][x] == 'e':
+            if game_board[y][x] == 'e':
                 exit_x = x
                 exit_y = y
+    if current_x == -1:
+        raise IOError("Imported level does not contain a starting point")
+    if exit_x == -1:
+        raise IOError("Imported level does not contain an exit point")
+    guard_status = check_guard_status()
     while True:
-        move()
+        current_x, current_y, player = move(game_board, current_x, current_y, player)
         if current_x == exit_x and current_y == exit_y:  # player reached exit tile
             # you can add a condition like need key here or something
             break
+        guard_status = check_guard_status()
         enemy_move()
         turn_counter = turn_counter + 1
+        guard_status = check_guard_status()
 
 
-def move():
-    return None
+def check_guard_status():
+    return "Passive"
+
+
+def is_wall(game_board, x, y):
+    return game_board[x][y] == 'W'
+
+
+def move(game_board, current_x, current_y, player):
+    while True:
+        ev = pygame.event.get()
+        match ev.type:
+            case pygame.KEYDOWN:
+                match ev.key:
+                    case pygame.K_w | pygame.K_UP:
+                        if not is_wall(game_board, current_x, current_y - 1):
+                            player.direction = "up"
+                            # redraw player here
+                            return current_x, current_y - 1
+                        else:
+                            print ("THIS GUYT RIED TO WALK INTO A WALL!!!")
+                    case pygame.K_a | pygame.K_LEFT:
+                        if not is_wall(game_board, current_x - 1, current_y):
+                            player.direction = "left"
+                            return current_x - 1, current_y
+                        else:
+                            print("THIS GUYT RIED TO WALK INTO A WALL!!!")
+                    case pygame.K_s | pygame.K_DOWN:
+                        if not is_wall(game_board, current_x, current_y + 1):
+                            player.direction = "down"
+                            return current_x, current_y + 1
+                        else:
+                            print("THIS GUYT RIED TO WALK INTO A WALL!!!")
+                    case pygame.K_d | pygame.K_RIGHT:
+                        if not is_wall(game_board, current_x + 1, current_y):
+                            player.direction = "right"
+                            return current_x + 1, current_y
+                        else:
+                            print("THIS GUYT RIED TO WALK INTO A WALL!!!")
 
 
 def enemy_move():
