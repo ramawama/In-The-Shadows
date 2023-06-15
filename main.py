@@ -233,9 +233,11 @@ def main():
                         music = True
                 if ev.key == pygame.K_ESCAPE:
                     if screen_state == 'options':
+                        screen_state = "menu"
                         real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
                             real_screen.get_width(), real_screen.get_height())
                     elif screen_state == 'game':
+                        screen_state = 'menu'
                         playMusic("menu")
                         real_screen, screen, quit_text_rect, start_text_rect, options_text_rect = drawMenu(
                             real_screen.get_width(), real_screen.get_height())
