@@ -1,7 +1,7 @@
 import pygame
-from entities.window import Window
-from entities.music import Music
-from entities.board import Board
+from window import Window
+from music import Music
+from board import Board
 
 
 class Game:
@@ -160,7 +160,7 @@ class Game:
                 color = (255, 128, 0)
             case "HARD":
                 color = (255, 0, 0)
-        text = small_font.render(str(self.__difficulty) + "  MODE CHOSEN!", True, color)
+        text = small_font.render(str(self.__difficulty) + "  MODE  CHOSEN!", True, color)
         text_rect = text.get_rect()
         text_rect.center = (diff_width, hard_height + self.__height // 8)
         self.__screen.background_surface.blit(text, text_rect)
