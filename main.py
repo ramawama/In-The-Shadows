@@ -1,7 +1,6 @@
 import sys
 
-sys.path.insert(1, './entities/')
-from game import Game
+from entities.game import Game
 
 
 # I think you're looking for run() in game.py

@@ -1,5 +1,5 @@
 import pygame
-from tile import Tile
+from entities.tile import Tile
 
 
 # Class for the game board (collection of all tiles)

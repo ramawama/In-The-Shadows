@@ -1,7 +1,7 @@
 import pygame
-from window import Window
-from music import Music
-from board import Board
+from entities.window import Window
+from entities.music import Music
+from entities.board import Board
 
 
 class Game:
