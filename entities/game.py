@@ -53,6 +53,13 @@ class Game:
                 self.__state = 'options'
             elif self.__rects['quit_text_rect'].collidepoint(mouse_pos):
                 self.__running = False
+        elif self.__state == 'options':
+            if self.__rects['easy_difficulty_rect'].collidepoint(mouse_pos):
+                self.__difficulty = "EASY"
+            elif self.__rects['medium_difficulty_rect'].collidepoint(mouse_pos):
+                self.__difficulty = "MEDIUM"
+            elif self.__rects['hard_difficulty_rect'].collidepoint(mouse_pos):
+                self.__difficulty = "HARD"
 
     # Handles quitting, key presses, and mouse clicks
     def __handle_events(self):
@@ -114,7 +121,7 @@ class Game:
         self.__screen.background_surface.blit(background, (0, 0))
 
         big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
-        small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.10))
+        small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.09))
 
         text = big_font.render('OPTIONS', True, self.__white)
         text_rect = text.get_rect()
@@ -130,23 +137,34 @@ class Game:
 
         (easy_width, easy_height) = (diff_width, diff_height + self.__height // 8)
         easy_difficulty = small_font.render('EASY', True, (0, 153, 0))
-        easy_difficulty_rect = easy_difficulty.get_rect()
-        easy_difficulty_rect.center = (easy_width, easy_height)
-        self.__screen.background_surface.blit(easy_difficulty, easy_difficulty_rect)
+        self.__rects['easy_difficulty_rect'] = easy_difficulty.get_rect()
+        self.__rects['easy_difficulty_rect'].center = (easy_width, easy_height)
+        self.__screen.background_surface.blit(easy_difficulty, self.__rects['easy_difficulty_rect'])
 
         (med_width, med_height) = (diff_width, easy_height + self.__height // 8)
         medium_difficulty = small_font.render('MEDIUM', True, (255, 128, 0))
-        medium_difficulty_rect = medium_difficulty.get_rect()
-        medium_difficulty_rect.center = (med_width, med_height)
-        self.__screen.background_surface.blit(medium_difficulty, medium_difficulty_rect)
+        self.__rects['medium_difficulty_rect'] = medium_difficulty.get_rect()
+        self.__rects['medium_difficulty_rect'].center = (med_width, med_height)
+        self.__screen.background_surface.blit(medium_difficulty, self.__rects['medium_difficulty_rect'])
 
         (hard_width, hard_height) = (diff_width, med_height + self.__height // 8)
         hard_difficulty = small_font.render('HARD', True, (255, 0, 0))
-        hard_difficulty_rect = hard_difficulty.get_rect()
-        hard_difficulty_rect.center = (hard_width, hard_height)
-        self.__screen.background_surface.blit(hard_difficulty, hard_difficulty_rect)
+        self.__rects['hard_difficulty_rect'] = hard_difficulty.get_rect()
+        self.__rects['hard_difficulty_rect'].center = (hard_width, hard_height)
+        self.__screen.background_surface.blit(hard_difficulty, self.__rects['hard_difficulty_rect'])
 
-
+        match self.__difficulty:
+            case "EASY":
+                color = (0, 153, 0)
+            case "MEDIUM":
+                color = (255, 128, 0)
+            case "HARD":
+                color = (255, 0, 0)
+        text = small_font.render(str(self.__difficulty) + "  MODE CHOSEN!", True, color)
+        text_rect = text.get_rect()
+        text_rect.center = (diff_width, hard_height + self.__height // 8)
+        self.__screen.background_surface.blit(text, text_rect)
+        pygame.display.update()
 
     # Runs the actual game
     def __run_game(self):
