@@ -169,11 +169,19 @@ class Game:
         self.__screen.background_surface.blit(text, text_rect)
         pygame.display.update()
 
-    def movePlayer(self, sprites, position, direction):
+    def movePlayer(self, player, direction):
+        # changes sprites depending on if moving left or right (stays the same with up/down)
+        if direction == "right" or direction == "left":
+            player.direction = direction
+        sprites = player.currSprites()
+        position = player.position()
+
+        # parameters for the animation
         distance = 32
-        anim_counter = 0
         speed = 12
         step_size = 8
+
+        anim_counter = 0
         match direction:
             case "right":
                 while distance >= 0:
@@ -193,6 +201,8 @@ class Game:
                         anim_counter = 0
 
                     self.__screen.update()
+                # update player location internally
+                player.moveRight()
             case "left":
                 while distance >= 0:
                     pygame.time.Clock().tick(speed)
@@ -211,6 +221,8 @@ class Game:
                         anim_counter = 0
 
                     self.__screen.update()
+                # update player location internally
+                player.moveLeft()
             case "up":
                 while distance >= 0:
                     pygame.time.Clock().tick(speed)
@@ -229,6 +241,8 @@ class Game:
                         anim_counter = 0
 
                     self.__screen.update()
+                # update player location internally
+                player.moveUp()
             case "down":
                 while distance >= 0:
                     pygame.time.Clock().tick(speed)
@@ -247,7 +261,10 @@ class Game:
                         anim_counter = 0
 
                     self.__screen.update()
+                # update player location internally
+                player.moveDown()
 
+        # reset clock speed
         pygame.time.Clock().tick(60)
 
     # Runs the actual game
@@ -255,7 +272,7 @@ class Game:
         self.__music.play_music('game')
         self.__board.load_level()
         self.__board.draw_level()
-        player = Player(self.__screen.foreground_surface, 0, 0)
+        player = Player(self.__screen.foreground_surface, 32, 0)
         in_game = True
         while in_game:
             self.__board.draw_level()
@@ -268,33 +285,21 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_w:
-                                self.movePlayer(player.currSprites(), player.position(), "up")
-                                player.moveUp()
+                                self.movePlayer(player, "up")
                             case pygame.K_a:
-                                player.direction = "left"
-                                self.movePlayer(player.currSprites(), player.position(), "left")
-                                player.moveLeft()
+                                self.movePlayer(player, "left")
                             case pygame.K_s:
-                                self.movePlayer(player.currSprites(), player.position(), "down")
-                                player.moveDown()
+                                self.movePlayer(player, "down")
                             case pygame.K_d:
-                                player.direction = "right"
-                                self.movePlayer(player.currSprites(), player.position(), "right")
-                                player.moveRight()
+                                self.movePlayer(player, "right")
                             case pygame.K_UP:
-                                self.movePlayer(player.currSprites(), player.position(), "up")
-                                player.moveUp()
+                                self.movePlayer(player, "up")
                             case pygame.K_LEFT:
-                                player.direction = "left"
-                                self.movePlayer(player.currSprites(), player.position(), "left")
-                                player.moveLeft()
+                                self.movePlayer(player, "left")
                             case pygame.K_DOWN:
-                                self.movePlayer(player.currSprites(), player.position(), "down")
-                                player.moveDown()
+                                self.movePlayer(player, "down")
                             case pygame.K_RIGHT:
-                                player.direction = "right"
-                                self.movePlayer(player.currSprites(), player.position(), "right")
-                                player.moveRight()
+                                self.movePlayer(player, "right")
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                                 in_game = False
