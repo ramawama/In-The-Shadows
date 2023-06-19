@@ -175,7 +175,6 @@ class Game:
             player.direction = direction
         sprites = player.currSprites()
         position = player.position()
-        print(*position)
 
         # parameters for the animation
         distance = 32
