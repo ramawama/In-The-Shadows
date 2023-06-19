@@ -161,6 +161,8 @@ class Game:
                 color = (255, 128, 0)
             case "HARD":
                 color = (255, 0, 0)
+            case _:
+                color = (255, 255, 255)
         text = small_font.render(str(self.__difficulty) + "  MODE  CHOSEN!", True, color)
         text_rect = text.get_rect()
         text_rect.center = (diff_width, hard_height + self.__height // 8)
@@ -186,20 +188,28 @@ class Game:
                         match ev.key:
                             case pygame.K_w:
                                 player.moveUp()
+                                movePlayer("up")
                             case pygame.K_a:
                                 player.moveLeft()
+                                movePlayer("left")
                             case pygame.K_s:
                                 player.moveDown()
+                                movePlayer("down")
                             case pygame.K_d:
                                 player.moveRight()
+                                movePlayer("right")
                             case pygame.K_UP:
                                 player.moveUp()
+                                movePlayer("up")
                             case pygame.K_LEFT:
                                 player.moveLeft()
+                                movePlayer("left")
                             case pygame.K_DOWN:
                                 player.moveDown()
+                                movePlayer("down")
                             case pygame.K_RIGHT:
                                 player.moveRight()
+                                movePlayer("right")
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                                 break
