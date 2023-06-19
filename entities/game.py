@@ -70,7 +70,6 @@ class Game:
                 self.__screen.resize(self.__width, self.__height)
                 self.__board = Board(self.__screen, self.__width, self.__height)
 
-
     # Handles quitting, key presses, and mouse clicks
     def __handle_events(self):
         for ev in pygame.event.get():
@@ -133,7 +132,6 @@ class Game:
         big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
         small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.09))
         res_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.06))
-
 
         (opt_width, opt_height) = (self.__width // 2, self.__height // 8)
         text = big_font.render('OPTIONS', True, self.__white)
@@ -199,7 +197,7 @@ class Game:
 
         pygame.display.update()
 
-    def movePlayer(self, player, direction):
+    def move_player(self, player, direction):
         # changes sprites depending on if moving left or right (stays the same with up/down)
         if direction == "right" or direction == "left":
             player.direction = direction
@@ -306,7 +304,7 @@ class Game:
         self.__music.play_music('game')
         player_spawn = self.__board.load_level()
         self.__board.draw_level()
-        player = Player(self.__screen.foreground_surface, player_spawn[0] * 32, player_spawn[1] * 32)
+        player = Player(self.__screen.foreground_surface, player_spawn[0] * 32, player_spawn[1] * 32, self.__width, self.__height)
         in_game = True
         while in_game:
             self.__board.draw_level()
@@ -319,21 +317,21 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_w:
-                                self.movePlayer(player, "up")
+                                self.move_player(player, "up")
                             case pygame.K_a:
-                                self.movePlayer(player, "left")
+                                self.move_player(player, "left")
                             case pygame.K_s:
-                                self.movePlayer(player, "down")
+                                self.move_player(player, "down")
                             case pygame.K_d:
-                                self.movePlayer(player, "right")
+                                self.move_player(player, "right")
                             case pygame.K_UP:
-                                self.movePlayer(player, "up")
+                                self.move_player(player, "up")
                             case pygame.K_LEFT:
-                                self.movePlayer(player, "left")
+                                self.move_player(player, "left")
                             case pygame.K_DOWN:
-                                self.movePlayer(player, "down")
+                                self.move_player(player, "down")
                             case pygame.K_RIGHT:
-                                self.movePlayer(player, "right")
+                                self.move_player(player, "right")
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                                 in_game = False

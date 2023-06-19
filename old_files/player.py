@@ -1,7 +1,7 @@
 import pygame
 
 
-class Player():
+class Player:
     def __init__(self, direction="Down"):
         self._state = "Alive"  # alive or dead
         self._direction = direction  # the direction they are facing
@@ -11,6 +11,10 @@ class Player():
         # self._down = pygame.image.load("./assets/graphics/Rogue.png")
 
         # more specific enemy entities will have their view radius and character sprites described
+    def resize(self, width, height):
+        self._right = pygame.transform.scale(self._right, (width / 32, height / 32))
+        self._left = pygame.transform.scale(self._left, (width / 32, height / 32))
+
     @property
     def state(self):
         return self._state
