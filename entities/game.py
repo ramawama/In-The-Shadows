@@ -297,7 +297,7 @@ class Game:
                                 player.moveRight()
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
-                                break
+                                in_game = False
                     case pygame.MOUSEBUTTONDOWN:
                         self.__mouse_click(pygame.mouse.get_pos())
             self.__screen.update()
