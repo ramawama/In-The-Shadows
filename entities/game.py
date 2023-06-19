@@ -60,6 +60,12 @@ class Game:
                 self.__difficulty = "MEDIUM"
             elif self.__rects['hard_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "HARD"
+            elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
+                (self.__width, self.__height) = (896, 504)
+                self.__screen.resize(self.__width, self.__height)
+            elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
+                (self.__width, self.__height) = (1792, 1008)
+                self.__screen.resize(self.__width, self.__height)
 
     # Handles quitting, key presses, and mouse clicks
     def __handle_events(self):
@@ -122,6 +128,8 @@ class Game:
 
         big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
         small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.09))
+        res_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.06))
+
 
         (opt_width, opt_height) = (self.__width // 2, self.__height // 8)
         text = big_font.render('OPTIONS', True, self.__white)
@@ -170,6 +178,18 @@ class Game:
         resolution_rect = resolution.get_rect()
         resolution_rect.center = (res_width, res_height)
         self.__screen.background_surface.blit(resolution, resolution_rect)
+
+        (res_def_width, res_def_height) = (res_width, res_height + self.__height // 8)
+        resolution_def = res_font.render('DEFAULT  RESOLUTION  (896 x 504)', True, self.__white)
+        self.__rects['resolution_def_rect'] = resolution_def.get_rect()
+        self.__rects['resolution_def_rect'].center = (res_def_width, res_def_height)
+        self.__screen.background_surface.blit(resolution_def, self.__rects['resolution_def_rect'])
+
+        (res_2_width, res_2_height) = (res_width, res_def_height + self.__height // 8)
+        resolution_2 = res_font.render('LARGE  RESOLUTION  (1792 x 1008)', True, self.__white)
+        self.__rects['resolution_2_rect'] = resolution_def.get_rect()
+        self.__rects['resolution_2_rect'].center = (res_2_width, res_2_height)
+        self.__screen.background_surface.blit(resolution_2, self.__rects['resolution_2_rect'])
 
         pygame.display.update()
 

@@ -18,6 +18,11 @@ class Window:
         self.__screen.blit(self.__foreground_surface, (0, 0))
         pygame.display.update()
 
+    def resize(self, width, height):
+        self.__screen = pygame.display.set_mode((width, height))
+        self.__background_surface = pygame.Surface((width, height))
+        self.__foreground_surface = pygame.Surface((width, height), pygame.SRCALPHA)
+
     # Returns background surface
     @property
     def background_surface(self):
