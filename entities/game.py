@@ -182,6 +182,7 @@ class Game:
         text_rect.center = (self.__width // 2, self.__height // 4)
         self.__screen.foreground_surface.blit(text, text_rect)
         self.__screen.update()
+        self.__board.load_level()
         return True
 
     def move_player(self, player, direction):
@@ -296,10 +297,13 @@ class Game:
         pygame.time.Clock().tick(60)
         return game_over
 
-    # Runs the actual game
-    def __run_game(self):
+    def __load_game(self):
         self.__music.play_music('game')
         player_spawn = self.__board.load_level()
+        return player_spawn
+
+    # Runs the actual game
+    def __run_game(self, player_spawn):
         self.__board.draw_level()
         player = Player(self.__screen.foreground_surface, player_spawn[0] * 32, player_spawn[1] * 32)
         in_game = True
@@ -345,6 +349,7 @@ class Game:
     # Main execution loop
     def run(self):
         clock = pygame.time.Clock()
+        player_spawn = self.__load_game()
         while self.__running:
             clock.tick(60)
             self.__handle_events()
@@ -354,6 +359,6 @@ class Game:
                 case 'options':
                     self.__run_options()
                 case 'game':
-                    self.__run_game()
+                    self.__run_game(player_spawn)
             self.__screen.update()
         pygame.quit()
