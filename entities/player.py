@@ -6,10 +6,8 @@ class Player:
     def __init__(self, screen, x, y, width, height):
         self.__alive = True
         self.__screen = screen
-        image = pygame.image.load("assets/graphics/Rogue/Rogue.png")
-        image1 = pygame.image.load("assets/graphics/Rogue/Rogue_walk.png")
-        self.__right = [pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue.png"), (width / 28, height / 15)),
-                        pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue_walk.png"), (width / 28, height / 15))]
+        self.__right = [pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue.png"), (width / 28, height // 15)),
+                        pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue_walk.png"), (width / 28, height // 15))]
         self.__left = [pygame.transform.flip(self.__right[0], True, False),
                        pygame.transform.flip(self.__right[1], True, False)]
         self.__curr_sprites = self.__right

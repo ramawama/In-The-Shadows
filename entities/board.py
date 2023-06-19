@@ -62,8 +62,8 @@ class Board:
         rows = len(self.__tiles)
         cols = len(self.__tiles[0])
 
-        tile_width = self.__screen_width / cols
-        tile_height = self.__screen_height / rows
+        tile_width = self.__screen_width / 28
+        tile_height = self.__screen_height // 15
 
         for row in range(rows):
             for col in range(cols):
