@@ -2,6 +2,7 @@ import pygame
 from entities.window import Window
 from entities.music import Music
 from entities.board import Board
+from entities.player import Player
 
 
 class Game:
@@ -160,17 +161,151 @@ class Game:
                 color = (255, 128, 0)
             case "HARD":
                 color = (255, 0, 0)
+            case _:
+                color = (255, 255, 255)
         text = small_font.render(str(self.__difficulty) + "  MODE  CHOSEN!", True, color)
         text_rect = text.get_rect()
         text_rect.center = (diff_width, hard_height + self.__height // 8)
         self.__screen.background_surface.blit(text, text_rect)
         pygame.display.update()
 
+    def movePlayer(self, player, direction):
+        # changes sprites depending on if moving left or right (stays the same with up/down)
+        if direction == "right" or direction == "left":
+            player.direction = direction
+        sprites = player.currSprites()
+        position = player.position()
+
+        # parameters for the animation
+        distance = 32
+        speed = 12
+        step_size = 8
+
+        anim_counter = 0
+        match direction:
+            case "right":
+                while distance >= 0:
+                    pygame.time.Clock().tick(speed)
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+
+                    # slight movement + decrement distance left to travel
+                    position = (position[0] + step_size, position[1])
+                    distance -= step_size
+                    anim_counter += 1
+
+                    # for resetting animation
+                    if anim_counter >= len(sprites):
+                        anim_counter = 0
+
+                    self.__screen.update()
+                # update player location internally
+                player.moveRight()
+            case "left":
+                while distance >= 0:
+                    pygame.time.Clock().tick(speed)
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+
+                    # slight movement + decrement distance left to travel
+                    position = (position[0] - step_size, position[1])
+                    distance -= step_size
+                    anim_counter += 1
+
+                    # for resetting animation
+                    if anim_counter >= len(sprites):
+                        anim_counter = 0
+
+                    self.__screen.update()
+                # update player location internally
+                player.moveLeft()
+            case "up":
+                while distance >= 0:
+                    pygame.time.Clock().tick(speed)
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+
+                    # slight movement + decrement distance left to travel
+                    position = (position[0], position[1] - step_size)
+                    distance -= step_size
+                    anim_counter += 1
+
+                    # for resetting animation
+                    if anim_counter >= len(sprites):
+                        anim_counter = 0
+
+                    self.__screen.update()
+                # update player location internally
+                player.moveUp()
+            case "down":
+                while distance >= 0:
+                    pygame.time.Clock().tick(speed)
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+
+                    # slight movement + decrement distance left to travel
+                    position = (position[0], position[1] + step_size)
+                    distance -= step_size
+                    anim_counter += 1
+
+                    # for resetting animation
+                    if anim_counter >= len(sprites):
+                        anim_counter = 0
+
+                    self.__screen.update()
+                # update player location internally
+                player.moveDown()
+
+        # reset clock speed
+        pygame.time.Clock().tick(60)
+
     # Runs the actual game
     def __run_game(self):
         self.__music.play_music('game')
         self.__board.load_level()
         self.__board.draw_level()
+        player = Player(self.__screen.foreground_surface, 32, 0)
+        in_game = True
+        while in_game:
+            self.__board.draw_level()
+            player.draw()
+            for ev in pygame.event.get():
+                match ev.type:
+                    case pygame.QUIT:
+                        self.__running = False
+                        break
+                    case pygame.KEYDOWN:
+                        match ev.key:
+                            case pygame.K_w:
+                                self.movePlayer(player, "up")
+                            case pygame.K_a:
+                                self.movePlayer(player, "left")
+                            case pygame.K_s:
+                                self.movePlayer(player, "down")
+                            case pygame.K_d:
+                                self.movePlayer(player, "right")
+                            case pygame.K_UP:
+                                self.movePlayer(player, "up")
+                            case pygame.K_LEFT:
+                                self.movePlayer(player, "left")
+                            case pygame.K_DOWN:
+                                self.movePlayer(player, "down")
+                            case pygame.K_RIGHT:
+                                self.movePlayer(player, "right")
+                            case pygame.K_ESCAPE:
+                                self.__escape_state()
+                                in_game = False
+                    case pygame.MOUSEBUTTONDOWN:
+                        self.__mouse_click(pygame.mouse.get_pos())
+            self.__screen.update()
 
     # Main execution loop
     def run(self):

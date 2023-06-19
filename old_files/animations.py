@@ -1,6 +1,8 @@
 import pygame
 
 
+
+
 def moveRight(screen, x, y, rogue, background, speed):
     distance = 32
     anim_counter = 0
