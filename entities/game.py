@@ -123,9 +123,9 @@ class Game:
         big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
         small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.09))
 
+        (opt_width, opt_height) = (self.__width // 2, self.__height // 8)
         text = big_font.render('OPTIONS', True, self.__white)
         text_rect = text.get_rect()
-        (opt_width, opt_height) = (self.__width // 2, self.__height // 8)
         text_rect.center = (opt_width, opt_height)
         self.__screen.background_surface.blit(text, text_rect)
 
@@ -164,6 +164,13 @@ class Game:
         text_rect = text.get_rect()
         text_rect.center = (diff_width, hard_height + self.__height // 8)
         self.__screen.background_surface.blit(text, text_rect)
+
+        (res_width, res_height) = (self.__width - self.__width // 4, opt_height + self.__height // 6)
+        resolution = small_font.render('SELECT RESOLUTION', True, self.__white)
+        resolution_rect = resolution.get_rect()
+        resolution_rect.center = (res_width, res_height)
+        self.__screen.background_surface.blit(resolution, resolution_rect)
+
         pygame.display.update()
 
     # Runs the actual game
