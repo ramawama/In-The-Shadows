@@ -1,5 +1,23 @@
 import pygame
 
+# distance = 32
+        # anim_counter = 0
+        # pygame.time.Clock().tick(6)
+        # while distance <= 0:
+        #     # clear
+        #     self.__screen.fill((0, 0, 0))
+        #     self.__screen.blit(self.__curr_sprites[anim_counter], (self.__x, self.__y))
+        #     self.__x += 4
+        #     distance -= 4
+        #     anim_counter += 1
+        #
+        #     if anim_counter >= len(self.__curr_sprites):
+        #         anim_counter = 0
+        #
+        #     self.__screen.update()
+        #
+        # pygame.time.Clock().tick(60)
+
 
 def moveRight(screen, x, y, rogue, background, speed):
     distance = 32

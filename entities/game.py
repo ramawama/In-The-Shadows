@@ -172,9 +172,11 @@ class Game:
         self.__music.play_music('game')
         self.__board.load_level()
         self.__board.draw_level()
-        player = Player()
+        player = Player(self.__screen.foreground_surface, 0, 0)
         in_game = True
         while in_game:
+            self.__board.draw_level()
+            player.draw()
             for ev in pygame.event.get():
                 match ev.type:
                     case pygame.QUIT:
@@ -203,6 +205,7 @@ class Game:
                                 break
                     case pygame.MOUSEBUTTONDOWN:
                         self.__mouse_click(pygame.mouse.get_pos())
+            self.__screen.update()
 
     # Main execution loop
     def run(self):
