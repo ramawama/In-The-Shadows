@@ -184,85 +184,89 @@ class Game:
         anim_counter = 0
         match direction:
             case "right":
-                while distance >= 0:
-                    pygame.time.Clock().tick(speed)
-                    # draw background
-                    self.__board.draw_level()
-                    # draw animation frame
-                    self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+                if self.__board.tiles[(position[1] // 32)][(position[0] // 32) + 1].type != "w":
+                    while distance >= 0:
+                        pygame.time.Clock().tick(speed)
+                        # draw background
+                        self.__board.draw_level()
+                        # draw animation frame
+                        self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
 
-                    # slight movement + decrement distance left to travel
-                    position = (position[0] + step_size, position[1])
-                    distance -= step_size
-                    anim_counter += 1
+                        # slight movement + decrement distance left to travel
+                        position = (position[0] + step_size, position[1])
+                        distance -= step_size
+                        anim_counter += 1
 
-                    # for resetting animation
-                    if anim_counter >= len(sprites):
-                        anim_counter = 0
+                        # for resetting animation
+                        if anim_counter >= len(sprites):
+                            anim_counter = 0
 
-                    self.__screen.update()
-                # update player location internally
-                player.moveRight()
+                        self.__screen.update()
+                    # update player location internally
+                    player.moveRight()
             case "left":
-                while distance >= 0:
-                    pygame.time.Clock().tick(speed)
-                    # draw background
-                    self.__board.draw_level()
-                    # draw animation frame
-                    self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+                if self.__board.tiles[(position[1] // 32)][(position[0] // 32) - 1].type != "w":
+                    while distance >= 0:
+                        pygame.time.Clock().tick(speed)
+                        # draw background
+                        self.__board.draw_level()
+                        # draw animation frame
+                        self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
 
-                    # slight movement + decrement distance left to travel
-                    position = (position[0] - step_size, position[1])
-                    distance -= step_size
-                    anim_counter += 1
+                        # slight movement + decrement distance left to travel
+                        position = (position[0] - step_size, position[1])
+                        distance -= step_size
+                        anim_counter += 1
 
-                    # for resetting animation
-                    if anim_counter >= len(sprites):
-                        anim_counter = 0
+                        # for resetting animation
+                        if anim_counter >= len(sprites):
+                            anim_counter = 0
 
-                    self.__screen.update()
-                # update player location internally
-                player.moveLeft()
+                        self.__screen.update()
+                    # update player location internally
+                    player.moveLeft()
             case "up":
-                while distance >= 0:
-                    pygame.time.Clock().tick(speed)
-                    # draw background
-                    self.__board.draw_level()
-                    # draw animation frame
-                    self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+                if self.__board.tiles[(position[1] // 32) - 1][(position[0] // 32)].type != "w":
+                    while distance >= 0:
+                        pygame.time.Clock().tick(speed)
+                        # draw background
+                        self.__board.draw_level()
+                        # draw animation frame
+                        self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
 
-                    # slight movement + decrement distance left to travel
-                    position = (position[0], position[1] - step_size)
-                    distance -= step_size
-                    anim_counter += 1
+                        # slight movement + decrement distance left to travel
+                        position = (position[0], position[1] - step_size)
+                        distance -= step_size
+                        anim_counter += 1
 
-                    # for resetting animation
-                    if anim_counter >= len(sprites):
-                        anim_counter = 0
+                        # for resetting animation
+                        if anim_counter >= len(sprites):
+                            anim_counter = 0
 
-                    self.__screen.update()
-                # update player location internally
-                player.moveUp()
+                        self.__screen.update()
+                    # update player location internally
+                    player.moveUp()
             case "down":
-                while distance >= 0:
-                    pygame.time.Clock().tick(speed)
-                    # draw background
-                    self.__board.draw_level()
-                    # draw animation frame
-                    self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+                if self.__board.tiles[(position[1] // 32) + 1][(position[0] // 32)].type != "w":
+                    while distance >= 0:
+                        pygame.time.Clock().tick(speed)
+                        # draw background
+                        self.__board.draw_level()
+                        # draw animation frame
+                        self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
 
-                    # slight movement + decrement distance left to travel
-                    position = (position[0], position[1] + step_size)
-                    distance -= step_size
-                    anim_counter += 1
+                        # slight movement + decrement distance left to travel
+                        position = (position[0], position[1] + step_size)
+                        distance -= step_size
+                        anim_counter += 1
 
-                    # for resetting animation
-                    if anim_counter >= len(sprites):
-                        anim_counter = 0
+                        # for resetting animation
+                        if anim_counter >= len(sprites):
+                            anim_counter = 0
 
-                    self.__screen.update()
-                # update player location internally
-                player.moveDown()
+                        self.__screen.update()
+                    # update player location internally
+                    player.moveDown()
 
         # reset clock speed
         pygame.time.Clock().tick(60)
@@ -270,9 +274,9 @@ class Game:
     # Runs the actual game
     def __run_game(self):
         self.__music.play_music('game')
-        self.__board.load_level()
+        player_spawn = self.__board.load_level()
         self.__board.draw_level()
-        player = Player(self.__screen.foreground_surface, 32, 0)
+        player = Player(self.__screen.foreground_surface, player_spawn[0] * 32, player_spawn[1] * 32)
         in_game = True
         while in_game:
             self.__board.draw_level()
