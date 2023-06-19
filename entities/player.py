@@ -27,17 +27,37 @@ class Player:
         self.__direction = direction
 
     def moveUp(self):
-        pass
+        if self.__direction == "right":
+            self.__curr_sprites = self.__right
+        else:
+            self.__curr_sprites = self.__left
+        self.__y -= 32
 
     def moveLeft(self):
-        pass
+        self.__direction = "left"
+        self.__curr_sprites = self.__left
+        self.__x -= 32
 
     def moveDown(self):
-        pass
+        if self.__direction == "right":
+            self.__curr_sprites = self.__right
+        else:
+            self.__curr_sprites = self.__left
+        self.__y += 32
 
     def moveRight(self):
         self.__direction = "right"
         self.__curr_sprites = self.__right
         self.__x += 32
+
+    def currSprites(self):
+        if self.__direction == "right":
+            self.__curr_sprites = self.__right
+        else:
+            self.__curr_sprites = self.__left
+        return self.__curr_sprites
+
+    def position(self):
+        return self.__x, self.__y
 
 
