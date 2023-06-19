@@ -171,6 +171,28 @@ class Game:
         self.__music.play_music('game')
         self.__board.load_level()
         self.__board.draw_level()
+        in_game = True
+        while in_game:
+            for ev in pygame.event.get():
+                match ev.type:
+                    case pygame.QUIT:
+                        self.__running = False
+                        break
+                    case pygame.KEYDOWN:
+                        match ev.key:
+                            case pygame.K_w:
+                                moveUp()
+                            case pygame.K_a:
+                                moveLeft()
+                            case pygame.K_s:
+                                moveDown()
+                            case pygame.K_d:
+                                moveRight()
+                            case pygame.K_ESCAPE:
+                                self.__escape_state()
+                                break
+                    case pygame.MOUSEBUTTONDOWN:
+                        self.__mouse_click(pygame.mouse.get_pos())
 
     # Main execution loop
     def run(self):
