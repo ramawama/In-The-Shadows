@@ -30,7 +30,7 @@ class Game:
         self.__music = Music()
 
         # Initialize Board Class
-        self.__board = Board(self.__screen)
+        self.__board = Board(self.__screen, self.__width, self.__height)
 
         # Load difficulty
         self.__difficulty = "EASY"
@@ -61,6 +61,14 @@ class Game:
                 self.__difficulty = "MEDIUM"
             elif self.__rects['hard_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "HARD"
+            elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
+                (self.__width, self.__height) = (896, 504)
+                self.__screen.resize(self.__width, self.__height)
+                self.__board = Board(self.__screen, self.__width, self.__height)
+            elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
+                (self.__width, self.__height) = (1792, 1008)
+                self.__screen.resize(self.__width, self.__height)
+                self.__board = Board(self.__screen, self.__width, self.__height)
 
     # Handles quitting, key presses, and mouse clicks
     def __handle_events(self):
@@ -123,10 +131,11 @@ class Game:
 
         big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
         small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.09))
+        res_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.06))
 
+        (opt_width, opt_height) = (self.__width // 2, self.__height // 8)
         text = big_font.render('OPTIONS', True, self.__white)
         text_rect = text.get_rect()
-        (opt_width, opt_height) = (self.__width // 2, self.__height // 8)
         text_rect.center = (opt_width, opt_height)
         self.__screen.background_surface.blit(text, text_rect)
 
@@ -167,9 +176,28 @@ class Game:
         text_rect = text.get_rect()
         text_rect.center = (diff_width, hard_height + self.__height // 8)
         self.__screen.background_surface.blit(text, text_rect)
+
+        (res_width, res_height) = (self.__width - self.__width // 4, opt_height + self.__height // 6)
+        resolution = small_font.render('SELECT RESOLUTION', True, self.__white)
+        resolution_rect = resolution.get_rect()
+        resolution_rect.center = (res_width, res_height)
+        self.__screen.background_surface.blit(resolution, resolution_rect)
+
+        (res_def_width, res_def_height) = (res_width, res_height + self.__height // 8)
+        resolution_def = res_font.render('DEFAULT  RESOLUTION  (896 x 504)', True, self.__white)
+        self.__rects['resolution_def_rect'] = resolution_def.get_rect()
+        self.__rects['resolution_def_rect'].center = (res_def_width, res_def_height)
+        self.__screen.background_surface.blit(resolution_def, self.__rects['resolution_def_rect'])
+
+        (res_2_width, res_2_height) = (res_width, res_def_height + self.__height // 8)
+        resolution_2 = res_font.render('LARGE  RESOLUTION  (1792 x 1008)', True, self.__white)
+        self.__rects['resolution_2_rect'] = resolution_def.get_rect()
+        self.__rects['resolution_2_rect'].center = (res_2_width, res_2_height)
+        self.__screen.background_surface.blit(resolution_2, self.__rects['resolution_2_rect'])
+
         pygame.display.update()
 
-    def movePlayer(self, player, direction):
+    def move_player(self, player, direction):
         # changes sprites depending on if moving left or right (stays the same with up/down)
         if direction == "right" or direction == "left":
             player.direction = direction
@@ -276,7 +304,7 @@ class Game:
         self.__music.play_music('game')
         player_spawn = self.__board.load_level()
         self.__board.draw_level()
-        player = Player(self.__screen.foreground_surface, player_spawn[0] * 32, player_spawn[1] * 32)
+        player = Player(self.__screen.foreground_surface, player_spawn[0] * 32, player_spawn[1] * 32, self.__width, self.__height)
         in_game = True
         while in_game:
             self.__board.draw_level()
@@ -289,21 +317,21 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_w:
-                                self.movePlayer(player, "up")
+                                self.move_player(player, "up")
                             case pygame.K_a:
-                                self.movePlayer(player, "left")
+                                self.move_player(player, "left")
                             case pygame.K_s:
-                                self.movePlayer(player, "down")
+                                self.move_player(player, "down")
                             case pygame.K_d:
-                                self.movePlayer(player, "right")
+                                self.move_player(player, "right")
                             case pygame.K_UP:
-                                self.movePlayer(player, "up")
+                                self.move_player(player, "up")
                             case pygame.K_LEFT:
-                                self.movePlayer(player, "left")
+                                self.move_player(player, "left")
                             case pygame.K_DOWN:
-                                self.movePlayer(player, "down")
+                                self.move_player(player, "down")
                             case pygame.K_RIGHT:
-                                self.movePlayer(player, "right")
+                                self.move_player(player, "right")
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                                 in_game = False

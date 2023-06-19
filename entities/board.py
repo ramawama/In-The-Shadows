@@ -4,10 +4,12 @@ from entities.tile import Tile
 
 # Class for the game board (collection of all tiles)
 class Board:
-    def __init__(self, screen):
+    def __init__(self, screen, width, height):
         self.__tiles = []
         self.__screen = screen
         self.__loaded = False
+        self.__screen_width = width
+        self.__screen_height = height
 
     # Load the level from a file
     def load_level(self, name="level_TEST"):
@@ -60,8 +62,8 @@ class Board:
         rows = len(self.__tiles)
         cols = len(self.__tiles[0])
 
-        tile_width = 32
-        tile_height = 32
+        tile_width = self.__screen_width / cols
+        tile_height = self.__screen_height / rows
 
         for row in range(rows):
             for col in range(cols):
