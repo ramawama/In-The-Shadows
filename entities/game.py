@@ -160,6 +160,8 @@ class Game:
                 color = (255, 128, 0)
             case "HARD":
                 color = (255, 0, 0)
+            case _:
+                color = (0, 0, 0)
         text = small_font.render(str(self.__difficulty) + "  MODE  CHOSEN!", True, color)
         text_rect = text.get_rect()
         text_rect.center = (diff_width, hard_height + self.__height // 8)
