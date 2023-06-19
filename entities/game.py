@@ -44,6 +44,8 @@ class Game:
                 self.__state = 'menu'
             case 'menu':
                 self.__running = False
+            case 'game_over':
+                self.__state = 'menu'
 
     # Changes state based on button click
     def __mouse_click(self, mouse_pos):
@@ -169,12 +171,27 @@ class Game:
         self.__screen.background_surface.blit(text, text_rect)
         pygame.display.update()
 
-    def movePlayer(self, player, direction):
+    def __game_over(self):
+        self.__state = "game_over"
+        self.__screen.background_surface.fill(self.__black)
+        self.__screen.foreground_surface.fill(self.__black)
+        self.__music.play_music("game_over")
+        big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
+        text = big_font.render('YOU  HAVE  FAILED', True, self.__white)
+        text_rect = text.get_rect()
+        text_rect.center = (self.__width // 2, self.__height // 4)
+        self.__screen.foreground_surface.blit(text, text_rect)
+        self.__screen.update()
+        return True
+
+    def move_player(self, player, direction):
         # changes sprites depending on if moving left or right (stays the same with up/down)
         if direction == "right" or direction == "left":
             player.direction = direction
         sprites = player.currSprites()
         position = player.position()
+
+        game_over = False
 
         # parameters for the animation
         distance = 32
@@ -268,8 +285,16 @@ class Game:
                     # update player location internally
                     player.moveDown()
 
+        if self.__board.tiles[(position[1] // 32)][(position[0] // 32)].type == "t" and \
+                self.__board.tiles[(position[1] // 32)][(position[0] // 32)].lit:
+            self.__board.tiles[(position[1] // 32)][(position[0] // 32)].unlight()
+            self.__board.torch_check()
+        if self.__board.tiles[(position[1] // 32)][(position[0] // 32)].type == "g":
+            game_over = self.__game_over()
+
         # reset clock speed
         pygame.time.Clock().tick(60)
+        return game_over
 
     # Runs the actual game
     def __run_game(self):
@@ -278,6 +303,7 @@ class Game:
         self.__board.draw_level()
         player = Player(self.__screen.foreground_surface, player_spawn[0] * 32, player_spawn[1] * 32)
         in_game = True
+        game_over = False
         while in_game:
             self.__board.draw_level()
             player.draw()
@@ -289,26 +315,31 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_w:
-                                self.movePlayer(player, "up")
+                                game_over = self.move_player(player, "up")
                             case pygame.K_a:
-                                self.movePlayer(player, "left")
+                                game_over = self.move_player(player, "left")
                             case pygame.K_s:
-                                self.movePlayer(player, "down")
+                                game_over = self.move_player(player, "down")
                             case pygame.K_d:
-                                self.movePlayer(player, "right")
+                                game_over = self.move_player(player, "right")
                             case pygame.K_UP:
-                                self.movePlayer(player, "up")
+                                game_over = self.move_player(player, "up")
                             case pygame.K_LEFT:
-                                self.movePlayer(player, "left")
+                                game_over = self.move_player(player, "left")
                             case pygame.K_DOWN:
-                                self.movePlayer(player, "down")
+                                game_over = self.move_player(player, "down")
                             case pygame.K_RIGHT:
-                                self.movePlayer(player, "right")
+                                game_over = self.move_player(player, "right")
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                                 in_game = False
                     case pygame.MOUSEBUTTONDOWN:
                         self.__mouse_click(pygame.mouse.get_pos())
+            if game_over:
+                in_game = False
+                for ev in pygame.event.get():
+                    if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
+                        self.__escape_state()
             self.__screen.update()
 
     # Main execution loop

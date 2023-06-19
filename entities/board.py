@@ -25,21 +25,23 @@ class Board:
                             break
                         row_array = []
                         for char in line.strip():
-                            row_array.append(Tile(char, False, x, y))
                             if char == "p":
                                 playerPos = [x, y]
+                                row_array.append(Tile("o", False, x, y))
+                            else:
+                                row_array.append(Tile(char, False, x, y))
                             x += 1
                         self.__tiles.append(row_array)
                         y += 1
                         x = 0
-                self.__torch_check()
+                self.torch_check()
                 self.__loaded = True
                 return playerPos
             except IOError:
                 print("Error from load_tiles function!")
 
     # Illuminates tiles near torches
-    def __torch_check(self):
+    def torch_check(self):
         for row in range(len(self.__tiles)):
             for col in range(len(self.__tiles[row])):
                 if self.__tiles[row][col].type == "t":
@@ -51,6 +53,15 @@ class Board:
                     self.__tiles[row - 1][col + 1].light()
                     self.__tiles[row][col - 1].light()
                     self.__tiles[row][col + 1].light()
+                if self.__tiles[row][col].type == "t" and not self.__tiles[row][col].lit:
+                    self.__tiles[row + 1][col].unlight()
+                    self.__tiles[row + 1][col - 1].unlight()
+                    self.__tiles[row + 1][col + 1].unlight()
+                    self.__tiles[row - 1][col].unlight()
+                    self.__tiles[row - 1][col - 1].unlight()
+                    self.__tiles[row - 1][col + 1].unlight()
+                    self.__tiles[row][col - 1].unlight()
+                    self.__tiles[row][col + 1].unlight()
 
     # Draws tiles on background_surface
     def draw_level(self):
