@@ -2,6 +2,7 @@ import pygame
 from entities.window import Window
 from entities.music import Music
 from entities.board import Board
+from entities.player import Player
 
 
 class Game:
@@ -171,6 +172,7 @@ class Game:
         self.__music.play_music('game')
         self.__board.load_level()
         self.__board.draw_level()
+        player = Player()
         in_game = True
         while in_game:
             for ev in pygame.event.get():
@@ -181,13 +183,21 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_w:
-                                moveUp()
+                                player.moveUp()
                             case pygame.K_a:
-                                moveLeft()
+                                player.moveLeft()
                             case pygame.K_s:
-                                moveDown()
+                                player.moveDown()
                             case pygame.K_d:
-                                moveRight()
+                                player.moveRight()
+                            case pygame.K_UP:
+                                player.moveUp()
+                            case pygame.K_LEFT:
+                                player.moveLeft()
+                            case pygame.K_DOWN:
+                                player.moveDown()
+                            case pygame.K_RIGHT:
+                                player.moveRight()
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                                 break
