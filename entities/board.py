@@ -19,15 +19,24 @@ class Board:
                     file.readline().strip()
                     lines = file.readlines()
                     file.close()
+                    x = 0
+                    y = 0
+                    playerPos = [0, 0]
                     for line in lines:
                         if line.strip() == "END":
                             break
                         row_array = []
                         for char in line.strip():
-                            row_array.append(Tile(char))
+                            row_array.append(Tile(char, False, x, y))
+                            if char == "p":
+                                playerPos = [x, y]
+                            x += 1
                         self.__tiles.append(row_array)
+                        y += 1
+                        x = 0
                 self.__torch_check()
                 self.__loaded = True
+                return playerPos
             except IOError:
                 print("Error from load_tiles function!")
 

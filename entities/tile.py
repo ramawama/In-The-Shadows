@@ -2,8 +2,9 @@ import pygame
 
 
 class Tile:
-    def __init__(self, tile_type="o", behind_torch=False):
+    def __init__(self, tile_type="o", behind_torch=False, x=0, y=0):
         self._tile_type = tile_type
+        self._pos = [x, y]
         match tile_type:
             case "t":
                 self._image = pygame.image.load("./assets/graphics/Level Elements/Torch/Torch_small.png")
@@ -39,6 +40,10 @@ class Tile:
     @property
     def lit(self):
         return self._lit
+
+    @property
+    def pos(self):
+        return self._pos
 
     # Sets a tile as lit
     def light(self):
