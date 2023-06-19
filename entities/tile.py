@@ -1,7 +1,7 @@
 import pygame
 
 
-class Tile():
+class Tile:
     def __init__(self, tile_type="o", behind_torch=False):
         self._tile_type = tile_type
         match tile_type:

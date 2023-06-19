@@ -1,7 +1,8 @@
 import pygame
 
+
 # Class for the main window and corresponding surfaces (background and foreground)
-class Window():
+class Window:
     def __init__(self, width, height):
         self.__screen = pygame.display.set_mode((width, height))
         self.__screen.fill((0, 0, 0))
@@ -21,7 +22,7 @@ class Window():
     @property
     def background_surface(self):
         return self.__background_surface
-    
+
     # Returns foreground surface
     @property
     def foreground_surface(self):

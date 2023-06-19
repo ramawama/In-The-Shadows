@@ -1,13 +1,14 @@
 import pygame
-from tile import Tile
+from entities.tile import Tile
+
 
 # Class for the game board (collection of all tiles)
-class Board():
+class Board:
     def __init__(self, screen):
         self.__tiles = []
         self.__screen = screen
         self.__loaded = False
-    
+
     # Load the level from a file
     def load_level(self, name="level_TEST"):
         if not self.__loaded:
@@ -22,8 +23,8 @@ class Board():
                         row_array = []
                         for char in line.strip():
                             row_array.append(Tile(char))
-                        self.__tiles.append(row_array) 
-                self.__torch_check()  
+                        self.__tiles.append(row_array)
+                self.__torch_check()
                 self.__loaded = True
             except IOError:
                 print("Error from load_tiles function!")
@@ -66,7 +67,7 @@ class Board():
                         scaled_floor = pygame.transform.scale(Tile().image, (tile_width, tile_height))
                     self.__screen.background_surface.blit(scaled_floor, (tile_x, tile_y))
                 self.__screen.foreground_surface.blit(scaled_tile, (tile_x, tile_y))
-    
+
     # Returns array of tiles
     @property
     def tiles(self):
