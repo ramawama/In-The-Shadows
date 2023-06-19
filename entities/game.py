@@ -29,7 +29,7 @@ class Game:
         self.__music = Music()
 
         # Initialize Board Class
-        self.__board = Board(self.__screen)
+        self.__board = Board(self.__screen, self.__width, self.__height)
 
         # Load difficulty
         self.__difficulty = "EASY"
@@ -63,9 +63,12 @@ class Game:
             elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
                 (self.__width, self.__height) = (896, 504)
                 self.__screen.resize(self.__width, self.__height)
+                self.__board = Board(self.__screen, self.__width, self.__height)
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
                 (self.__width, self.__height) = (1792, 1008)
                 self.__screen.resize(self.__width, self.__height)
+                self.__board = Board(self.__screen, self.__width, self.__height)
+
 
     # Handles quitting, key presses, and mouse clicks
     def __handle_events(self):
