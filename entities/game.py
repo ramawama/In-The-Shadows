@@ -78,7 +78,7 @@ class Game:
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
 
-    # Handles quitting, key presses, and mouse clicks
+    # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
             for ev in pygame.event.get():
