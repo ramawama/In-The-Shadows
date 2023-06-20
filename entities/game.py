@@ -78,20 +78,40 @@ class Game:
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
 
-    # Handles quitting, key presses, and mouse clicks
+    # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
-        for ev in pygame.event.get():
-            match ev.type:
-                case pygame.QUIT:
-                    self.__running = False
-                case pygame.KEYDOWN:
-                    match ev.key:
-                        case pygame.K_m:
-                            self.__music.toggle()
-                        case pygame.K_ESCAPE:
-                            self.__escape_state()
-                case pygame.MOUSEBUTTONDOWN:
-                    self.__mouse_click(pygame.mouse.get_pos())
+        if self.__state == 'game':
+            for ev in pygame.event.get():
+                match ev.type:
+                    case pygame.QUIT:
+                        self.__running = False
+                    case pygame.KEYDOWN:
+                        match ev.key:
+                            case pygame.K_m:
+                                self.__music.toggle()
+                            case pygame.K_ESCAPE:
+                                self.__escape_state()
+                            case pygame.K_w | pygame.K_UP:
+                                self.move_player(self.__player, "up")
+                            case pygame.K_a | pygame.K_LEFT:
+                                self.move_player(self.__player, "left")
+                            case pygame.K_s | pygame.K_DOWN:
+                                self.move_player(self.__player, "down")
+                            case pygame.K_d | pygame.K_RIGHT:
+                                self.move_player(self.__player, "right")
+        else:
+            for ev in pygame.event.get():
+                match ev.type:
+                    case pygame.QUIT:
+                        self.__running = False
+                    case pygame.KEYDOWN:
+                        match ev.key:
+                            case pygame.K_m:
+                                self.__music.toggle()
+                            case pygame.K_ESCAPE:
+                                self.__escape_state()
+                    case pygame.MOUSEBUTTONDOWN:
+                        self.__mouse_click(pygame.mouse.get_pos())
 
     # Runs the main menu
     def __run_menu(self):
@@ -350,21 +370,6 @@ class Game:
 
             self.__board.draw_level()
             self.__player.draw()
-            for ev in pygame.event.get():
-                match ev.type:
-                    case pygame.QUIT:
-                        self.__running = False
-                        break
-                    case pygame.KEYDOWN:
-                        match ev.key:
-                            case pygame.K_w | pygame.K_UP:
-                                self.move_player(self.__player, "up")
-                            case pygame.K_a | pygame.K_LEFT:
-                                self.move_player(self.__player, "left")
-                            case pygame.K_s | pygame.K_DOWN:
-                                self.move_player(self.__player, "down")
-                            case pygame.K_d | pygame.K_RIGHT:
-                                self.move_player(self.__player, "right")
             if self.__check_game_over(self.__player.position()):
                 self.__game_over()
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
