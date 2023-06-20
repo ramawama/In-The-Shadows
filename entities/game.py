@@ -225,7 +225,7 @@ class Game:
 
         # parameters for the animation
         distance = 32
-        speed = 12
+        speed = 50
         step_size = 8
 
         anim_counter = 0
@@ -233,7 +233,7 @@ class Game:
             case "right":
                 if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
                     while distance >= 0:
-                        pygame.time.Clock().tick(speed)
+                        pygame.time.delay(speed)
                         # draw background
                         self.__board.draw_level()
                         # draw animation frame
@@ -254,7 +254,7 @@ class Game:
             case "left":
                 if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
                     while distance >= 0:
-                        pygame.time.Clock().tick(speed)
+                        pygame.time.delay(speed)
                         # draw background
                         self.__board.draw_level()
                         # draw animation frame
@@ -275,7 +275,7 @@ class Game:
             case "up":
                 if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
                     while distance >= 0:
-                        pygame.time.Clock().tick(speed)
+                        pygame.time.delay(speed)
                         # draw background
                         self.__board.draw_level()
                         # draw animation frame
@@ -296,7 +296,7 @@ class Game:
             case "down":
                 if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
                     while distance >= 0:
-                        pygame.time.Clock().tick(speed)
+                        pygame.time.delay(speed)
                         # draw background
                         self.__board.draw_level()
                         # draw animation frame
@@ -324,9 +324,6 @@ class Game:
         if self.__board.tiles[player_position[1]][player_position[0]].type == "g":
             game_over = self.__game_over()
 
-        # print(*player.position())
-        # reset clock speed
-        pygame.time.Clock().tick(60)
         return game_over
 
     def __load_game(self):
