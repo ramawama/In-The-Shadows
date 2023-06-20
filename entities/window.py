@@ -7,6 +7,7 @@ class Window:
         self.__screen = pygame.display.set_mode((width, height))
         self.__screen.fill((0, 0, 0))
         pygame.display.flip()
+        pygame.display.set_caption("In The Shadows")
 
         # Create surfaces
         self.__background_surface = pygame.Surface((width, height))
@@ -20,8 +21,8 @@ class Window:
 
     def resize(self, width, height):
         self.__screen = pygame.display.set_mode((width, height))
-        self.__background_surface = pygame.Surface((width, height))
-        self.__foreground_surface = pygame.Surface((width, height), pygame.SRCALPHA)
+        self.__background_surface = pygame.transform.scale(self.__background_surface, (width, height))
+        self.__foreground_surface = pygame.transform.scale(self.__foreground_surface, (width, height))
 
     # Returns background surface
     @property
