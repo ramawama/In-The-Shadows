@@ -52,6 +52,8 @@ class Game:
                 self.__running = False
             case 'game_over':
                 self.__state = 'menu'
+            case 'win':
+                self.__state = 'menu'
 
     # Changes state based on button click
     def __mouse_click(self, mouse_pos):
@@ -225,7 +227,23 @@ class Game:
 
         pygame.display.update()
 
+    def __win(self):
+        self.__level = 1
+        self.__state = "win"
+        self.__screen.background_surface.fill(self.__black)
+        self.__screen.foreground_surface.fill(self.__black)
+        self.__music.play_music("win")
+        big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
+        text = big_font.render('YOU  HAVE  WON', True, self.__white)
+        text_rect = text.get_rect()
+        text_rect.center = (self.__width // 2, self.__height // 4)
+        self.__screen.foreground_surface.blit(text, text_rect)
+        self.__screen.update()
+        self.__board.load_level()
+        return True
+
     def __game_over(self):
+        self.__level = 1
         self.__state = "game_over"
         self.__screen.background_surface.fill(self.__black)
         self.__screen.foreground_surface.fill(self.__black)
@@ -378,7 +396,15 @@ class Game:
                     if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
                         self.__escape_state()
             if self.__check_next_level(self.__player.position()):
-                self.__level += 1
+                if self.__level == 3:
+                    self.__win()
+                    self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                           self.__player_spawn[1], self.__width, self.__height)
+                    for ev in pygame.event.get():
+                        if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
+                            self.__escape_state()
+                else:
+                    self.__level += 1
 
     # Main execution loop
     def run(self):
