@@ -80,9 +80,7 @@ class Board:
         self.__screen.foreground_surface.fill((0, 0, 0, 0))
 
         rows = len(self.__tiles)
-        print(rows)
         cols = len(self.__tiles[0])
-        print(cols)
 
         tile_width = self.__screen_width // cols
         tile_height = self.__screen_height // rows
