@@ -226,7 +226,7 @@ class Game:
         game_over = False
 
         # parameters for the animation
-        distance = 32 * self.__width // 896
+        distance = 32 * self.__width / 896
         speed = 50
         step_size = 8
 
