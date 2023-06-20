@@ -50,3 +50,10 @@ class Tile:
         self._lit = True
         if self.type == "o":
             self._image = pygame.image.load("./assets/graphics/Level Elements/Floor/Floor_lit.png")
+
+    def unlight(self):
+        self._lit = False
+        if self.type == "o":
+            self._image = pygame.image.load("./assets/graphics/Level Elements/Floor/Floor.png")
+        if self.type == "t":
+            self._image = pygame.image.load("./assets/graphics/Level Elements/Torch/Torch_unlit.png")
