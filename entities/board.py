@@ -17,10 +17,10 @@ class Board:
         self.__screen_height = height
 
     # Load the level from a file
-    def load_level(self, name="level_TEST"):
+    def load_level(self, name=1):
         if not self.__loaded:
             try:
-                with open('./levels/' + name, 'r') as file:
+                with open('./levels/level_' + str(name), 'r') as file:
                     file.readline().strip()
                     lines = file.readlines()
                     file.close()
@@ -103,3 +103,7 @@ class Board:
     @property
     def tiles(self):
         return self.__tiles
+
+    def unload(self):
+        self.__loaded = False
+        self.__tiles = []
