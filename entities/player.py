@@ -16,7 +16,7 @@ class Player:
         self.__y = y
 
     def draw(self):
-        self.__screen.blit(self.__curr_sprites[0], (self.__x, self.__y))
+        self.__screen.blit(self.__curr_sprites[0], (self.__x * 32, self.__y * 32))
 
     @property
     def direction(self):
@@ -31,24 +31,24 @@ class Player:
             self.__curr_sprites = self.__right
         else:
             self.__curr_sprites = self.__left
-        self.__y -= 32
+        self.__y -= 1
 
     def moveLeft(self):
         self.__direction = "left"
         self.__curr_sprites = self.__left
-        self.__x -= 32
+        self.__x -= 1
 
     def moveDown(self):
         if self.__direction == "right":
             self.__curr_sprites = self.__right
         else:
             self.__curr_sprites = self.__left
-        self.__y += 32
+        self.__y += 1
 
     def moveRight(self):
         self.__direction = "right"
         self.__curr_sprites = self.__right
-        self.__x += 32
+        self.__x += 1
 
     def currSprites(self):
         if self.__direction == "right":

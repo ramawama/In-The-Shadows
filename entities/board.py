@@ -30,6 +30,10 @@ class Board:
                                 row_array.append(Tile("o", False, x, y))
                             else:
                                 row_array.append(Tile(char, False, x, y))
+                            if char == "g":
+                                print("guard at: x:", x, " y: ", y)
+                            if char == "p":
+                                print("spawn at at: x:", x, " y: ", y)
                             x += 1
                         self.__tiles.append(row_array)
                         y += 1

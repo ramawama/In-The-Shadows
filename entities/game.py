@@ -190,7 +190,8 @@ class Game:
         if direction == "right" or direction == "left":
             player.direction = direction
         sprites = player.currSprites()
-        position = player.position()
+        player_position = player.position()
+        position = (player_position[0] * 32, player_position[1] * 32)
 
         game_over = False
 
@@ -202,7 +203,7 @@ class Game:
         anim_counter = 0
         match direction:
             case "right":
-                if self.__board.tiles[(position[1] // 32)][(position[0] // 32) + 1].type != "w":
+                if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
                     while distance >= 0:
                         pygame.time.Clock().tick(speed)
                         # draw background
@@ -223,7 +224,7 @@ class Game:
                     # update player location internally
                     player.moveRight()
             case "left":
-                if self.__board.tiles[(position[1] // 32)][(position[0] // 32) - 1].type != "w":
+                if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
                     while distance >= 0:
                         pygame.time.Clock().tick(speed)
                         # draw background
@@ -244,7 +245,7 @@ class Game:
                     # update player location internally
                     player.moveLeft()
             case "up":
-                if self.__board.tiles[(position[1] // 32) - 1][(position[0] // 32)].type != "w":
+                if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
                     while distance >= 0:
                         pygame.time.Clock().tick(speed)
                         # draw background
@@ -265,7 +266,7 @@ class Game:
                     # update player location internally
                     player.moveUp()
             case "down":
-                if self.__board.tiles[(position[1] // 32) + 1][(position[0] // 32)].type != "w":
+                if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
                     while distance >= 0:
                         pygame.time.Clock().tick(speed)
                         # draw background
@@ -286,13 +287,16 @@ class Game:
                     # update player location internally
                     player.moveDown()
 
-        if self.__board.tiles[(position[1] // 32)][(position[0] // 32)].type == "t" and \
-                self.__board.tiles[(position[1] // 32)][(position[0] // 32)].lit:
-            self.__board.tiles[(position[1] // 32)][(position[0] // 32)].unlight()
+        player_position = player.position()
+
+        if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
+                self.__board.tiles[player_position[1]][player_position[0]].lit:
+            self.__board.tiles[player_position[1]][player_position[0]].unlight()
             self.__board.torch_check()
-        if self.__board.tiles[(position[1] // 32)][(position[0] // 32)].type == "g":
+        if self.__board.tiles[player_position[1]][player_position[0]].type == "g":
             game_over = self.__game_over()
 
+        print(*player.position())
         # reset clock speed
         pygame.time.Clock().tick(60)
         return game_over
@@ -305,7 +309,7 @@ class Game:
     # Runs the actual game
     def __run_game(self, player_spawn):
         self.__board.draw_level()
-        player = Player(self.__screen.foreground_surface, player_spawn[0] * 32, player_spawn[1] * 32)
+        player = Player(self.__screen.foreground_surface, player_spawn[0], player_spawn[1])
         in_game = True
         game_over = False
         while in_game:
