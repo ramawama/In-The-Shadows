@@ -45,6 +45,7 @@ class Board:
                         self.__tiles.append(row_array)
                         y += 1
                         x = 0
+                #  Update torch count for all tiles
                 self.torch_check()
                 self.__loaded = True
                 return playerPos
@@ -53,32 +54,26 @@ class Board:
 
     # Illuminates tiles near torches
     def torch_check(self):
+        surrounding_tiles = (-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)
         for row in range(len(self.__tiles)):
             for col in range(len(self.__tiles[row])):
                 if self.__tiles[row][col].type == "t":
-                    self.__tiles[row + 1][col].light()
-                    self.__tiles[row + 1][col - 1].light()
-                    self.__tiles[row + 1][col + 1].light()
-                    self.__tiles[row - 1][col].light()
-                    self.__tiles[row - 1][col - 1].light()
-                    self.__tiles[row - 1][col + 1].light()
-                    self.__tiles[row][col - 1].light()
-                    self.__tiles[row][col + 1].light()
-                if self.__tiles[row][col].type == "t" and not self.__tiles[row][col].lit:
-                    self.__tiles[row + 1][col].unlight()
-                    self.__tiles[row + 1][col - 1].unlight()
-                    self.__tiles[row + 1][col + 1].unlight()
-                    self.__tiles[row - 1][col].unlight()
-                    self.__tiles[row - 1][col - 1].unlight()
-                    self.__tiles[row - 1][col + 1].unlight()
-                    self.__tiles[row][col - 1].unlight()
-                    self.__tiles[row][col + 1].unlight()
-
+                    if self.__tiles[row][col].lit is True:
+                        for neighbor in surrounding_tiles:
+                            try:
+                                self.__tiles[row + neighbor[0]][col + neighbor[1]].light()
+                            except IndexError:
+                                pass
+                    else:
+                        for neighbor in surrounding_tiles:
+                            try:
+                                self.__tiles[row + neighbor[0]][col + neighbor[1]].unlight()
+                            except IndexError:
+                                pass
     # Draws tiles on background_surface
     def draw_level(self):
         self.__screen.background_surface.fill((0, 0, 0))
         self.__screen.foreground_surface.fill((0, 0, 0, 0))
-
         rows = len(self.__tiles)
         cols = len(self.__tiles[0])
 
@@ -89,7 +84,6 @@ class Board:
             for col in range(cols):
                 tile_x = col * tile_width
                 tile_y = row * tile_height
-
                 scaled_tile = pygame.transform.scale(self.__tiles[row][col].image, (tile_width, tile_height))
                 if self.__tiles[row][col].type != "o":
                     if self.__tiles[row][col].lit:

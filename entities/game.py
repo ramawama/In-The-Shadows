@@ -60,6 +60,7 @@ class Game:
         if self.__state == 'menu':
             if self.__rects['start_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'game'
+                self.__player_spawn = self.__load_game()
             elif self.__rects['options_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'options'
             elif self.__rects['quit_text_rect'].collidepoint(mouse_pos):
@@ -243,6 +244,7 @@ class Game:
         return True
 
     def __game_over(self):
+        self.__board.unload()
         self.__level = 1
         self.__state = "game_over"
         self.__screen.background_surface.fill(self.__black)
@@ -254,7 +256,6 @@ class Game:
         text_rect.center = (self.__width // 2, self.__height // 4)
         self.__screen.foreground_surface.blit(text, text_rect)
         self.__screen.update()
-        self.__board.load_level()
         return True
 
     def move_player(self, player, direction):
@@ -368,6 +369,7 @@ class Game:
 
         return game_over
 
+
     def __load_game(self):
         self.__music.play_music('game')
         player_spawn = self.__board.load_level(self.__level)
@@ -385,7 +387,6 @@ class Game:
 
     # Runs the actual game
     def __run_game(self):
-
             self.__board.draw_level()
             self.__player.draw()
             if self.__check_game_over(self.__player.position()):
@@ -405,6 +406,8 @@ class Game:
                             self.__escape_state()
                 else:
                     self.__level += 1
+                    self.__board.unload()
+                    self.__player_spawn = self.__load_game()
 
     # Main execution loop
     def run(self):
@@ -418,8 +421,9 @@ class Game:
                 case 'options':
                     self.__run_options()
                 case 'game':
-                    self.__board.unload()
-                    self.__player_spawn = self.__load_game()
-                    self.__run_game()
+                    try:
+                        self.__run_game()
+                    except Exception as E:
+                        print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
             self.__screen.update()
         pygame.quit()
