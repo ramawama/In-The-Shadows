@@ -324,7 +324,7 @@ class Game:
         if self.__board.tiles[player_position[1]][player_position[0]].type == "g":
             game_over = self.__game_over()
 
-        print(*player.position())
+        # print(*player.position())
         # reset clock speed
         pygame.time.Clock().tick(60)
         return game_over
@@ -337,7 +337,7 @@ class Game:
     # Runs the actual game
     def __run_game(self, player_spawn):
         self.__board.draw_level()
-        player = Player(self.__screen.foreground_surface, player_spawn[0], player_spawn[1])
+        player = Player(self.__screen.foreground_surface, player_spawn[0], player_spawn[1], self.__width, self.__height)
         in_game = True
         game_over = False
         while in_game:
