@@ -37,6 +37,10 @@ class Game:
         # Load difficulty
         self.__difficulty = "EASY"
 
+        self.__player_spawn = self.__load_game()
+
+        self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1], self.__width, self.__height)
+
     # Changes states when escape is pressed
     def __escape_state(self):
         match self.__state:
@@ -342,13 +346,10 @@ class Game:
         return False
 
     # Runs the actual game
-    def __run_game(self, player_spawn):
-        in_game = True
-        game_over = False
-        player = Player(self.__screen.foreground_surface, player_spawn[0], player_spawn[1], self.__width, self.__height)
-        while in_game:
+    def __run_game(self):
+
             self.__board.draw_level()
-            player.draw()
+            self.__player.draw()
             for ev in pygame.event.get():
                 match ev.type:
                     case pygame.QUIT:
@@ -357,28 +358,22 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_w | pygame.K_UP:
-                                self.move_player(player, "up")
+                                self.move_player(self.__player, "up")
                             case pygame.K_a | pygame.K_LEFT:
-                                self.move_player(player, "left")
+                                self.move_player(self.__player, "left")
                             case pygame.K_s | pygame.K_DOWN:
-                                self.move_player(player, "down")
+                                self.move_player(self.__player, "down")
                             case pygame.K_d | pygame.K_RIGHT:
-                                self.move_player(player, "right")
-                            case pygame.K_ESCAPE:
-                                self.__escape_state()
-                                in_game = False
-                    case pygame.MOUSEBUTTONDOWN:
-                        self.__mouse_click(pygame.mouse.get_pos())
-            if self.__check_game_over(player.position()):
-                in_game = False
+                                self.move_player(self.__player, "right")
+            if self.__check_game_over(self.__player.position()):
                 self.__game_over()
+                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                       self.__player_spawn[1], self.__width, self.__height)
                 for ev in pygame.event.get():
                     if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
                         self.__escape_state()
-            if self.__check_next_level(player.position()):
+            if self.__check_next_level(self.__player.position()):
                 self.__level += 1
-                break
-            self.__screen.update()
 
     # Main execution loop
     def run(self):
@@ -393,7 +388,7 @@ class Game:
                     self.__run_options()
                 case 'game':
                     self.__board.unload()
-                    player_spawn = self.__load_game()
-                    self.__run_game(player_spawn)
+                    self.__player_spawn = self.__load_game()
+                    self.__run_game()
             self.__screen.update()
         pygame.quit()
