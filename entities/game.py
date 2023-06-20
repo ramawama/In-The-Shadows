@@ -324,9 +324,6 @@ class Game:
         if self.__board.tiles[player_position[1]][player_position[0]].type == "g":
             game_over = self.__game_over()
 
-        # print(*player.position())
-        # reset clock speed
-        pygame.time.Clock().tick(60)
         return game_over
 
     def __load_game(self):
