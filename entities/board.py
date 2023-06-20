@@ -11,6 +11,11 @@ class Board:
         self.__screen_width = width
         self.__screen_height = height
 
+    def resize_board(self, screen, width, height):
+        self.__screen = screen
+        self.__screen_width = width
+        self.__screen_height = height
+
     # Load the level from a file
     def load_level(self, name="level_TEST"):
         if not self.__loaded:
@@ -75,10 +80,12 @@ class Board:
         self.__screen.foreground_surface.fill((0, 0, 0, 0))
 
         rows = len(self.__tiles)
+        print(rows)
         cols = len(self.__tiles[0])
+        print(cols)
 
-        tile_width = self.__screen_width / 28
-        tile_height = self.__screen_height // 15
+        tile_width = self.__screen_width // cols
+        tile_height = self.__screen_height // rows
 
         for row in range(rows):
             for col in range(cols):
