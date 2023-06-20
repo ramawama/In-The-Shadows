@@ -12,6 +12,8 @@ class Game:
         self.__white = (255, 255, 255)
         (self.__width, self.__height) = (896, 504)
 
+        self.__level = 1
+
         # Create window
         self.__screen = Window(self.__width, self.__height)
 
@@ -321,8 +323,6 @@ class Game:
                 self.__board.tiles[player_position[1]][player_position[0]].lit:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
             self.__board.torch_check()
-        if self.__board.tiles[player_position[1]][player_position[0]].type == "g":
-            game_over = self.__game_over()
 
         # print(*player.position())
         # reset clock speed
@@ -331,15 +331,24 @@ class Game:
 
     def __load_game(self):
         self.__music.play_music('game')
-        player_spawn = self.__board.load_level()
+        player_spawn = self.__board.load_level(self.__level)
         return player_spawn
+
+    def __check_game_over(self, player_position):
+        if self.__board.tiles[player_position[1]][player_position[0]].type == "g":
+            return True
+        return False
+
+    def __check_next_level(self, player_position):
+        if self.__board.tiles[player_position[1]][player_position[0]].type == "e":
+            return True
+        return False
 
     # Runs the actual game
     def __run_game(self, player_spawn):
-        self.__board.draw_level()
-        player = Player(self.__screen.foreground_surface, player_spawn[0], player_spawn[1], self.__width, self.__height)
         in_game = True
         game_over = False
+        player = Player(self.__screen.foreground_surface, player_spawn[0], player_spawn[1], self.__width, self.__height)
         while in_game:
             self.__board.draw_level()
             player.draw()
@@ -351,37 +360,40 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_w:
-                                game_over = self.move_player(player, "up")
+                                self.move_player(player, "up")
                             case pygame.K_a:
-                                game_over = self.move_player(player, "left")
+                                self.move_player(player, "left")
                             case pygame.K_s:
-                                game_over = self.move_player(player, "down")
+                                self.move_player(player, "down")
                             case pygame.K_d:
-                                game_over = self.move_player(player, "right")
+                                self.move_player(player, "right")
                             case pygame.K_UP:
-                                game_over = self.move_player(player, "up")
+                                self.move_player(player, "up")
                             case pygame.K_LEFT:
-                                game_over = self.move_player(player, "left")
+                                self.move_player(player, "left")
                             case pygame.K_DOWN:
-                                game_over = self.move_player(player, "down")
+                                self.move_player(player, "down")
                             case pygame.K_RIGHT:
-                                game_over = self.move_player(player, "right")
+                                self.move_player(player, "right")
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                                 in_game = False
                     case pygame.MOUSEBUTTONDOWN:
                         self.__mouse_click(pygame.mouse.get_pos())
-            if game_over:
+            if self.__check_game_over(player.position()):
                 in_game = False
+                self.__game_over()
                 for ev in pygame.event.get():
                     if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
                         self.__escape_state()
+            if self.__check_next_level(player.position()):
+                self.__level += 1
+                break
             self.__screen.update()
 
     # Main execution loop
     def run(self):
         clock = pygame.time.Clock()
-        player_spawn = self.__load_game()
         while self.__running:
             clock.tick(60)
             self.__handle_events()
@@ -391,6 +403,8 @@ class Game:
                 case 'options':
                     self.__run_options()
                 case 'game':
+                    self.__board.unload()
+                    player_spawn = self.__load_game()
                     self.__run_game(player_spawn)
             self.__screen.update()
         pygame.quit()
