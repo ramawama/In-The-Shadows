@@ -221,12 +221,12 @@ class Game:
             player.direction = direction
         sprites = player.currSprites()
         player_position = player.position()
-        position = (player_position[0] * 32, player_position[1] * 32)
+        position = (player_position[0] * 32 * self.__width // 896, player_position[1] * 32 * self.__height // 504)
 
         game_over = False
 
         # parameters for the animation
-        distance = 32
+        distance = 32 * self.__width // 896
         speed = 50
         step_size = 8
 
@@ -356,21 +356,13 @@ class Game:
                         break
                     case pygame.KEYDOWN:
                         match ev.key:
-                            case pygame.K_w:
+                            case pygame.K_w | pygame.K_UP:
                                 self.move_player(player, "up")
-                            case pygame.K_a:
+                            case pygame.K_a | pygame.K_LEFT:
                                 self.move_player(player, "left")
-                            case pygame.K_s:
+                            case pygame.K_s | pygame.K_DOWN:
                                 self.move_player(player, "down")
-                            case pygame.K_d:
-                                self.move_player(player, "right")
-                            case pygame.K_UP:
-                                self.move_player(player, "up")
-                            case pygame.K_LEFT:
-                                self.move_player(player, "left")
-                            case pygame.K_DOWN:
-                                self.move_player(player, "down")
-                            case pygame.K_RIGHT:
+                            case pygame.K_d | pygame.K_RIGHT:
                                 self.move_player(player, "right")
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
