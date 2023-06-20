@@ -6,7 +6,15 @@ class Guard:
     def __init__(self, screen, x, y, width, height, difficulty):
         self.__alive = True
         self.__screen = screen
-        self.__difficulty = difficulty
+        match difficulty:
+            case "easy":
+                self.__difficulty = 1
+            case "med":
+                self.__difficulty = 2
+            case "hard":
+                self.__difficulty = 3
+            case other:
+                self.__difficulty = 1
         self.__right = [pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}.png"), (width / 28, height // 15)),
                         pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}_walk.png"), (width / 28, height // 15))]
         self.__left = [pygame.transform.flip(self.__right[0], True, False),
