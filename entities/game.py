@@ -37,7 +37,7 @@ class Game:
         # Load difficulty
         self.__difficulty = "EASY"
 
-        self.__player_spawn = self.__load_game()
+        self.__player_spawn = self.__get_spawn()
 
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
                                self.__width, self.__height)
