@@ -391,6 +391,7 @@ class Game:
             self.__player.draw()
             if self.__check_game_over(self.__player.position()):
                 self.__game_over()
+                self.__player_spawn = self.__load_game()
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                        self.__player_spawn[1], self.__width, self.__height)
                 for ev in pygame.event.get():
@@ -408,6 +409,8 @@ class Game:
                     self.__level += 1
                     self.__board.unload()
                     self.__player_spawn = self.__load_game()
+                    self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                       self.__player_spawn[1], self.__width, self.__height)
 
     # Main execution loop
     def run(self):
