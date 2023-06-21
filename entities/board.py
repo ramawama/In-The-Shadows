@@ -52,6 +52,13 @@ class Board:
             except IOError:
                 print("Error from load_tiles function!")
 
+    def check_for_key(self):
+        for row in range(len(self.__tiles)):
+            for col in range(len(self.__tiles[row])):
+                if self.__tiles[row][col].type == "k":
+                    return True
+        return False
+
     # Illuminates tiles near torches
     def torch_check(self):
         surrounding_tiles = (-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)
