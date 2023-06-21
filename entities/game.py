@@ -276,7 +276,7 @@ class Game:
         anim_counter = 0
         match direction:
             case "right":
-                if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                if self.__board.tiles[player_position[1]][player_position[0] + 1].type not in ["w", "m", "l", "r"]:
                     while distance >= 0:
                         pygame.time.delay(speed)
                         # draw background
@@ -297,7 +297,7 @@ class Game:
                     # update player location internally
                     player.moveRight()
             case "left":
-                if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                if self.__board.tiles[player_position[1]][player_position[0] - 1].type not in ["w", "m", "l", "r"]:
                     while distance >= 0:
                         pygame.time.delay(speed)
                         # draw background
@@ -318,7 +318,7 @@ class Game:
                     # update player location internally
                     player.moveLeft()
             case "up":
-                if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                if self.__board.tiles[player_position[1] - 1][player_position[0]].type not in ["w", "m", "l", "r"]:
                     while distance >= 0:
                         pygame.time.delay(speed)
                         # draw background
@@ -339,7 +339,7 @@ class Game:
                     # update player location internally
                     player.moveUp()
             case "down":
-                if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                if self.__board.tiles[player_position[1] + 1][player_position[0]].type not in ["w", "m", "l", "r"]:
                     while distance >= 0:
                         pygame.time.delay(speed)
                         # draw background
