@@ -97,6 +97,7 @@ class Game:
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                        self.__player_spawn[1], self.__resolution)
+
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
@@ -345,7 +346,8 @@ class Game:
                     # draw background
                     self.__board.draw_level()
                     # draw animation frame
-                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0], self.__position[1]))
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
+                                                          (self.__position[0], self.__position[1]))
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0] - step_size, self.__position[1])
@@ -363,7 +365,8 @@ class Game:
                     # draw background
                     self.__board.draw_level()
                     # draw animation frame
-                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0], self.__position[1]))
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
+                                                          (self.__position[0], self.__position[1]))
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0], self.__position[1] - step_size)
@@ -381,7 +384,8 @@ class Game:
                     # draw background
                     self.__board.draw_level()
                     # draw animation frame
-                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0], self.__position[1]))
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
+                                                          (self.__position[0], self.__position[1]))
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0], self.__position[1] + step_size)
