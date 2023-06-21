@@ -5,14 +5,15 @@ class Tile:
     def __init__(self, tile_type="o", behind_torch=False, x=0, y=0):
         self._tile_type = tile_type
         self._pos = [x, y]
+        self._lit = False
+        self.unlight()
+        if behind_torch is False:
+            self._backgroundtile = pygame.image.load("./assets/graphics/Level Elements/Floor/Floor.png")
+        else:
+            self._backgroundtile = pygame.image.load("./assets/graphics/Level Elements/Floor/Floor_lit.png")
         match tile_type:
             case "t":
-                self._image = pygame.image.load("./assets/graphics/Level Elements/Torch/Torch_small.png")
-            case "o":
-                if behind_torch:
-                    self.light()
-                else:
-                    self._image = pygame.image.load("./assets/graphics/Level Elements/Floor/Floor.png")
+                self.light()
             case "g":
                 self._image = pygame.image.load("./assets/graphics/Guard/Guard_easy.png")
             case "p":
@@ -24,10 +25,6 @@ class Tile:
             case "k":
                 self._image = pygame.image.load("./assets/graphics/Level Elements/Key.png")
 
-        if tile_type == "t":
-            self._lit = True
-        else:
-            self._lit = False
 
     @property
     def image(self):
@@ -45,15 +42,18 @@ class Tile:
     def pos(self):
         return self._pos
 
+
     # Sets a tile as lit
     def light(self):
         self._lit = True
         if self.type == "o":
             self._image = pygame.image.load("./assets/graphics/Level Elements/Floor/Floor_lit.png")
+        elif self.type == "t":
+            self._image = pygame.image.load("./assets/graphics/Level Elements/Torch/Torch_small.png")
 
     def unlight(self):
         self._lit = False
         if self.type == "o":
             self._image = pygame.image.load("./assets/graphics/Level Elements/Floor/Floor.png")
-        if self.type == "t":
+        elif self.type == "t":
             self._image = pygame.image.load("./assets/graphics/Level Elements/Torch/Torch_unlit.png")
