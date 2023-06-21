@@ -63,6 +63,7 @@ class Game:
         if self.__state == 'menu':
             if self.__rects['start_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'game'
+                self.__board.unload()
                 self.__player_spawn = self.__load_game()
             elif self.__rects['options_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'options'
@@ -284,7 +285,7 @@ class Game:
         anim_counter = 0
         match direction:
             case "right":
-                if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                if self.__board.tiles[player_position[1]][player_position[0] + 1].type not in ["w", "m", "l", "r"]:
                     while distance >= 0:
                         pygame.time.delay(speed)
                         # draw background
@@ -305,7 +306,7 @@ class Game:
                     # update player location internally
                     player.moveRight()
             case "left":
-                if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                if self.__board.tiles[player_position[1]][player_position[0] - 1].type not in ["w", "m", "l", "r"]:
                     while distance >= 0:
                         pygame.time.delay(speed)
                         # draw background
@@ -326,7 +327,7 @@ class Game:
                     # update player location internally
                     player.moveLeft()
             case "up":
-                if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                if self.__board.tiles[player_position[1] - 1][player_position[0]].type not in ["w", "m", "l", "r"]:
                     while distance >= 0:
                         pygame.time.delay(speed)
                         # draw background
@@ -347,7 +348,7 @@ class Game:
                     # update player location internally
                     player.moveUp()
             case "down":
-                if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                if self.__board.tiles[player_position[1] + 1][player_position[0]].type not in ["w", "m", "l", "r"]:
                     while distance >= 0:
                         pygame.time.delay(speed)
                         # draw background
@@ -377,6 +378,10 @@ class Game:
 
         return game_over
 
+    def __get_spawn(self):
+        player_spawn = self.__board.load_level(self.__level)
+        return player_spawn
+
     def __load_game(self):
         self.__music.play_music('game')
         player_spawn = self.__board.load_level(self.__level)
@@ -398,21 +403,14 @@ class Game:
         self.__player.draw()
         if self.__check_game_over(self.__player.position()):
             self.__game_over()
-            self.__player_spawn = self.__load_game()
-            self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                   self.__player_spawn[1], self.__resolution)
-            for ev in pygame.event.get():
-                if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
-                    self.__escape_state()
+            self.__player_spawn = self.__get_spawn()
+            self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1], self.__resolution)
         if self.__check_next_level(self.__player.position()):
             if self.__level == 3:
                 self.__board.unload()
                 self.__win()
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                        self.__player_spawn[1], self.__resolution)
-                for ev in pygame.event.get():
-                    if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
-                        self.__escape_state()
             else:
                 self.__level += 1
                 self.__board.unload()
@@ -436,5 +434,7 @@ class Game:
                         self.__run_game()
                     except Exception as E:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
+                case 'game_over':
+                    pass
             self.__screen.update()
         pygame.quit()
