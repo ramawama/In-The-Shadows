@@ -10,7 +10,7 @@ class Game:
         # Create global variables for height, width, and black and white colors
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
-        (self.__width, self.__height) = (896, 512)
+        (self.__width, self.__height) = (896, 504)
 
         self.__level = 1
         self.__move_counter = 0
@@ -84,14 +84,14 @@ class Game:
             elif self.__rects['hard_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "HARD"
             elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (896, 512)
+                (self.__width, self.__height) = (896, 504)
                 self.__resolution = 1
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                        self.__player_spawn[1], self.__resolution)
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (1792, 1024)
+                (self.__width, self.__height) = (1792, 1008)
                 self.__resolution = 2
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
@@ -116,29 +116,29 @@ class Game:
                                 self.__move_direction = 'up'
                                 self.__move_counter = 0
                                 self.__anim_counter = 0
-                                self.__position = (self.__player.position()[0] * 32 * self.__width // 896,
-                                                   self.__player.position()[1] * 32 * self.__height // 504)
+                                self.__position = (self.__player.position()[0] * 32 * self.__resolution,
+                                                   self.__player.position()[1] * 32 * self.__resolution)
                             case pygame.K_a | pygame.K_LEFT:
                                 self.__state = 'move'
                                 self.__move_direction = 'left'
                                 self.__move_counter = 0
                                 self.__anim_counter = 0
-                                self.__position = (self.__player.position()[0] * 32 * self.__width // 896,
-                                                   self.__player.position()[1] * 32 * self.__height // 504)
+                                self.__position = (self.__player.position()[0] * 32 * self.__resolution,
+                                                   self.__player.position()[1] * 32 * self.__resolution)
                             case pygame.K_s | pygame.K_DOWN:
                                 self.__state = 'move'
                                 self.__move_direction = 'down'
                                 self.__move_counter = 0
                                 self.__anim_counter = 0
-                                self.__position = (self.__player.position()[0] * 32 * self.__width // 896,
-                                                   self.__player.position()[1] * 32 * self.__height // 504)
+                                self.__position = (self.__player.position()[0] * 32 * self.__resolution,
+                                                   self.__player.position()[1] * 32 * self.__resolution)
                             case pygame.K_d | pygame.K_RIGHT:
                                 self.__state = 'move'
                                 self.__move_direction = 'right'
                                 self.__move_counter = 0
                                 self.__anim_counter = 0
-                                self.__position = (self.__player.position()[0] * 32 * self.__width // 896,
-                                                   self.__player.position()[1] * 32 * self.__height // 504)
+                                self.__position = (self.__player.position()[0] * 32 * self.__resolution,
+                                                   self.__player.position()[1] * 32 * self.__resolution)
         else:
             for ev in pygame.event.get():
                 match ev.type:
@@ -298,7 +298,7 @@ class Game:
 
     def move_player(self):
         player_position = self.__player.position()
-        if self.__move_counter == 15:
+        if self.__move_counter == 15 // self.__resolution:
             self.__state = 'game'
             match self.__move_direction:
                 case 'up':
@@ -318,7 +318,7 @@ class Game:
             self.__player.direction = self.__move_direction
         sprites = self.__player.currSprites()
 
-        step_size = 2
+        step_size = 2 * self.__resolution * self.__resolution
         game_over = False
 
         match self.__move_direction:
@@ -457,7 +457,7 @@ class Game:
         while self.__running:
             clock.tick(60)
             self.__move_counter += 1
-            if self.__move_counter == 16:
+            if self.__move_counter == 16 // self.__resolution:
                 self.__move_counter = 0
             self.__handle_events()
             match self.__state:
