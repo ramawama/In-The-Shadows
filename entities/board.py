@@ -87,9 +87,9 @@ class Board:
                 scaled_tile = pygame.transform.scale(self.__tiles[row][col].image, (tile_width, tile_height))
                 if self.__tiles[row][col].type != "o":
                     if self.__tiles[row][col].lit:
-                        scaled_floor = pygame.transform.scale(Tile("o", True).image, (tile_width, tile_height))
+                        scaled_floor = pygame.transform.scale(Tile("o", True)._backgroundtile, (tile_width, tile_height))
                     else:
-                        scaled_floor = pygame.transform.scale(Tile().image, (tile_width, tile_height))
+                        scaled_floor = pygame.transform.scale(Tile()._backgroundtile, (tile_width, tile_height))
                     self.__screen.background_surface.blit(scaled_floor, (tile_x, tile_y))
                 self.__screen.foreground_surface.blit(scaled_tile, (tile_x, tile_y))
 
