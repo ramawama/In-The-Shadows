@@ -301,16 +301,16 @@ class Game:
             self.__state = 'game'
             match self.__move_direction:
                 case 'up':
-                    if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                    if self.__board.tiles[player_position[1] - 1][player_position[0]].type not in ['l', 'r', 'm', 'w']:
                         self.__player.moveUp()
                 case 'down':
-                    if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                    if self.__board.tiles[player_position[1] + 1][player_position[0]].type not in ['l', 'r', 'm', 'w']:
                         self.__player.moveDown()
                 case 'left':
-                    if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                    if self.__board.tiles[player_position[1]][player_position[0] - 1].type not in ['l', 'r', 'm', 'w']:
                         self.__player.moveLeft()
                 case 'right':
-                    if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                    if self.__board.tiles[player_position[1]][player_position[0] + 1].type not in ['l', 'r', 'm', 'w']:
                         self.__player.moveRight()
         # changes sprites depending on if moving left or right (stays the same with up/down)
         if self.__move_direction == "right" or self.__move_direction == "left":
@@ -322,7 +322,7 @@ class Game:
 
         match self.__move_direction:
             case "right":
-                if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                if self.__board.tiles[player_position[1]][player_position[0] + 1].type not in ['l', 'r', 'm', 'w']:
                     # draw background
                     self.__board.draw_level()
                     # draw animation frame
@@ -341,7 +341,7 @@ class Game:
                     self.__screen.update()
                     # update player location internally
             case "left":
-                if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                if self.__board.tiles[player_position[1]][player_position[0] - 1].type not in ['l', 'r', 'm', 'w']:
                     # draw background
                     self.__board.draw_level()
                     # draw animation frame
@@ -359,7 +359,7 @@ class Game:
                     self.__screen.update()
                     # update player location internally
             case "up":
-                if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                if self.__board.tiles[player_position[1] - 1][player_position[0]].type not in ['l', 'r', 'm', 'w']:
                     # draw background
                     self.__board.draw_level()
                     # draw animation frame
@@ -377,7 +377,7 @@ class Game:
                     self.__screen.update()
                     # update player location internally
             case "down":
-                if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                if self.__board.tiles[player_position[1] + 1][player_position[0]].type not in ['l', 'r', 'm', 'w']:
                     # draw background
                     self.__board.draw_level()
                     # draw animation frame
