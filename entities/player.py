@@ -15,16 +15,6 @@ class Player:
         self.__x = x
         self.__y = y
 
-    def update_resolution(self, resolution, screen):
-        self.__screen = screen
-        self.__resolution = resolution
-        self.__right = [pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue.png"),
-                                               (self.__resolution * 32, self.__resolution * 32)),
-                        pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue_walk.png"),
-                                               (self.__resolution * 32, self.__resolution * 32))]
-        self.__left = [pygame.transform.flip(self.__right[0], True, False),
-                       pygame.transform.flip(self.__right[1], True, False)]
-
     def draw(self):
         self.__screen.blit(self.__curr_sprites[0], (self.__x * 32 * self.__resolution, self.__y * 32 * self.__resolution))
 
