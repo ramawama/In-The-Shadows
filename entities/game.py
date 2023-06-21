@@ -42,9 +42,10 @@ class Game:
 
         self.__position = ()
 
-        self.__player_spawn = self.__load_game()
+        self.__player_spawn = self.__get_spawn()
 
-        self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1], self.__width, self.__height)
+        self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
+                               self.__width, self.__height)
 
     # Changes states when escape is pressed
     def __escape_state(self):
@@ -65,6 +66,7 @@ class Game:
         if self.__state == 'menu':
             if self.__rects['start_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'game'
+                self.__board.unload()
                 self.__player_spawn = self.__load_game()
             elif self.__rects['options_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'options'
@@ -393,6 +395,9 @@ class Game:
 
         return game_over
 
+    def __get_spawn(self):
+        player_spawn = self.__board.load_level(self.__level)
+        return player_spawn
 
     def __load_game(self):
         self.__music.play_music('game')
@@ -411,30 +416,24 @@ class Game:
 
     # Runs the actual game
     def __run_game(self):
-            self.__board.draw_level()
-            self.__player.draw()
-            if self.__check_game_over(self.__player.position()):
-                self.__game_over()
-                self.__player_spawn = self.__load_game()
+        self.__board.draw_level()
+        self.__player.draw()
+        if self.__check_game_over(self.__player.position()):
+            self.__game_over()
+            self.__player_spawn = self.__get_spawn()
+            self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
+                                   self.__width, self.__height)
+        if self.__check_next_level(self.__player.position()):
+            if self.__level == 3:
+                self.__board.unload()
+                self.__win()
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                        self.__player_spawn[1], self.__width, self.__height)
-                # for ev in pygame.event.get():
-                #     if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
-                #         self.__escape_state()
-            if self.__check_next_level(self.__player.position()):
-                if self.__level == 3:
-                    self.__board.unload()
-                    self.__win()
-                    self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                           self.__player_spawn[1], self.__width, self.__height)
-                    for ev in pygame.event.get():
-                        if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
-                            self.__escape_state()
-                else:
-                    self.__level += 1
-                    self.__board.unload()
-                    self.__player_spawn = self.__load_game()
-                    self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+            else:
+                self.__level += 1
+                self.__board.unload()
+                self.__player_spawn = self.__load_game()
+                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                        self.__player_spawn[1], self.__width, self.__height)
 
     # Main execution loop
@@ -457,6 +456,8 @@ class Game:
                         self.__run_game()
                     except Exception as E:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
+                case 'game_over':
+                    pass
                 case 'move':
                     self.move_player()
             self.__screen.update()
