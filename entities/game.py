@@ -240,7 +240,8 @@ class Game:
         text_rect.center = (self.__width // 2, self.__height // 4)
         self.__screen.foreground_surface.blit(text, text_rect)
         self.__screen.update()
-        self.__board.load_level()
+        self.__player_spawn = self.__board.load_level()
+
         return True
 
     def __game_over(self):
@@ -399,6 +400,7 @@ class Game:
                         self.__escape_state()
             if self.__check_next_level(self.__player.position()):
                 if self.__level == 3:
+                    self.__board.unload()
                     self.__win()
                     self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                            self.__player_spawn[1], self.__width, self.__height)
