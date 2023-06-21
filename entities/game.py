@@ -10,7 +10,7 @@ class Game:
         # Create global variables for height, width, and black and white colors
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
-        (self.__width, self.__height) = (896, 504)
+        (self.__width, self.__height) = (896, 512)
 
         self.__level = 1
 
@@ -77,14 +77,14 @@ class Game:
             elif self.__rects['hard_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "HARD"
             elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (896, 504)
+                (self.__width, self.__height) = (896, 512)
                 self.__resolution = 1
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                        self.__player_spawn[1], self.__resolution)
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (1792, 1008)
+                (self.__width, self.__height) = (1792, 1024)
                 self.__resolution = 2
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
