@@ -51,6 +51,8 @@ class Game:
                 self.__state = 'menu'
             case 'game':
                 self.__state = 'menu'
+                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
+                                       self.__resolution)
             case 'menu':
                 self.__running = False
             case 'game_over':
