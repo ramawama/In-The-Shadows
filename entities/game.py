@@ -14,6 +14,8 @@ class Game:
 
         self.__level = 1
 
+        self.__resolution = 1  # resolution option for scaling
+
         # Create window
         self.__screen = Window(self.__width, self.__height)
 
@@ -39,7 +41,8 @@ class Game:
 
         self.__player_spawn = self.__load_game()
 
-        self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1], self.__width, self.__height)
+        self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
+                               self.__resolution)
 
     # Changes states when escape is pressed
     def __escape_state(self):
@@ -74,12 +77,18 @@ class Game:
                 self.__difficulty = "HARD"
             elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
                 (self.__width, self.__height) = (896, 504)
+                self.__resolution = 1
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
+                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                       self.__player_spawn[1], self.__resolution)
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
                 (self.__width, self.__height) = (1792, 1008)
+                self.__resolution = 2
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
+                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                       self.__player_spawn[1], self.__resolution)
 
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
@@ -265,14 +274,14 @@ class Game:
             player.direction = direction
         sprites = player.currSprites()
         player_position = player.position()
-        position = (player_position[0] * 32 * self.__width // 896, player_position[1] * 32 * self.__height // 504)
+        position = (player_position[0] * 32 * self.__resolution, player_position[1] * 32 * self.__resolution)
 
         game_over = False
 
         # parameters for the animation
-        distance = 32 * self.__width // 896
-        speed = 50
-        step_size = 8
+        distance = 32 * self.__resolution
+        speed = 50 * self.__resolution
+        step_size = 8 * self.__resolution
 
         anim_counter = 0
         match direction:
@@ -370,7 +379,6 @@ class Game:
 
         return game_over
 
-
     def __load_game(self):
         self.__music.play_music('game')
         player_spawn = self.__board.load_level(self.__level)
@@ -388,31 +396,31 @@ class Game:
 
     # Runs the actual game
     def __run_game(self):
-            self.__board.draw_level()
-            self.__player.draw()
-            if self.__check_game_over(self.__player.position()):
-                self.__game_over()
-                self.__player_spawn = self.__load_game()
+        self.__board.draw_level()
+        self.__player.draw()
+        if self.__check_game_over(self.__player.position()):
+            self.__game_over()
+            self.__player_spawn = self.__load_game()
+            self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                   self.__player_spawn[1], self.__resolution)
+            for ev in pygame.event.get():
+                if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
+                    self.__escape_state()
+        if self.__check_next_level(self.__player.position()):
+            if self.__level == 3:
+                self.__board.unload()
+                self.__win()
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                       self.__player_spawn[1], self.__width, self.__height)
+                                       self.__player_spawn[1], self.__resolution)
                 for ev in pygame.event.get():
                     if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
                         self.__escape_state()
-            if self.__check_next_level(self.__player.position()):
-                if self.__level == 3:
-                    self.__board.unload()
-                    self.__win()
-                    self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                           self.__player_spawn[1], self.__width, self.__height)
-                    for ev in pygame.event.get():
-                        if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
-                            self.__escape_state()
-                else:
-                    self.__level += 1
-                    self.__board.unload()
-                    self.__player_spawn = self.__load_game()
-                    self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                       self.__player_spawn[1], self.__width, self.__height)
+            else:
+                self.__level += 1
+                self.__board.unload()
+                self.__player_spawn = self.__load_game()
+                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                       self.__player_spawn[1], self.__resolution)
 
     # Main execution loop
     def run(self):
