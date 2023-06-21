@@ -7,6 +7,7 @@ class Tile:
         self._pos = [x, y]
         self._lit = False
         self.unlight()
+        self.__torch_counter = 0
         if behind_torch is False:
             self._backgroundtile = pygame.image.load("./assets/graphics/Level Elements/Floor/Floor.png")
         else:
@@ -19,12 +20,25 @@ class Tile:
             case "p":
                 self._image = pygame.image.load("./assets/graphics/Rogue/Rogue.png")
             case "w":
-                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall.png")
+                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_t.png")
+            case "m":
+                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_b.png")
+            case "l":
+                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_l.png")
+            case "r":
+                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_r.png")
+            case "1":
+                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_tl.png")
+            case "2":
+                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_tr.png")
+            case "3":
+                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_bl.png")
+            case "4":
+                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_br.png")
             case "e":
                 self._image = pygame.image.load("./assets/graphics/Level Elements/Exit.png")
             case "k":
                 self._image = pygame.image.load("./assets/graphics/Level Elements/Key.png")
-
 
     @property
     def image(self):
@@ -41,7 +55,6 @@ class Tile:
     @property
     def pos(self):
         return self._pos
-
 
     # Sets a tile as lit
     def light(self):
