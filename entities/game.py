@@ -10,12 +10,14 @@ class Game:
         # Create global variables for height, width, and black and white colors
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
-        (self.__width, self.__height) = (896, 504)
+        (self.__width, self.__height) = (896, 512)
 
         self.__level = 1
         self.__move_counter = 0
         self.__move_direction = 'right'
         self.__anim_counter = 0
+
+        self.__resolution = 1  # resolution option for scaling
 
         # Create window
         self.__screen = Window(self.__width, self.__height)
@@ -45,7 +47,7 @@ class Game:
         self.__player_spawn = self.__get_spawn()
 
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
-                               self.__width, self.__height)
+                               self.__resolution)
 
     # Changes states when escape is pressed
     def __escape_state(self):
@@ -54,6 +56,8 @@ class Game:
                 self.__state = 'menu'
             case 'game':
                 self.__state = 'menu'
+                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
+                                       self.__resolution)
             case 'menu':
                 self.__running = False
             case 'game_over':
@@ -80,14 +84,19 @@ class Game:
             elif self.__rects['hard_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "HARD"
             elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (896, 504)
+                (self.__width, self.__height) = (896, 512)
+                self.__resolution = 1
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
+                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                       self.__player_spawn[1], self.__resolution)
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (1792, 1008)
+                (self.__width, self.__height) = (1792, 1024)
+                self.__resolution = 2
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
-
+                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                       self.__player_spawn[1], self.__resolution)
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
@@ -421,20 +430,21 @@ class Game:
         if self.__check_game_over(self.__player.position()):
             self.__game_over()
             self.__player_spawn = self.__get_spawn()
-            self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
-                                   self.__width, self.__height)
+            self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                   self.__player_spawn[1], self.__resolution)
+
         if self.__check_next_level(self.__player.position()):
             if self.__level == 3:
                 self.__board.unload()
                 self.__win()
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                       self.__player_spawn[1], self.__width, self.__height)
+                                       self.__player_spawn[1], self.__resolution)
             else:
                 self.__level += 1
                 self.__board.unload()
                 self.__player_spawn = self.__load_game()
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                       self.__player_spawn[1], self.__width, self.__height)
+                                       self.__player_spawn[1], self.__resolution)
 
     # Main execution loop
     def run(self):

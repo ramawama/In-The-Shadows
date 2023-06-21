@@ -1,20 +1,19 @@
 import pygame
-from entities.board import Board
 
 
 class Player:
-    def __init__(self, screen, x, y, width, height):
+    def __init__(self, screen, x, y, resolution):
+        self.__resolution = resolution
         self.__alive = True
         self.__screen = screen
-        self.__right = [pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue.png"), (width // 28, height // 15)),
-                        pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue_walk.png"), (width // 28, height // 15))]
+        self.__right = [pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue.png"), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue_walk.png"), (self.__resolution * 32, self.__resolution * 32))]
         self.__left = [pygame.transform.flip(self.__right[0], True, False),
                        pygame.transform.flip(self.__right[1], True, False)]
         self.__curr_sprites = self.__right
         self.__direction = "right"
         self.__x = x
         self.__y = y
-        self.__resolution = width / 896 # 896 is the width of the original image
 
     def draw(self):
         self.__screen.blit(self.__curr_sprites[0], (self.__x * 32 * self.__resolution, self.__y * 32 * self.__resolution))
