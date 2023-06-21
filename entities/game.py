@@ -13,6 +13,9 @@ class Game:
         (self.__width, self.__height) = (896, 504)
 
         self.__level = 1
+        self.__move_counter = 0
+        self.__move_direction = 'right'
+        self.__anim_counter = 0
 
         # Create window
         self.__screen = Window(self.__width, self.__height)
@@ -36,6 +39,8 @@ class Game:
 
         # Load difficulty
         self.__difficulty = "EASY"
+
+        self.__position = ()
 
         self.__player_spawn = self.__load_game()
 
@@ -95,13 +100,33 @@ class Game:
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                             case pygame.K_w | pygame.K_UP:
-                                self.move_player(self.__player, "up")
+                                self.__state = 'move'
+                                self.__move_direction = 'up'
+                                self.__move_counter = 0
+                                self.__anim_counter = 0
+                                self.__position = (self.__player.position()[0] * 32 * self.__width // 896,
+                                                   self.__player.position()[1] * 32 * self.__height // 504)
                             case pygame.K_a | pygame.K_LEFT:
-                                self.move_player(self.__player, "left")
+                                self.__state = 'move'
+                                self.__move_direction = 'left'
+                                self.__move_counter = 0
+                                self.__anim_counter = 0
+                                self.__position = (self.__player.position()[0] * 32 * self.__width // 896,
+                                                   self.__player.position()[1] * 32 * self.__height // 504)
                             case pygame.K_s | pygame.K_DOWN:
-                                self.move_player(self.__player, "down")
+                                self.__state = 'move'
+                                self.__move_direction = 'down'
+                                self.__move_counter = 0
+                                self.__anim_counter = 0
+                                self.__position = (self.__player.position()[0] * 32 * self.__width // 896,
+                                                   self.__player.position()[1] * 32 * self.__height // 504)
                             case pygame.K_d | pygame.K_RIGHT:
-                                self.move_player(self.__player, "right")
+                                self.__state = 'move'
+                                self.__move_direction = 'right'
+                                self.__move_counter = 0
+                                self.__anim_counter = 0
+                                self.__position = (self.__player.position()[0] * 32 * self.__width // 896,
+                                                   self.__player.position()[1] * 32 * self.__height // 504)
         else:
             for ev in pygame.event.get():
                 match ev.type:
@@ -259,109 +284,107 @@ class Game:
         self.__screen.update()
         return True
 
-    def move_player(self, player, direction):
+    def move_player(self):
+        player_position = self.__player.position()
+        if self.__move_counter == 15:
+            self.__state = 'game'
+            match self.__move_direction:
+                case 'up':
+                    if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                        self.__player.moveUp()
+                case 'down':
+                    if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                        self.__player.moveDown()
+                case 'left':
+                    if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                        self.__player.moveLeft()
+                case 'right':
+                    if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                        self.__player.moveRight()
         # changes sprites depending on if moving left or right (stays the same with up/down)
-        if direction == "right" or direction == "left":
-            player.direction = direction
-        sprites = player.currSprites()
-        player_position = player.position()
-        position = (player_position[0] * 32 * self.__width // 896, player_position[1] * 32 * self.__height // 504)
+        if self.__move_direction == "right" or self.__move_direction == "left":
+            self.__player.direction = self.__move_direction
+        sprites = self.__player.currSprites()
 
+        step_size = 2
         game_over = False
 
-        # parameters for the animation
-        distance = 32 * self.__width // 896
-        speed = 50
-        step_size = 8
-
-        anim_counter = 0
-        match direction:
+        match self.__move_direction:
             case "right":
                 if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
-                    while distance >= 0:
-                        pygame.time.delay(speed)
-                        # draw background
-                        self.__board.draw_level()
-                        # draw animation frame
-                        self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0],
+                                                                                         self.__position[1]))
 
-                        # slight movement + decrement distance left to travel
-                        position = (position[0] + step_size, position[1])
-                        distance -= step_size
-                        anim_counter += 1
+                    # slight movement + decrement distance left to travel
+                    self.__position = (self.__position[0] + step_size, self.__position[1])
+                    if not (self.__move_counter % 4):
+                        self.__anim_counter += 1
 
-                        # for resetting animation
-                        if anim_counter >= len(sprites):
-                            anim_counter = 0
+                    # for resetting animation
+                    if self.__anim_counter >= len(sprites):
+                        self.__anim_counter = 0
 
-                        self.__screen.update()
+                    self.__screen.update()
                     # update player location internally
-                    player.moveRight()
             case "left":
                 if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
-                    while distance >= 0:
-                        pygame.time.delay(speed)
-                        # draw background
-                        self.__board.draw_level()
-                        # draw animation frame
-                        self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0], self.__position[1]))
 
-                        # slight movement + decrement distance left to travel
-                        position = (position[0] - step_size, position[1])
-                        distance -= step_size
-                        anim_counter += 1
+                    # slight movement + decrement distance left to travel
+                    self.__position = (self.__position[0] - step_size, self.__position[1])
+                    if not (self.__move_counter % 4):
+                        self.__anim_counter += 1
 
-                        # for resetting animation
-                        if anim_counter >= len(sprites):
-                            anim_counter = 0
+                    # for resetting animation
+                    if self.__anim_counter >= len(sprites):
+                        self.__anim_counter = 0
 
-                        self.__screen.update()
+                    self.__screen.update()
                     # update player location internally
-                    player.moveLeft()
             case "up":
                 if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
-                    while distance >= 0:
-                        pygame.time.delay(speed)
-                        # draw background
-                        self.__board.draw_level()
-                        # draw animation frame
-                        self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0], self.__position[1]))
 
-                        # slight movement + decrement distance left to travel
-                        position = (position[0], position[1] - step_size)
-                        distance -= step_size
-                        anim_counter += 1
+                    # slight movement + decrement distance left to travel
+                    self.__position = (self.__position[0], self.__position[1] - step_size)
+                    if not (self.__move_counter % 4):
+                        self.__anim_counter += 1
 
-                        # for resetting animation
-                        if anim_counter >= len(sprites):
-                            anim_counter = 0
+                    # for resetting animation
+                    if self.__anim_counter >= len(sprites):
+                        self.__anim_counter = 0
 
-                        self.__screen.update()
+                    self.__screen.update()
                     # update player location internally
-                    player.moveUp()
             case "down":
                 if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
-                    while distance >= 0:
-                        pygame.time.delay(speed)
-                        # draw background
-                        self.__board.draw_level()
-                        # draw animation frame
-                        self.__screen.foreground_surface.blit(sprites[anim_counter], (position[0], position[1]))
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0], self.__position[1]))
 
-                        # slight movement + decrement distance left to travel
-                        position = (position[0], position[1] + step_size)
-                        distance -= step_size
-                        anim_counter += 1
+                    # slight movement + decrement distance left to travel
+                    self.__position = (self.__position[0], self.__position[1] + step_size)
+                    if not (self.__move_counter % 4):
+                        self.__anim_counter += 1
 
-                        # for resetting animation
-                        if anim_counter >= len(sprites):
-                            anim_counter = 0
+                    # for resetting animation
+                    if self.__anim_counter >= len(sprites):
+                        self.__anim_counter = 0
 
-                        self.__screen.update()
+                    self.__screen.update()
                     # update player location internally
-                    player.moveDown()
 
-        player_position = player.position()
+        player_position = self.__player.position()
 
         if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
                 self.__board.tiles[player_position[1]][player_position[0]].lit:
@@ -395,9 +418,9 @@ class Game:
                 self.__player_spawn = self.__load_game()
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                        self.__player_spawn[1], self.__width, self.__height)
-                for ev in pygame.event.get():
-                    if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
-                        self.__escape_state()
+                # for ev in pygame.event.get():
+                #     if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
+                #         self.__escape_state()
             if self.__check_next_level(self.__player.position()):
                 if self.__level == 3:
                     self.__board.unload()
@@ -417,8 +440,12 @@ class Game:
     # Main execution loop
     def run(self):
         clock = pygame.time.Clock()
+        self.__move_counter = 0
         while self.__running:
             clock.tick(60)
+            self.__move_counter += 1
+            if self.__move_counter == 16:
+                self.__move_counter = 0
             self.__handle_events()
             match self.__state:
                 case 'menu':
@@ -430,5 +457,7 @@ class Game:
                         self.__run_game()
                     except Exception as E:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
+                case 'move':
+                    self.move_player()
             self.__screen.update()
         pygame.quit()
