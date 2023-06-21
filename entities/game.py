@@ -1,4 +1,6 @@
 import pygame
+
+from entities.tile import Tile
 from entities.window import Window
 from entities.music import Music
 from entities.board import Board
@@ -424,6 +426,12 @@ class Game:
 
     def __check_next_level(self, player_position):
         if self.__board.tiles[player_position[1]][player_position[0]].type == "e":
+            return not self.__board.check_for_key()
+        return False
+
+    def __check_key(self, player_position):
+        if self.__board.tiles[player_position[1]][player_position[0]].type == "k":
+            self.__board.tiles[player_position[1]][player_position[0]] = Tile()
             return True
         return False
 
@@ -436,6 +444,7 @@ class Game:
             self.__player_spawn = self.__get_spawn()
             self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                    self.__player_spawn[1], self.__resolution)
+        self.__check_key(self.__player.position())  # change to if statement if you want to do hud stuff
 
         if self.__check_next_level(self.__player.position()):
             if self.__level == 3:
