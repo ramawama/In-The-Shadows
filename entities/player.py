@@ -15,7 +15,7 @@ class Player:
         self.__x = x
         self.__y = y
 
-    def update_scale(self, resolution, screen):
+    def update_resolution(self, resolution, screen):
         self.__screen = screen
         self.__resolution = resolution
         self.__right = [pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue.png"),

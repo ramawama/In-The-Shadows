@@ -81,14 +81,15 @@ class Game:
                 self.__resolution = 1
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
-                self.__player.update_resolution(self.__resolution)
+                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                       self.__player_spawn[1], self.__resolution)
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
                 (self.__width, self.__height) = (1792, 1008)
                 self.__resolution = 2
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
-                self.__player.update_resolution(self.__resolution)
-
+                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                       self.__player_spawn[1], self.__resolution)
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
@@ -404,7 +405,9 @@ class Game:
         if self.__check_game_over(self.__player.position()):
             self.__game_over()
             self.__player_spawn = self.__get_spawn()
-            self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1], self.__resolution)
+            self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
+                                   self.__player_spawn[1], self.__resolution)
+
         if self.__check_next_level(self.__player.position()):
             if self.__level == 3:
                 self.__board.unload()
