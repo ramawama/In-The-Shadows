@@ -599,10 +599,13 @@ class Game:
             self.__handle_events()
             match self.__state:
                 case 'menu':
+                    pygame.mouse.set_visible(True)
                     self.__run_menu()
                 case 'options':
+                    pygame.mouse.set_visible(True)
                     self.__run_options()
                 case 'game':
+                    pygame.mouse.set_visible(False)
                     if self.__move_flag:
                         self.__update_guards()
                         self.__move_flag = False
