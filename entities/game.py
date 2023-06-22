@@ -18,7 +18,7 @@ class Game:
         self.__level = 1
         self.__move_counter = 0
         self.__move_direction = 'right'
-        self.__anim_counter = 0
+        self.__home_screen_anim = True
 
         self.__resolution = 2  # resolution option for scaling
 
@@ -176,6 +176,8 @@ class Game:
 
     # Runs the main menu
     def __run_menu(self):
+        if self.__move_counter % 15 == 0:
+            self.__home_screen_anim = not self.__home_screen_anim
         self.__music.play_music('menu')
         self.__screen.background_surface.fill((0, 0, 0))
         self.__screen.foreground_surface.fill((0, 0, 0, 0))
@@ -202,7 +204,10 @@ class Game:
         self.__rects['quit_text_rect'] = quit_text.get_rect()
         self.__rects['quit_text_rect'].center = (1.02*quit_width, quit_height + 1.6*quit_height // 4)
 
-        background = pygame.image.load("assets/graphics/Backgrounds/Home_screen_1.png")
+        if self.__home_screen_anim:
+            background = pygame.image.load("assets/graphics/Backgrounds/Home_screen_1.png")
+        else:
+            background = pygame.image.load("assets/graphics/Backgrounds/Home_screen_2.png")
         background = pygame.transform.scale(background, (self.__width, self.__height))
 
         self.__screen.background_surface.blit(background, (0, 0))
