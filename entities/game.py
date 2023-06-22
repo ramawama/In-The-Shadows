@@ -12,7 +12,7 @@ class Game:
         # Create global variables for height, width, and black and white colors
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
-        (self.__width, self.__height) = (896, 504)
+        (self.__width, self.__height) = (32*28, 32*16)
 
         self.__level = 1
         self.__move_counter = 0
@@ -86,7 +86,7 @@ class Game:
             elif self.__rects['hard_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "HARD"
             elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (896, 504)
+                (self.__width, self.__height) = (896, 512)
                 self.__resolution = 1
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
@@ -254,7 +254,7 @@ class Game:
         self.__screen.background_surface.blit(resolution, resolution_rect)
 
         (res_def_width, res_def_height) = (res_width, res_height + self.__height // 8)
-        resolution_def = res_font.render('DEFAULT  RESOLUTION  (896 x 504)', True, self.__white)
+        resolution_def = res_font.render('DEFAULT  RESOLUTION  (896 x 512)', True, self.__white)
         self.__rects['resolution_def_rect'] = resolution_def.get_rect()
         self.__rects['resolution_def_rect'].center = (res_def_width, res_def_height)
         self.__screen.background_surface.blit(resolution_def, self.__rects['resolution_def_rect'])
