@@ -3,7 +3,7 @@ from entities.board import Board
 
 
 class Guard:
-    def __init__(self, screen, resolution, x, y, path="", difficulty="easy", width=32, height=32):
+    def __init__(self, screen, resolution, x, y, path="LR", difficulty="easy", width=32, height=32):
         self.__alive = True
         self.__screen = screen
         self.__resolution = resolution
@@ -14,7 +14,7 @@ class Guard:
                 self.__difficulty = 2
             case "hard":
                 self.__difficulty = 3
-            case other:
+            case _:
                 self.__difficulty = 1
         self.__right = [pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}.png"), (self.__resolution * 32, self.__resolution * 32)),
                         pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}_walk.png"), (self.__resolution * 32, self.__resolution * 32))]
@@ -24,10 +24,16 @@ class Guard:
         self.__direction = "right"
         self.__x = int(x)
         self.__y = int(y)
+        self.__route = path
 
     def draw(self):
         self.__screen.blit(self.__curr_sprites[0],
                            (self.__x * 32 * self.__resolution, self.__y * 32 * self.__resolution))
+
+
+    @property
+    def route(self):
+        return self.__route
 
     @property
     def direction(self):
