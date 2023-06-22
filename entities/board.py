@@ -5,12 +5,12 @@ from entities.tile import Tile
 # Class for the game board (collection of all tiles)
 class Board:
     def __init__(self, screen, width, height):
+        self.__resolution = width // 896
         self.__tiles = []
         self.__screen = screen
         self.__loaded = False
         self.__screen_width = width
-        self.__screen_height = height - 32
-        self.__resolution = width // 896
+        self.__screen_height = height - (32 * self.__resolution)
         self.__level = 1
 
     def resize_board(self, screen, width, height):

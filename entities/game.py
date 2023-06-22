@@ -266,7 +266,7 @@ class Game:
         self.__screen.background_surface.blit(text, text_rect)
 
         (res_width, res_height) = (self.__width - self.__width // 4, opt_height + self.__height // 6)
-        resolution = small_font.render('SELECT RESOLUTION', True, self.__white)
+        resolution = small_font.render('SELECT  RESOLUTION', True, self.__white)
         resolution_rect = resolution.get_rect()
         resolution_rect.center = (res_width, res_height)
         self.__screen.background_surface.blit(resolution, resolution_rect)
