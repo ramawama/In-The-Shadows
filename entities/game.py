@@ -572,9 +572,9 @@ class Game:
     def __update_guards(self):
         for x in range(len(self.__guards)):
             move_direction = self.__guard_routes[x][2][(self.__turn_counter % len(self.__guard_routes[x][2]))]
+            self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
             match move_direction:
                 case 'R':
-                    # this needs to be replaced with a function that loads what the tile was from the original file
                     self.__guards[x].moveRight()
                 case 'L':
                     self.__guards[x].moveLeft()
@@ -582,6 +582,7 @@ class Game:
                     self.__guards[x].moveUp()
                 case 'D':
                     self.__guards[x].moveDown()
+            self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x)
 
     # Main execution loop
     def run(self):
