@@ -110,7 +110,7 @@ class Board:
 
     # Draws tiles on background_surface
     def draw_level(self):
-        self.__screen.background_surface.fill((0, 0, 0))
+        self.__screen.background_surface.fill((0, 0, 0), pygame.Rect(0, 0, self.__screen_width, self.__screen_height))
         self.__screen.foreground_surface.fill((0, 0, 0, 0))
         rows = len(self.__tiles)
         cols = len(self.__tiles[0])
@@ -131,7 +131,6 @@ class Board:
                                                               (tile_width, tile_height))
                     self.__screen.background_surface.blit(scaled_floor, (tile_x, tile_y))
                 self.__screen.foreground_surface.blit(scaled_tile, (tile_x, tile_y))
-        self.display_hud()
 
     # Returns array of tiles
     @property
@@ -144,7 +143,9 @@ class Board:
         self.__orig_tiles = []
 
     # pass in more parameters like a list of items a player has to display on the HUD
-    def display_hud(self):
+    def display_hud(self, key=False):
+        self.__screen.background_surface.fill((0, 0, 0), pygame.Rect(0, self.__screen_height,
+                                                                     self.__screen_width, 128))
         white = (255, 255, 255)
         text_font = pygame.font.Font('assets/fonts/Digital.TTF', int(self.__screen_height * 0.04))
         move_text = text_font.render('MOVE:', True, white)
@@ -162,7 +163,11 @@ class Board:
         (curr_level_width, curr_level_height) = (self.__screen_width // 2 - 32, move_height)
         curr_level_rect.center = (curr_level_width, curr_level_height)
 
-        instructions = text_font.render('COLLECT THE KEY AND AVOID CAPTURE!', True, white)
+        if not key:
+            instructions = text_font.render('COLLECT THE KEY AND AVOID CAPTURE!', True, white)
+        else:
+            instructions = text_font.render('KEY COLLECTED! ESCAPE TO THE NEXT LEVEL', True, white)
+
         instructions_rect = instructions.get_rect()
         (instructions_width, instructions_height) = (curr_level_width + (256 * self.__resolution), move_height)
         instructions_rect.center = (instructions_width, instructions_height)
@@ -171,4 +176,3 @@ class Board:
         self.__screen.background_surface.blit(scaled_arrow, (movement_width, movement_height))
         self.__screen.background_surface.blit(curr_level, curr_level_rect)
         self.__screen.background_surface.blit(instructions, instructions_rect)
-        pygame.display.update()
