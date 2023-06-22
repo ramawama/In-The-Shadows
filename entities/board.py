@@ -10,11 +10,13 @@ class Board:
         self.__loaded = False
         self.__screen_width = width
         self.__screen_height = height - 32
+        self.__resolution = width // 896
 
     def resize_board(self, screen, width, height):
+        self.__resolution = width // 896
         self.__screen = screen
         self.__screen_width = width
-        self.__screen_height = height - (32 * width // 896)
+        self.__screen_height = height - (32 * self.__resolution)
 
     # Load the level from a file
     def load_level(self, name=1):
@@ -106,6 +108,7 @@ class Board:
                                                               (tile_width, tile_height))
                     self.__screen.background_surface.blit(scaled_floor, (tile_x, tile_y))
                 self.__screen.foreground_surface.blit(scaled_tile, (tile_x, tile_y))
+        self.display_hud()
 
     # Returns array of tiles
     @property
@@ -115,3 +118,15 @@ class Board:
     def unload(self):
         self.__loaded = False
         self.__tiles = []
+
+    # pass in more parameters like a list of items a player has to display on the HUD
+    def display_hud(self):
+        white = (255, 255, 255)
+        text_font = pygame.font.Font('assets/fonts/Digital.TTF', int(self.__screen_height * 0.04))
+        instructions_text = text_font.render('MOVE:', True, white)
+        instructions_rect = instructions_text.get_rect()
+        (instruct_width, instruct_height) = (self.__screen_width // (16 * self.__resolution), self.__screen_height + (16 * self.__resolution))
+        instructions_rect.center = (instruct_width, instruct_height)
+
+
+        self.__screen.background_surface.blit(instructions_text, instructions_rect)
