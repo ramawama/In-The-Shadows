@@ -1,3 +1,5 @@
+import copy
+
 import pygame
 from entities.tile import Tile
 
@@ -6,12 +8,17 @@ from entities.tile import Tile
 class Board:
     def __init__(self, screen, width, height):
         self.__resolution = width // 896
+        self.__orig_tiles = []
         self.__tiles = []
         self.__screen = screen
         self.__loaded = False
         self.__screen_width = width
         self.__screen_height = height - (32 * self.__resolution)
         self.__level = 1
+        self.__exit_tile = [0, 0]
+
+    def unlock(self):
+        self.__tiles[self.__exit_tile[1]][self.__exit_tile[0]].unlock()
 
     def resize_board(self, screen, width, height):
         self.__resolution = width // 896
@@ -42,6 +49,9 @@ class Board:
                             if char == "p":
                                 playerPos = [x, y]
                                 row_array.append(Tile("o", False, x, y))
+                            elif char == "e":
+                                self.__exit_tile = x, y
+                                row_array.append(Tile(char, False, x, y))
                             else:
                                 row_array.append(Tile(char, False, x, y))
                             # if char == "g":
@@ -50,6 +60,7 @@ class Board:
                             # print("spawn at at: x:", x, " y: ", y)
                             x += 1
                         self.__tiles.append(row_array)
+                        self.__orig_tiles.append(row_array)
                         y += 1
                         x = 0
                 for x in range(line_counter, len(lines), 3):
@@ -60,6 +71,12 @@ class Board:
                 return playerPos, guards
             except IOError:
                 print("Error from load_tiles function!")
+
+    def replace_tile_with_original(self, x, y):
+        self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, x, y)
+
+    def replace_tile_with_guard(self, x, y):
+        self.__tiles[x][y] = Tile("g", self.__tiles[x][y].lit, x, y)
 
     def check_for_key(self):
         for row in range(len(self.__tiles)):
@@ -120,6 +137,7 @@ class Board:
     def unload(self):
         self.__loaded = False
         self.__tiles = []
+        self.__orig_tiles = []
 
     # pass in more parameters like a list of items a player has to display on the HUD
     def display_hud(self):
