@@ -14,7 +14,7 @@ class Board:
     def resize_board(self, screen, width, height):
         self.__screen = screen
         self.__screen_width = width
-        self.__screen_height = height
+        self.__screen_height = height - (32 * width // 896)
 
     # Load the level from a file
     def load_level(self, name=1):

@@ -93,7 +93,7 @@ class Game:
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                        self.__player_spawn[1], self.__resolution)
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (1792, 1008)
+                (self.__width, self.__height) = (1792, 1024)
                 self.__resolution = 2
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
@@ -319,7 +319,6 @@ class Game:
         if self.__move_direction == "right" or self.__move_direction == "left":
             self.__player.direction = self.__move_direction
         sprites = self.__player.currSprites()
-
         step_size = 2 * self.__resolution * self.__resolution
         game_over = False
 
