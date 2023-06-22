@@ -1,10 +1,12 @@
+import time
+
 import pygame
 
 
 # Class for the main window and corresponding surfaces (background and foreground)
 class Window:
     def __init__(self, width, height):
-        self.__screen = pygame.display.set_mode((width, height))
+        self.__screen = pygame.display.set_mode((width, height), pygame.NOFRAME + pygame.FULLSCREEN + pygame.SCALED, 32)
         self.__screen.fill((0, 0, 0))
         pygame.display.flip()
         pygame.display.set_caption("In The Shadows")
@@ -21,7 +23,7 @@ class Window:
         pygame.display.update()
 
     def resize(self, width, height):
-        self.__screen = pygame.display.set_mode((width, height))
+        self.__screen = pygame.display.set_mode((width, height), pygame.NOFRAME + pygame.SCALED + pygame.FULLSCREEN, 32)
         self.__background_surface = pygame.transform.scale(self.__background_surface, (width, height))
         self.__foreground_surface = pygame.transform.scale(self.__foreground_surface, (width, height))
 

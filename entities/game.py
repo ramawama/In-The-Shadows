@@ -1,5 +1,5 @@
 import pygame
-
+import os
 from entities.guard import Guard
 from entities.tile import Tile
 from entities.window import Window
@@ -13,14 +13,14 @@ class Game:
         # Create global variables for height, width, and black and white colors
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
-        (self.__width, self.__height) = (32*28, 32*16)
+        (self.__width, self.__height) = (64*28, 64*16)
 
         self.__level = 1
         self.__move_counter = 0
         self.__move_direction = 'right'
         self.__anim_counter = 0
 
-        self.__resolution = 1  # resolution option for scaling
+        self.__resolution = 2  # resolution option for scaling
 
         # Create window
         self.__screen = Window(self.__width, self.__height)
@@ -51,6 +51,7 @@ class Game:
 
         self.__set_player_and_guards()
 
+        self.__fullscreen = True
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
@@ -70,7 +71,6 @@ class Game:
             case 'game':
                 self.__state = 'menu'
                 self.__set_player_and_guards()
-
             case 'menu':
                 self.__running = False
             case 'game_over':
@@ -97,18 +97,23 @@ class Game:
             elif self.__rects['hard_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "HARD"
             elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (896, 512)
-                self.__resolution = 1
-                self.__screen.resize(self.__width, self.__height)
-                self.__board.resize_board(self.__screen, self.__width, self.__height)
-                self.__set_player_and_guards()
-
+                if self.__fullscreen:
+                    (self.__width, self.__height) = (32 * 28, 32 * 16)
+                    self.__resolution = 1
+                    self.__screen.resize(self.__width, self.__height)
+                    self.__board.resize_board(self.__screen, self.__width, self.__height)
+                    self.__set_player_and_guards()
+                    pygame.display.toggle_fullscreen()
+                    self.__fullscreen = False
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (1792, 1024)
-                self.__resolution = 2
-                self.__screen.resize(self.__width, self.__height)
-                self.__board.resize_board(self.__screen, self.__width, self.__height)
-                self.__set_player_and_guards()
+                if not self.__fullscreen:
+                    (self.__width, self.__height) = (64 * 28, 64 * 16)
+                    self.__resolution = 2
+                    self.__screen.resize(self.__width, self.__height)
+                    self.__board.resize_board(self.__screen, self.__width, self.__height)
+                    self.__set_player_and_guards()
+                    pygame.display.toggle_fullscreen()
+                    self.__fullscreen = True
 
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
@@ -215,7 +220,6 @@ class Game:
 
         big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
         small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.09))
-        res_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.06))
 
         (opt_width, opt_height) = (self.__width // 2, self.__height // 8)
         text = big_font.render('OPTIONS', True, self.__white)
@@ -262,19 +266,19 @@ class Game:
         self.__screen.background_surface.blit(text, text_rect)
 
         (res_width, res_height) = (self.__width - self.__width // 4, opt_height + self.__height // 6)
-        resolution = small_font.render('SELECT RESOLUTION', True, self.__white)
+        resolution = small_font.render('SELECT  RESOLUTION', True, self.__white)
         resolution_rect = resolution.get_rect()
         resolution_rect.center = (res_width, res_height)
         self.__screen.background_surface.blit(resolution, resolution_rect)
 
         (res_def_width, res_def_height) = (res_width, res_height + self.__height // 8)
-        resolution_def = res_font.render('DEFAULT  RESOLUTION  (896 x 512)', True, self.__white)
+        resolution_def = small_font.render('WINDOW  MODE', True, self.__white)
         self.__rects['resolution_def_rect'] = resolution_def.get_rect()
         self.__rects['resolution_def_rect'].center = (res_def_width, res_def_height)
         self.__screen.background_surface.blit(resolution_def, self.__rects['resolution_def_rect'])
 
         (res_2_width, res_2_height) = (res_width, res_def_height + self.__height // 8)
-        resolution_2 = res_font.render('LARGE  RESOLUTION  (1792 x 1008)', True, self.__white)
+        resolution_2 = small_font.render('FULLSCREEN  MODE', True, self.__white)
         self.__rects['resolution_2_rect'] = resolution_def.get_rect()
         self.__rects['resolution_2_rect'].center = (res_2_width, res_2_height)
         self.__screen.background_surface.blit(resolution_2, self.__rects['resolution_2_rect'])
@@ -586,6 +590,7 @@ class Game:
 
     # Main execution loop
     def run(self):
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
         clock = pygame.time.Clock()
         self.__move_counter = 0
         self.__move_flag = False
