@@ -137,6 +137,7 @@ class Board:
     def unload(self):
         self.__loaded = False
         self.__tiles = []
+        self.__orig_tiles = []
 
     # pass in more parameters like a list of items a player has to display on the HUD
     def display_hud(self):
