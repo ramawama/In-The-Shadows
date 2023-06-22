@@ -129,20 +129,9 @@ class Board:
                                              self.__screen_height + (16 * self.__resolution))
         instructions_rect.center = (instruct_width, instruct_height)
 
-        movement_up = text_font.render('↑', True, white)
-        movement_up_rect = movement_up.get_rect()
-        (movement_up_width, movement_up_height) = (instruct_width + (32 * self.__resolution),
-                                                   instruct_height - (16 * self.__resolution))
-        movement_up_rect.center = (movement_up_width, movement_up_height)
-
-        movement = text_font.render('← ↓ →', True, white)
-        movement_rect = movement.get_rect()
-        (movement_width, movement_height) = (movement_up_width + (32 * self.__resolution), instruct_height + (10 * self.__resolution))
-        movement_rect.center = (movement_width, movement_height)
+        arrow_key = pygame.image.load("assets/graphics/HUD Elements/arrow_keys.png").convert_alpha()
+        scaled_arrow = pygame.transform.scale(arrow_key, (32 * self.__resolution, 32 * self.__resolution))
+        (movement_width, movement_height) = (instruct_width + (32 * self.__resolution), self.__screen_height)
 
         self.__screen.background_surface.blit(instructions_text, instructions_rect)
-        self.__screen.background_surface.blit(movement_up, movement_up_rect)
-        self.__screen.background_surface.blit(movement, movement_rect)
-
-        self.__screen.background_surface.blit(instructions_text, instructions_rect)
-
+        self.__screen.background_surface.blit(scaled_arrow, (movement_width,movement_height))
