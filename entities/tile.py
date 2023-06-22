@@ -39,7 +39,7 @@ class Tile:
                 else:
                     self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_t.png").convert_alpha()
             case "e":
-                self._image = pygame.image.load("./assets/graphics/Level Elements/Exit.png").convert_alpha()
+                self._image = pygame.image.load("./assets/graphics/Level Elements/Exit_locked.png").convert_alpha()
             case "k":
                 self._image = pygame.image.load("./assets/graphics/Level Elements/Key.png").convert_alpha()
 
@@ -77,3 +77,7 @@ class Tile:
             self._image = pygame.image.load("./assets/graphics/Level Elements/Floor/Floor.png").convert_alpha()
         elif self.type == "t":
             self._image = pygame.image.load("./assets/graphics/Level Elements/Torch/Torch_unlit.png").convert_alpha()
+
+    def unlock(self):
+        if self.type == "e":
+            self._image = pygame.image.load("./assets/graphics/Level Elements/Exit.png").convert_alpha()
