@@ -145,7 +145,7 @@ class Board:
     # pass in more parameters like a list of items a player has to display on the HUD
     def display_hud(self, key=False):
         self.__screen.background_surface.fill((0, 0, 0), pygame.Rect(0, self.__screen_height,
-                                                          self.__screen_width, 128))
+                                                                     self.__screen_width, 128))
         white = (255, 255, 255)
         text_font = pygame.font.Font('assets/fonts/Digital.TTF', int(self.__screen_height * 0.04))
         move_text = text_font.render('MOVE:', True, white)
