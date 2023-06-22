@@ -23,6 +23,7 @@ class Board:
     def load_level(self, name=1):
         if not self.__loaded:
             try:
+                self.__level = name
                 with open('./levels/level_' + str(name), 'r') as file:
                     file.readline().strip()
                     lines = file.readlines()
@@ -59,7 +60,6 @@ class Board:
                 return playerPos, guards
             except IOError:
                 print("Error from load_tiles function!")
-        self.__level = name
 
     def check_for_key(self):
         for row in range(len(self.__tiles)):
@@ -137,7 +137,7 @@ class Board:
 
         curr_level = text_font.render('LEVEL ' + str(self.__level), True, white)
         curr_level_rect = curr_level.get_rect()
-        (curr_level_width, curr_level_height) = (self.__screen_width // 2, move_height)
+        (curr_level_width, curr_level_height) = (self.__screen_width // 2 - 32, move_height)
         curr_level_rect.center = (curr_level_width, curr_level_height)
 
         instructions = text_font.render('COLLECT THE KEY AND AVOID CAPTURE!', True, white)
@@ -149,3 +149,4 @@ class Board:
         self.__screen.background_surface.blit(scaled_arrow, (movement_width, movement_height))
         self.__screen.background_surface.blit(curr_level, curr_level_rect)
         self.__screen.background_surface.blit(instructions, instructions_rect)
+        pygame.display.update()
