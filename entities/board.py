@@ -49,7 +49,7 @@ class Board:
                         y += 1
                         x = 0
                 for x in range(line_counter, len(lines), 3):
-                    guards.append((lines[x].strip(), lines[x+1].strip(), lines[x+2].strip()))
+                    guards.append((lines[x].strip(), lines[x+1].strip().split(), lines[x+2].strip()))
                 #  Update torch count for all tiles
                 self.torch_check()
                 self.__loaded = True

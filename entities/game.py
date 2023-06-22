@@ -57,8 +57,8 @@ class Game:
                                self.__resolution)
         self.__guards = []
         for x in range(len(self.__guard_routes)):
-            self.__guards.append(Guard(self.__screen.foreground_surface, self.__guard_routes[x][1][0],
-                                       self.__guard_routes[x][1][2], self.__guard_routes[x][2],
+            self.__guards.append(Guard(self.__screen.foreground_surface, self.__resolution, self.__guard_routes[x][1][0],
+                                       self.__guard_routes[x][1][1], self.__guard_routes[x][2],
                                        self.__guard_routes[x][0]))
 
     # Changes states when escape is pressed
@@ -543,10 +543,16 @@ class Game:
             return True
         return False
 
+    def __draw_guards(self):
+        for x in range(len(self.__guards)):
+            self.__guards[x].draw()
+
     # Runs the actual game
     def __run_game(self):
         self.__board.draw_level()
         self.__player.draw()
+        self.__guards[1].draw()
+        self.__draw_guards()
         if self.__check_game_over(self.__player.position()):
             self.__game_over()
             self.__player_spawn, self.__guard_routes = self.__get_spawns()
