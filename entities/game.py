@@ -51,7 +51,6 @@ class Game:
 
         self.__set_player_and_guards()
 
-
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
                                self.__resolution)
@@ -97,20 +96,10 @@ class Game:
             elif self.__rects['hard_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "HARD"
             elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (896, 512)
-                self.__resolution = 1
-                self.__screen.resize(self.__width, self.__height)
-                self.__board.resize_board(self.__screen, self.__width, self.__height)
-                self.__set_player_and_guards()
+                self.__screen.resize()
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (1792, 1024)
-                self.__resolution = 2
-                self.__screen.resize(self.__width, self.__height)
-                self.__board.resize_board(self.__screen, self.__width, self.__height)
-                self.__set_player_and_guards()
-            elif self.__rects['resolution_3_rect'].collidepoint(mouse_pos):
-                (self.__width, self.__height) = (1000,1000)
-                self.__screen = pygame.display.set_mode((400, 300), pygame.FULLSCREEN)
+                self.__screen.resize()
+
 
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
@@ -276,16 +265,10 @@ class Game:
         self.__screen.background_surface.blit(resolution_def, self.__rects['resolution_def_rect'])
 
         (res_2_width, res_2_height) = (res_width, res_def_height + self.__height // 8)
-        resolution_2 = res_font.render('LARGE  RESOLUTION  (1792 x 1008)', True, self.__white)
+        resolution_2 = res_font.render('FULLSCREEN MODE', True, self.__white)
         self.__rects['resolution_2_rect'] = resolution_def.get_rect()
         self.__rects['resolution_2_rect'].center = (res_2_width, res_2_height)
         self.__screen.background_surface.blit(resolution_2, self.__rects['resolution_2_rect'])
-
-        (res_3_width, res_3_height) = (res_width, res_2_height + self.__height // 8)
-        resolution_3 = res_font.render('FULLSCREEN  MODE', True, self.__white)
-        self.__rects['resolution_3_rect'] = resolution_def.get_rect()
-        self.__rects['resolution_3_rect'].center = (res_3_width, res_3_height)
-        self.__screen.background_surface.blit(resolution_3, self.__rects['resolution_3_rect'])
 
         pygame.display.update()
 
