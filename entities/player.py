@@ -6,8 +6,8 @@ class Player:
         self.__resolution = resolution
         self.__alive = True
         self.__screen = screen
-        self.__right = [pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue.png"), (self.__resolution * 32, self.__resolution * 32)),
-                        pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue_walk.png"), (self.__resolution * 32, self.__resolution * 32))]
+        self.__right = [pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load("assets/graphics/Rogue/Rogue_walk.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32))]
         self.__left = [pygame.transform.flip(self.__right[0], True, False),
                        pygame.transform.flip(self.__right[1], True, False)]
         self.__curr_sprites = self.__right
@@ -59,5 +59,3 @@ class Player:
 
     def position(self):
         return self.__x, self.__y
-
-
