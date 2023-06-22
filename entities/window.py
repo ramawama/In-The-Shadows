@@ -4,7 +4,7 @@ import pygame
 # Class for the main window and corresponding surfaces (background and foreground)
 class Window:
     def __init__(self, width, height):
-        self.__screen = pygame.display.set_mode((width, height))
+        self.__screen = pygame.display.set_mode((width, height), pygame.NOFRAME + pygame.FULLSCREEN + pygame.SCALED)
         self.__screen.fill((0, 0, 0))
         pygame.display.flip()
         pygame.display.set_caption("In The Shadows")
