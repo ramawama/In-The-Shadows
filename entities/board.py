@@ -9,7 +9,7 @@ class Board:
         self.__screen = screen
         self.__loaded = False
         self.__screen_width = width
-        self.__screen_height = height
+        self.__screen_height = height - 32
 
     def resize_board(self, screen, width, height):
         self.__screen = screen

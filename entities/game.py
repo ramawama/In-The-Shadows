@@ -12,7 +12,7 @@ class Game:
         # Create global variables for height, width, and black and white colors
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
-        (self.__width, self.__height) = (896, 504)
+        (self.__width, self.__height) = (32*28, 32*16)
 
         self.__level = 1
         self.__move_counter = 0
