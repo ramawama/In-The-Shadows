@@ -1,4 +1,5 @@
-import sys
+import cProfile
+import time
 
 from entities.game import Game
 
@@ -11,3 +12,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+    # cProfile.run('main()', sort='cumtime')

@@ -183,7 +183,7 @@ class Game:
         self.__rects['quit_text_rect'] = quit_text.get_rect()
         self.__rects['quit_text_rect'].center = (quit_width, quit_height + quit_height // 4)
 
-        background = pygame.image.load("assets/graphics/Backgrounds/dungeon.jpg")
+        background = pygame.image.load("assets/graphics/Backgrounds/dungeon.jpg").convert_alpha()
         background = pygame.transform.scale(background, (self.__width, self.__height))
 
         self.__screen.background_surface.blit(background, (0, 0))
@@ -194,7 +194,7 @@ class Game:
 
     # Runs the options
     def __run_options(self):
-        background = pygame.image.load("assets/graphics/Backgrounds/woodBackground.png")
+        background = pygame.image.load("assets/graphics/Backgrounds/woodBackground.png").convert_alpha()
         background = pygame.transform.scale(background, (self.__width, self.__height))
         self.__screen.background_surface.fill(self.__black)
         self.__screen.background_surface.blit(background, (0, 0))
@@ -444,7 +444,7 @@ class Game:
             self.__player_spawn = self.__get_spawn()
             self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
                                    self.__player_spawn[1], self.__resolution)
-        self.__check_key(self.__player.position())  # change to if statement if you want to do hud stuff
+        self.__check_key(self.__player.position())  # change to if statement is you want to do hud stuff
 
         if self.__check_next_level(self.__player.position()):
             if self.__level == 3:
@@ -454,6 +454,8 @@ class Game:
                                        self.__player_spawn[1], self.__resolution)
             else:
                 self.__level += 1
+                self.__screen.background_surface.fill(self.__black)
+                self.__screen.foreground_surface.fill(self.__black)
                 self.__board.unload()
                 self.__player_spawn = self.__load_game()
                 self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
@@ -465,6 +467,7 @@ class Game:
         self.__move_counter = 0
         while self.__running:
             clock.tick(60)
+            # print(clock.get_fps())
             self.__move_counter += 1
             if self.__move_counter == 16 // self.__resolution:
                 self.__move_counter = 0

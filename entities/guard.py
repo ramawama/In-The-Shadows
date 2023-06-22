@@ -15,8 +15,8 @@ class Guard:
                 self.__difficulty = 3
             case other:
                 self.__difficulty = 1
-        self.__right = [pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}.png"), (width / 28, height // 15)),
-                        pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}_walk.png"), (width / 28, height // 15))]
+        self.__right = [pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}.png").convert_alpha(), (width / 28, height // 15)),
+                        pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}_walk.png").convert_alpha(), (width / 28, height // 15))]
         self.__left = [pygame.transform.flip(self.__right[0], True, False),
                        pygame.transform.flip(self.__right[1], True, False)]
         self.__curr_sprites = self.__right
