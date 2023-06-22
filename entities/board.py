@@ -12,6 +12,10 @@ class Board:
         self.__screen_height = height - 32
         self.__resolution = width // 896
         self.__level = 1
+        self.__exit_tile = [0, 0]
+
+    def unlock(self):
+        self.__tiles[self.__exit_tile[1]][self.__exit_tile[0]].unlock()
 
     def resize_board(self, screen, width, height):
         self.__resolution = width // 896
@@ -42,6 +46,9 @@ class Board:
                             if char == "p":
                                 playerPos = [x, y]
                                 row_array.append(Tile("o", False, x, y))
+                            elif char == "e":
+                                self.__exit_tile = x, y
+                                row_array.append(Tile(char, False, x, y))
                             else:
                                 row_array.append(Tile(char, False, x, y))
                             # if char == "g":

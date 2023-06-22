@@ -537,6 +537,7 @@ class Game:
         if self.__board.tiles[player_position[1]][player_position[0]].type == "k":
             self.__board.tiles[player_position[1]][player_position[0]] = Tile()
             self.__board.torch_check()
+            self.__board.unlock()
             return True
         return False
 
