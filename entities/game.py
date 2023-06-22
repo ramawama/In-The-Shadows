@@ -334,7 +334,6 @@ class Game:
             self.__player.direction = self.__move_direction
         sprites = self.__player.currSprites()
         step_size = 2 * self.__resolution * self.__resolution
-        game_over = False
 
         match self.__move_direction:
             case "right":
@@ -421,13 +420,10 @@ class Game:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
             self.__board.torch_check()
 
-        return game_over
-
     # not done
     def move_guards(self):
-        game_over = False
         for x in range(len(self.__guards)):
-            guard_pos = self.__guards[x].position
+            guard_pos = self.__guards[x].position()
             sprites = self.__guards[x].currSprites()
             route = self.__guards[x].route
             step_size = 2 * self.__resolution * self.__resolution
@@ -454,7 +450,7 @@ class Game:
                     self.__screen.update()
                     # update player location internally
                 case 'L':
-                    if self.__board.tiles[player_position[1]][player_position[0] - 1].type not in ['l', 'r', 'm', 'w']:
+                    if self.__board.tiles[guard_pos[1]][guard_pos[0] - 1].type not in ['l', 'r', 'm', 'w']:
                         # draw background
                         self.__board.draw_level()
                         # draw animation frame
@@ -473,7 +469,7 @@ class Game:
                         self.__screen.update()
                         # update player location internally
                 case "up":
-                    if self.__board.tiles[player_position[1] - 1][player_position[0]].type not in ['l', 'r', 'm', 'w']:
+                    if self.__board.tiles[guard_pos[1] - 1][guard_pos[0]].type not in ['l', 'r', 'm', 'w']:
                         # draw background
                         self.__board.draw_level()
                         # draw animation frame
@@ -492,7 +488,7 @@ class Game:
                         self.__screen.update()
                         # update player location internally
                 case "down":
-                    if self.__board.tiles[player_position[1] + 1][player_position[0]].type not in ['l', 'r', 'm', 'w']:
+                    if self.__board.tiles[guard_pos[1] + 1][guard_pos[0]].type not in ['l', 'r', 'm', 'w']:
                         # draw background
                         self.__board.draw_level()
                         # draw animation frame
@@ -511,14 +507,12 @@ class Game:
                         self.__screen.update()
                         # update player location internally
 
-            player_position = self.__player.position()
+            guard_pos = self.__guards[x].position()
 
-            if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
-                    self.__board.tiles[player_position[1]][player_position[0]].lit:
-                self.__board.tiles[player_position[1]][player_position[0]].unlight()
+            if self.__board.tiles[guard_pos[1]][guard_pos[0]].type == "t" and not \
+                    self.__board.tiles[guard_pos[1]][guard_pos[0]].lit:
+                self.__board.tiles[guard_pos[1]][guard_pos[0]].unlight()
                 self.__board.torch_check()
-
-        return game_over
 
     def __get_spawns(self):
         player_spawn, guards = self.__board.load_level(self.__level)
