@@ -166,7 +166,10 @@ class Board:
         if not key:
             instructions = text_font.render('COLLECT THE KEY AND AVOID CAPTURE!', True, white)
         else:
-            instructions = text_font.render('KEY COLLECTED! ESCAPE TO THE NEXT LEVEL', True, white)
+            if self.__level == 3:
+                instructions = text_font.render('KEY COLLECTED! COLLECT THE TREASURE', True, white)
+            else:
+                instructions = text_font.render('KEY COLLECTED! ESCAPE TO THE NEXT LEVEL', True, white)
 
         instructions_rect = instructions.get_rect()
         (instructions_width, instructions_height) = (curr_level_width + (256 * self.__resolution), move_height)
