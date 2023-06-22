@@ -20,21 +20,24 @@ class Tile:
             case "p":
                 self._image = pygame.image.load("./assets/graphics/Rogue/Rogue.png").convert_alpha()
             case "w":
-                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_t.png").convert_alpha()
-            case "m":
-                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_b.png").convert_alpha()
-            case "l":
-                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_l.png").convert_alpha()
-            case "r":
-                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_r.png").convert_alpha()
-            case "1":
-                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_tl.png").convert_alpha()
-            case "2":
-                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_tr.png").convert_alpha()
-            case "3":
-                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_bl.png").convert_alpha()
-            case "4":
-                self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_br.png").convert_alpha()
+                if x == 0 and y == 0:
+                    self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_tl.png").convert_alpha()
+                elif x == 0 and y == 14:
+                    self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_bl.png").convert_alpha()
+                elif x == 27 and y == 0:
+                    self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_tr.png").convert_alpha()
+                elif x == 27 and y == 14:
+                    self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_corner_br.png").convert_alpha()
+                elif y == 0:
+                    self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_t.png").convert_alpha()
+                elif x == 0:
+                    self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_l.png").convert_alpha()
+                elif x == 27:
+                    self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_r.png").convert_alpha()
+                elif y == 14:
+                    self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_b.png").convert_alpha()
+                else:
+                    self._image = pygame.image.load("./assets/graphics/Level Elements/Wall_t.png").convert_alpha()
             case "e":
                 self._image = pygame.image.load("./assets/graphics/Level Elements/Exit.png").convert_alpha()
             case "k":
