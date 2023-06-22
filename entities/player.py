@@ -18,6 +18,8 @@ class Player:
         self.__direction = "right"
         self.__x = x
         self.__y = y
+        self.__items = []
+        self.__key = False
 
     def draw(self):
         self.__screen.blit(self.__curr_sprites[0], (self.__x * 32 * self.__resolution, self.__y * 32 * self.__resolution))
@@ -29,6 +31,14 @@ class Player:
     @direction.setter
     def direction(self, direction):
         self.__direction = direction
+
+    @property
+    def key(self):
+        return self.__key
+
+    @key.setter
+    def key(self, key):
+        self.__key = key
 
     def moveUp(self):
         if self.__direction == "right":
@@ -63,3 +73,8 @@ class Player:
 
     def position(self):
         return self.__x, self.__y
+
+    #add item to inventory
+    def add_item(self, item):
+        self.__items.append(item)
+

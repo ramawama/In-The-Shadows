@@ -543,6 +543,7 @@ class Game:
             self.__board.tiles[player_position[1]][player_position[0]] = Tile()
             self.__board.torch_check()
             self.__board.unlock()
+            self.__player.key = True
             return True
         return False
 
@@ -553,6 +554,7 @@ class Game:
     # Runs the actual game
     def __run_game(self):
         self.__board.draw_level()
+        self.__board.display_hud(self.__player.key)
         self.__player.draw()
         self.__guards[1].draw()
         self.__draw_guards()
@@ -573,6 +575,7 @@ class Game:
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
                 self.__set_player_and_guards()
+                self.__player.reset_key()
 
     def __update_guards(self):
         for x in range(len(self.__guards)):
