@@ -125,7 +125,8 @@ class Board:
         text_font = pygame.font.Font('assets/fonts/Digital.TTF', int(self.__screen_height * 0.04))
         instructions_text = text_font.render('MOVE:', True, white)
         instructions_rect = instructions_text.get_rect()
-        (instruct_width, instruct_height) = (self.__screen_width // (16 * self.__resolution), self.__screen_height + (16 * self.__resolution))
+        (instruct_width, instruct_height) = (self.__screen_width // (16 * self.__resolution),
+                                             self.__screen_height + (16 * self.__resolution))
         instructions_rect.center = (instruct_width, instruct_height)
 
 
