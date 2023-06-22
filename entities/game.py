@@ -186,30 +186,30 @@ class Game:
         (options_width, options_height) = (start_width, start_height + start_height // 32)
         (quit_width, quit_height) = (start_width, start_height + start_height // 4)
 
-        text = big_font.render('IN  THE  SHADOWS', True, self.__white)
-        text_rect = text.get_rect()
-        text_rect.center = (self.__width // 2, self.__height // 4)
+        # text = big_font.render('IN  THE  SHADOWS', True, self.__white)
+        # text_rect = text.get_rect()
+        # text_rect.center = (self.__width // 2, self.__height // 4)
 
-        start_text = small_font.render('START', True, self.__white)
+        start_text = small_font.render('START__', True, self.__white)
         self.__rects['start_text_rect'] = start_text.get_rect()
-        self.__rects['start_text_rect'].center = (start_width, start_height + 1)
+        self.__rects['start_text_rect'].center = (1.04*start_width, 0.95*start_height)
 
-        options_text = small_font.render('OPTIONS', True, self.__white)
+        options_text = small_font.render('OPTIONS_', True, self.__white)
         self.__rects['options_text_rect'] = options_text.get_rect()
-        self.__rects['options_text_rect'].center = (options_width, options_height + options_height // 4)
+        self.__rects['options_text_rect'].center = (1.02*options_width, options_height + 1.25*options_height // 4)
 
-        quit_text = small_font.render('QUIT', True, self.__white)
+        quit_text = small_font.render('QUIT__', True, self.__white)
         self.__rects['quit_text_rect'] = quit_text.get_rect()
-        self.__rects['quit_text_rect'].center = (quit_width, quit_height + quit_height // 4)
+        self.__rects['quit_text_rect'].center = (1.02*quit_width, quit_height + 1.6*quit_height // 4)
 
-        background = pygame.image.load("assets/graphics/Backgrounds/dungeon.jpg")
+        background = pygame.image.load("assets/graphics/Backgrounds/Home_screen_1.png")
         background = pygame.transform.scale(background, (self.__width, self.__height))
 
         self.__screen.background_surface.blit(background, (0, 0))
-        self.__screen.background_surface.blit(text, text_rect)
-        self.__screen.background_surface.blit(start_text, self.__rects['start_text_rect'])
-        self.__screen.background_surface.blit(options_text, self.__rects['options_text_rect'])
-        self.__screen.background_surface.blit(quit_text, self.__rects['quit_text_rect'])
+        # self.__screen.background_surface.blit(text, text_rect)
+        # self.__screen.background_surface.blit(start_text, self.__rects['start_text_rect'])
+        # self.__screen.background_surface.blit(options_text, self.__rects['options_text_rect'])
+        # self.__screen.background_surface.blit(quit_text, self.__rects['quit_text_rect'])
 
     # Runs the options
     def __run_options(self):
