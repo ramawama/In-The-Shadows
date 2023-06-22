@@ -579,13 +579,14 @@ class Game:
             move_direction = self.__guard_routes[x][2][(self.__turn_counter % len(self.__guard_routes[x][2]))]
             match move_direction:
                 case 'R':
-                    self.__guards[x].x = self.__guards[x].x + 1
+                    # this needs to be replaced with a function that loads what the tile was from the original file
+                    self.__guards[x].moveRight()
                 case 'L':
-                    self.__guards[x].x = self.__guards[x].x - 1
+                    self.__guards[x].moveLeft()
                 case 'U':
-                    self.__guards[x].y = self.__guards[x].y + 1
+                    self.__guards[x].moveUp()
                 case 'D':
-                    self.__guards[x].y = self.__guards[x].y - 1
+                    self.__guards[x].moveDown()
 
     # Main execution loop
     def run(self):
