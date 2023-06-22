@@ -125,21 +125,27 @@ class Board:
     def display_hud(self):
         white = (255, 255, 255)
         text_font = pygame.font.Font('assets/fonts/Digital.TTF', int(self.__screen_height * 0.04))
-        instructions_text = text_font.render('MOVE:', True, white)
-        instructions_rect = instructions_text.get_rect()
-        (instruct_width, instruct_height) = (self.__screen_width // (16 * self.__resolution),
+        move_text = text_font.render('MOVE:', True, white)
+        move_rect = move_text.get_rect()
+        (move_width, move_height) = (self.__screen_width // (16 * self.__resolution),
                                              self.__screen_height + (16 * self.__resolution))
-        instructions_rect.center = (instruct_width, instruct_height)
+        move_rect.center = (move_width, move_height)
 
         arrow_key = pygame.image.load("assets/graphics/HUD Elements/arrow_keys.png").convert_alpha()
         scaled_arrow = pygame.transform.scale(arrow_key, (32 * self.__resolution, 32 * self.__resolution))
-        (movement_width, movement_height) = (instruct_width + (32 * self.__resolution), self.__screen_height)
+        (movement_width, movement_height) = (move_width + (32 * self.__resolution), self.__screen_height)
 
         curr_level = text_font.render('LEVEL ' + str(self.__level), True, white)
         curr_level_rect = curr_level.get_rect()
-        (curr_level_width, curr_level_height) = (self.__screen_width // 2, instruct_height)
+        (curr_level_width, curr_level_height) = (self.__screen_width // 2, move_height)
         curr_level_rect.center = (curr_level_width, curr_level_height)
 
-        self.__screen.background_surface.blit(instructions_text, instructions_rect)
-        self.__screen.background_surface.blit(scaled_arrow, (movement_width,movement_height))
+        instructions = text_font.render('COLLECT THE KEY AND AVOID CAPTURE!', True, white)
+        instructions_rect = instructions.get_rect()
+        (instructions_width, instructions_height) = (curr_level_width + (256 * self.__resolution), move_height)
+        instructions_rect.center = (instructions_width, instructions_height)
+
+        self.__screen.background_surface.blit(move_text, move_rect)
+        self.__screen.background_surface.blit(scaled_arrow, (movement_width, movement_height))
         self.__screen.background_surface.blit(curr_level, curr_level_rect)
+        self.__screen.background_surface.blit(instructions, instructions_rect)
