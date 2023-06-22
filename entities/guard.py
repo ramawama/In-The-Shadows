@@ -3,9 +3,10 @@ from entities.board import Board
 
 
 class Guard:
-    def __init__(self, screen, x, y, width, height, difficulty):
+    def __init__(self, screen, resolution, x, y, path="", difficulty="easy", width=32, height=32):
         self.__alive = True
         self.__screen = screen
+        self.__resolution = resolution
         match difficulty:
             case "easy":
                 self.__difficulty = 1
@@ -15,17 +16,18 @@ class Guard:
                 self.__difficulty = 3
             case other:
                 self.__difficulty = 1
-        self.__right = [pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}.png").convert_alpha(), (width / 28, height // 15)),
-                        pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}_walk.png").convert_alpha(), (width / 28, height // 15))]
+        self.__right = [pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}.png"), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}_walk.png"), (self.__resolution * 32, self.__resolution * 32))]
         self.__left = [pygame.transform.flip(self.__right[0], True, False),
                        pygame.transform.flip(self.__right[1], True, False)]
         self.__curr_sprites = self.__right
         self.__direction = "right"
-        self.__x = x
-        self.__y = y
+        self.__x = int(x)
+        self.__y = int(y)
 
     def draw(self):
-        self.__screen.blit(self.__curr_sprites[0], (self.__x * 32, self.__y * 32))
+        self.__screen.blit(self.__curr_sprites[0],
+                           (self.__x * 32 * self.__resolution, self.__y * 32 * self.__resolution))
 
     @property
     def direction(self):
@@ -69,4 +71,18 @@ class Guard:
     def position(self):
         return self.__x, self.__y
 
+    @property
+    def x(self):
+        return self.__x
 
+    @x.setter
+    def x(self, x):
+        self.__x = x
+
+    @property
+    def y(self):
+        return self.__y
+
+    @y.setter
+    def y(self, y):
+        self.__y = y

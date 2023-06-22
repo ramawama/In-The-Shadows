@@ -27,7 +27,10 @@ class Board:
                     x = 0
                     y = 0
                     playerPos = [0, 0]
+                    line_counter = 0
+                    guards = []
                     for line in lines:
+                        line_counter = line_counter + 1
                         if line.strip() == "END":
                             break
                         row_array = []
@@ -45,10 +48,12 @@ class Board:
                         self.__tiles.append(row_array)
                         y += 1
                         x = 0
+                for x in range(line_counter, len(lines), 3):
+                    guards.append((lines[x].strip(), lines[x+1].strip().split(), lines[x+2].strip()))
                 #  Update torch count for all tiles
                 self.torch_check()
                 self.__loaded = True
-                return playerPos
+                return playerPos, guards
             except IOError:
                 print("Error from load_tiles function!")
 
