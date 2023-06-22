@@ -53,7 +53,7 @@ class Board:
                         y += 1
                         x = 0
                 for x in range(line_counter, len(lines), 3):
-                    guards.append((lines[x].strip(), lines[x+1].strip().split(), lines[x+2].strip()))
+                    guards.append((lines[x].strip(), lines[x + 1].strip().split(), lines[x + 2].strip()))
                 #  Update torch count for all tiles
                 self.torch_check()
                 self.__loaded = True
@@ -128,7 +128,7 @@ class Board:
         move_text = text_font.render('MOVE:', True, white)
         move_rect = move_text.get_rect()
         (move_width, move_height) = (self.__screen_width // (16 * self.__resolution),
-                                             self.__screen_height + (16 * self.__resolution))
+                                     self.__screen_height + (16 * self.__resolution))
         move_rect.center = (move_width, move_height)
 
         arrow_key = pygame.image.load("assets/graphics/HUD Elements/arrow_keys.png").convert_alpha()
