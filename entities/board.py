@@ -11,6 +11,7 @@ class Board:
         self.__screen_width = width
         self.__screen_height = height - 32
         self.__resolution = width // 896
+        self.__level = 1
 
     def resize_board(self, screen, width, height):
         self.__resolution = width // 896
@@ -58,6 +59,7 @@ class Board:
                 return playerPos, guards
             except IOError:
                 print("Error from load_tiles function!")
+        self.__level = name
 
     def check_for_key(self):
         for row in range(len(self.__tiles)):
@@ -133,5 +135,11 @@ class Board:
         scaled_arrow = pygame.transform.scale(arrow_key, (32 * self.__resolution, 32 * self.__resolution))
         (movement_width, movement_height) = (instruct_width + (32 * self.__resolution), self.__screen_height)
 
+        curr_level = text_font.render('LEVEL ' + str(self.__level), True, white)
+        curr_level_rect = curr_level.get_rect()
+        (curr_level_width, curr_level_height) = (self.__screen_width // 2, instruct_height)
+        curr_level_rect.center = (curr_level_width, curr_level_height)
+
         self.__screen.background_surface.blit(instructions_text, instructions_rect)
         self.__screen.background_surface.blit(scaled_arrow, (movement_width,movement_height))
+        self.__screen.background_surface.blit(curr_level, curr_level_rect)
