@@ -3,7 +3,7 @@ from entities.board import Board
 
 
 class Guard:
-    def __init__(self, screen, x, y, width, height, difficulty):
+    def __init__(self, screen, x, y, path="", difficulty="easy", width=32, height=32):
         self.__alive = True
         self.__screen = screen
         match difficulty:

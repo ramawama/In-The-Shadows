@@ -1,5 +1,6 @@
 import pygame
 
+from entities.guard import Guard
 from entities.tile import Tile
 from entities.window import Window
 from entities.music import Music
@@ -46,10 +47,19 @@ class Game:
 
         self.__position = ()
 
-        self.__player_spawn = self.__get_spawn()
+        self.__player_spawn, self.__guard_routes = self.__get_spawns()
 
+        self.__set_player_and_guards()
+
+
+    def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
                                self.__resolution)
+        self.__guards = []
+        for x in range(len(self.__guard_routes)):
+            self.__guards.append(Guard(self.__screen.foreground_surface, self.__guard_routes[x][1][0],
+                                       self.__guard_routes[x][1][2], self.__guard_routes[x][2],
+                                       self.__guard_routes[x][0]))
 
     # Changes states when escape is pressed
     def __escape_state(self):
@@ -58,8 +68,8 @@ class Game:
                 self.__state = 'menu'
             case 'game':
                 self.__state = 'menu'
-                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
-                                       self.__resolution)
+                self.__set_player_and_guards()
+
             case 'menu':
                 self.__running = False
             case 'game_over':
@@ -73,7 +83,7 @@ class Game:
             if self.__rects['start_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'game'
                 self.__board.unload()
-                self.__player_spawn = self.__load_game()
+                self.__player_spawn, self.__guard_routes = self.__load_game()
             elif self.__rects['options_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'options'
             elif self.__rects['quit_text_rect'].collidepoint(mouse_pos):
@@ -90,15 +100,14 @@ class Game:
                 self.__resolution = 1
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
-                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                       self.__player_spawn[1], self.__resolution)
+                self.__set_player_and_guards()
+
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
                 (self.__width, self.__height) = (1792, 1008)
                 self.__resolution = 2
                 self.__screen.resize(self.__width, self.__height)
                 self.__board.resize_board(self.__screen, self.__width, self.__height)
-                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                       self.__player_spawn[1], self.__resolution)
+                self.__set_player_and_guards()
 
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
@@ -279,7 +288,7 @@ class Game:
         text_rect.center = (self.__width // 2, self.__height // 4)
         self.__screen.foreground_surface.blit(text, text_rect)
         self.__screen.update()
-        self.__player_spawn = self.__board.load_level()
+        self.__player_spawn, guards = self.__board.load_level()
 
         return True
 
@@ -410,14 +419,113 @@ class Game:
 
         return game_over
 
-    def __get_spawn(self):
-        player_spawn = self.__board.load_level(self.__level)
-        return player_spawn
+    def move_guard(self):
+        player_position = self.__player.position()
+        if self.__move_counter == 15 // self.__resolution:
+            self.__state = 'game'
+        # changes sprites depending on if moving left or right (stays the same with up/down)
+        if self.__move_direction == "right" or self.__move_direction == "left":
+            self.__player.direction = self.__move_direction
+        sprites = self.__player.currSprites()
+
+        step_size = 2 * self.__resolution * self.__resolution
+        game_over = False
+
+        match self.__move_direction:
+            case "right":
+                if self.__board.tiles[player_position[1]][player_position[0] + 1].type not in ['l', 'r', 'm', 'w']:
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0],
+                                                                                         self.__position[1]))
+
+                    # slight movement + decrement distance left to travel
+                    self.__position = (self.__position[0] + step_size, self.__position[1])
+                    if not (self.__move_counter % 4):
+                        self.__anim_counter += 1
+
+                    # for resetting animation
+                    if self.__anim_counter >= len(sprites):
+                        self.__anim_counter = 0
+
+                    self.__screen.update()
+                    # update player location internally
+            case "left":
+                if self.__board.tiles[player_position[1]][player_position[0] - 1].type not in ['l', 'r', 'm', 'w']:
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
+                                                          (self.__position[0], self.__position[1]))
+
+                    # slight movement + decrement distance left to travel
+                    self.__position = (self.__position[0] - step_size, self.__position[1])
+                    if not (self.__move_counter % 4):
+                        self.__anim_counter += 1
+
+                    # for resetting animation
+                    if self.__anim_counter >= len(sprites):
+                        self.__anim_counter = 0
+
+                    self.__screen.update()
+                    # update player location internally
+            case "up":
+                if self.__board.tiles[player_position[1] - 1][player_position[0]].type not in ['l', 'r', 'm', 'w']:
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
+                                                          (self.__position[0], self.__position[1]))
+
+                    # slight movement + decrement distance left to travel
+                    self.__position = (self.__position[0], self.__position[1] - step_size)
+                    if not (self.__move_counter % 4):
+                        self.__anim_counter += 1
+
+                    # for resetting animation
+                    if self.__anim_counter >= len(sprites):
+                        self.__anim_counter = 0
+
+                    self.__screen.update()
+                    # update player location internally
+            case "down":
+                if self.__board.tiles[player_position[1] + 1][player_position[0]].type not in ['l', 'r', 'm', 'w']:
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
+                                                          (self.__position[0], self.__position[1]))
+
+                    # slight movement + decrement distance left to travel
+                    self.__position = (self.__position[0], self.__position[1] + step_size)
+                    if not (self.__move_counter % 4):
+                        self.__anim_counter += 1
+
+                    # for resetting animation
+                    if self.__anim_counter >= len(sprites):
+                        self.__anim_counter = 0
+
+                    self.__screen.update()
+                    # update player location internally
+
+        player_position = self.__player.position()
+
+        if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
+                self.__board.tiles[player_position[1]][player_position[0]].lit:
+            self.__board.tiles[player_position[1]][player_position[0]].unlight()
+            self.__board.torch_check()
+
+        return game_over
+
+    def __get_spawns(self):
+        player_spawn, guards = self.__board.load_level(self.__level)
+        return player_spawn, guards
 
     def __load_game(self):
         self.__music.play_music('game')
-        player_spawn = self.__board.load_level(self.__level)
-        return player_spawn
+        player_spawn, guards = self.__board.load_level(self.__level)
+        return player_spawn, guards
 
     def __check_game_over(self, player_position):
         if self.__board.tiles[player_position[1]][player_position[0]].type == "g":
@@ -441,23 +549,21 @@ class Game:
         self.__player.draw()
         if self.__check_game_over(self.__player.position()):
             self.__game_over()
-            self.__player_spawn = self.__get_spawn()
-            self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                   self.__player_spawn[1], self.__resolution)
+            self.__player_spawn, self.__guard_routes = self.__get_spawns()
+            self.__set_player_and_guards()
+
         self.__check_key(self.__player.position())  # change to if statement if you want to do hud stuff
 
         if self.__check_next_level(self.__player.position()):
             if self.__level == 3:
                 self.__board.unload()
                 self.__win()
-                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                       self.__player_spawn[1], self.__resolution)
+                self.__set_player_and_guards()
             else:
                 self.__level += 1
                 self.__board.unload()
-                self.__player_spawn = self.__load_game()
-                self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0],
-                                       self.__player_spawn[1], self.__resolution)
+                self.__player_spawn, self.__guard_routes = self.__load_game()
+                self.__set_player_and_guards()
 
     # Main execution loop
     def run(self):
