@@ -45,22 +45,26 @@ class Board:
                         if line.strip() == "END":
                             break
                         row_array = []
+                        row_char_array = []
                         for char in line.strip():
                             if char == "p":
                                 playerPos = [x, y]
                                 row_array.append(Tile("o", False, x, y))
+                                row_char_array.append("o")
                             elif char == "e":
                                 self.__exit_tile = x, y
                                 row_array.append(Tile(char, False, x, y))
+                                row_char_array.append(char)
                             else:
                                 row_array.append(Tile(char, False, x, y))
+                                row_char_array.append(char)
                             # if char == "g":
                             # print("guard at: x:", x, " y: ", y)
                             # if char == "p":
                             # print("spawn at at: x:", x, " y: ", y)
                             x += 1
                         self.__tiles.append(row_array)
-                        self.__orig_tiles.append(row_array)
+                        self.__orig_tiles.append(row_char_array)
                         y += 1
                         x = 0
                 for x in range(line_counter, len(lines), 3):
@@ -73,7 +77,7 @@ class Board:
                 print("Error from load_tiles function!")
 
     def replace_tile_with_original(self, x, y):
-        self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, x, y)
+        self.__tiles[x][y] = Tile(self.__orig_tiles[x][y], self.__tiles[x][y].lit, x, y)
 
     def replace_tile_with_guard(self, x, y):
         self.__tiles[x][y] = Tile("g", self.__tiles[x][y].lit, x, y)
