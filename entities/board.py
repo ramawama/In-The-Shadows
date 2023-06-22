@@ -51,7 +51,7 @@ class Board:
                                 playerPos = [x, y]
                                 row_array.append(Tile("o", False, x, y))
                                 row_char_array.append("o")
-                            elif char == "e":
+                            elif char in ['e', 'c']:
                                 self.__exit_tile = x, y
                                 row_array.append(Tile(char, False, x, y))
                                 row_char_array.append(char)

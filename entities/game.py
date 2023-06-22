@@ -534,7 +534,7 @@ class Game:
         return False
 
     def __check_next_level(self, player_position):
-        if self.__board.tiles[player_position[1]][player_position[0]].type == "e":
+        if self.__board.tiles[player_position[1]][player_position[0]].type in ['e', 'c']:
             return not self.__board.check_for_key()
         return False
 
