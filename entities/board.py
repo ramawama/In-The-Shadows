@@ -41,9 +41,9 @@ class Board:
                             else:
                                 row_array.append(Tile(char, False, x, y))
                             # if char == "g":
-                                # print("guard at: x:", x, " y: ", y)
+                            # print("guard at: x:", x, " y: ", y)
                             # if char == "p":
-                                # print("spawn at at: x:", x, " y: ", y)
+                            # print("spawn at at: x:", x, " y: ", y)
                             x += 1
                         self.__tiles.append(row_array)
                         y += 1
@@ -100,9 +100,10 @@ class Board:
                 scaled_tile = pygame.transform.scale(self.__tiles[row][col].image, (tile_width, tile_height))
                 if self.__tiles[row][col].type != "o":
                     if self.__tiles[row][col].lit:
-                        scaled_floor = pygame.transform.scale(Tile("o", True)._backgroundtile, (tile_width, tile_height))
+                        scaled_floor = pygame.transform.scale(Tile("o", True).backgroundtile, (tile_width, tile_height))
                     else:
-                        scaled_floor = pygame.transform.scale(Tile()._backgroundtile, (tile_width, tile_height))
+                        scaled_floor = pygame.transform.scale(self.__tiles[row][col].backgroundtile,
+                                                              (tile_width, tile_height))
                     self.__screen.background_surface.blit(scaled_floor, (tile_x, tile_y))
                 self.__screen.foreground_surface.blit(scaled_tile, (tile_x, tile_y))
 
