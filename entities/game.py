@@ -112,7 +112,6 @@ class Game:
                     self.__screen.resize(self.__width, self.__height)
                     self.__board.resize_board(self.__screen, self.__width, self.__height)
                     self.__set_player_and_guards()
-                    pygame.display.toggle_fullscreen()
                     self.__fullscreen = True
 
     # Handles quitting, key presses, and mouse clicks, including in game
