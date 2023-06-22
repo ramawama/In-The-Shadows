@@ -1,5 +1,5 @@
 import pygame
-import sys
+import os
 from entities.guard import Guard
 from entities.tile import Tile
 from entities.window import Window
@@ -13,14 +13,14 @@ class Game:
         # Create global variables for height, width, and black and white colors
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
-        (self.__width, self.__height) = (32*28, 32*16)
+        (self.__width, self.__height) = (64*28, 64*16)
 
         self.__level = 1
         self.__move_counter = 0
         self.__move_direction = 'right'
         self.__anim_counter = 0
 
-        self.__resolution = 1  # resolution option for scaling
+        self.__resolution = 2  # resolution option for scaling
 
         # Create window
         self.__screen = Window(self.__width, self.__height)
@@ -71,7 +71,6 @@ class Game:
             case 'game':
                 self.__state = 'menu'
                 self.__set_player_and_guards()
-
             case 'menu':
                 self.__running = False
             case 'game_over':
@@ -99,13 +98,22 @@ class Game:
                 self.__difficulty = "HARD"
             elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
                 if self.__fullscreen:
-                    self.__screen.resize()
+                    (self.__width, self.__height) = (32 * 28, 32 * 16)
+                    self.__resolution = 1
+                    self.__screen.resize(self.__width, self.__height)
+                    self.__board.resize_board(self.__screen, self.__width, self.__height)
+                    self.__set_player_and_guards()
+                    pygame.display.toggle_fullscreen()
                     self.__fullscreen = False
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
                 if not self.__fullscreen:
-                    self.__screen.resize()
+                    (self.__width, self.__height) = (64 * 28, 64 * 16)
+                    self.__resolution = 2
+                    self.__screen.resize(self.__width, self.__height)
+                    self.__board.resize_board(self.__screen, self.__width, self.__height)
+                    self.__set_player_and_guards()
+                    pygame.display.toggle_fullscreen()
                     self.__fullscreen = True
-
 
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
@@ -579,6 +587,7 @@ class Game:
 
     # Main execution loop
     def run(self):
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
         clock = pygame.time.Clock()
         self.__move_counter = 0
         self.__move_flag = False

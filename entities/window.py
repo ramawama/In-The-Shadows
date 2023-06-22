@@ -1,3 +1,5 @@
+import time
+
 import pygame
 
 
@@ -20,8 +22,10 @@ class Window:
         self.__screen.blit(self.__foreground_surface, (0, 0))
         pygame.display.update()
 
-    def resize(self):
-        pygame.display.toggle_fullscreen()
+    def resize(self, width, height):
+        self.__screen = pygame.display.set_mode((width, height), pygame.NOFRAME + pygame.SCALED + pygame.FULLSCREEN, 32)
+        self.__background_surface = pygame.transform.scale(self.__background_surface, (width, height))
+        self.__foreground_surface = pygame.transform.scale(self.__foreground_surface, (width, height))
 
     # Returns background surface
     @property
