@@ -42,6 +42,8 @@ class Tile:
                 self._image = pygame.image.load("./assets/graphics/Level Elements/Exit_locked.png").convert_alpha()
             case "k":
                 self._image = pygame.image.load("./assets/graphics/Level Elements/Key.png").convert_alpha()
+            case "c":
+                self._image = pygame.image.load("./assets/graphics/Level Elements/Chest_locked.png").convert_alpha()
 
     @property
     def image(self):
@@ -81,3 +83,5 @@ class Tile:
     def unlock(self):
         if self.type == "e":
             self._image = pygame.image.load("./assets/graphics/Level Elements/Exit.png").convert_alpha()
+        elif self.type == 'c':
+            self._image = pygame.image.load("./assets/graphics/Level Elements/Chest.png").convert_alpha()
