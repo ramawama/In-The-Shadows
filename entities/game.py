@@ -425,6 +425,8 @@ class Game:
 
     # not done
     def move_guards(self):
+        if self.__move_counter == 15 // self.__resolution:
+            self.__state = 'game'
         for x in range(len(self.__guards)):
             guard_pos = self.__guards[x].position()
             sprites = self.__guards[x].currSprites()
@@ -435,15 +437,11 @@ class Game:
                     # draw background
                     self.__board.draw_level()
                     # draw animation frame
-                    if self.__anim_counter % 2 == 0:
-                        self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[0], (guard_pos[0],
-                                                                                         guard_pos[1]))
-                    else:
-                        self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[1], (guard_pos[0],
-                                                                                                  guard_pos[1]))
+                    self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter], (guard_pos[0],
+                                                                      guard_pos[1]))
                     # slight movement + decrement distance left to travel
                     self.__guards[x].position = (self.__position[0] + step_size, self.__position[1])
-                    if not (self.__move_counter % 4):
+                    if not (self.__move_counter % 2):
                         self.__anim_counter += 1
 
                     # for resetting animation
@@ -453,24 +451,23 @@ class Game:
                     self.__screen.update()
                     # update player location internally
                 case 'L':
-                    if self.__board.tiles[guard_pos[1]][guard_pos[0] - 1].type != "w":
-                        # draw background
-                        self.__board.draw_level()
-                        # draw animation frame
-                        self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
-                                                              (self.__position[0], self.__position[1]))
+                    # draw background
+                    self.__board.draw_level()
+                    # draw animation frame
+                    self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
+                                                          (self.__position[0], self.__position[1]))
 
-                        # slight movement + decrement distance left to travel
-                        self.__position = (self.__position[0] - step_size, self.__position[1])
-                        if not (self.__move_counter % 4):
-                            self.__anim_counter += 1
+                    # slight movement + decrement distance left to travel
+                    self.__position = (self.__position[0] - step_size, self.__position[1])
+                    if not (self.__move_counter % 4):
+                        self.__anim_counter += 1
 
                         # for resetting animation
                         if self.__anim_counter >= len(sprites):
                             self.__anim_counter = 0
 
-                        self.__screen.update()
-                        # update player location internally
+                    self.__screen.update()
+                    # update player location internally
                 case "up":
                     if self.__board.tiles[guard_pos[1] - 1][guard_pos[0]].type != "w":
                         # draw background
@@ -484,9 +481,9 @@ class Game:
                         if not (self.__move_counter % 4):
                             self.__anim_counter += 1
 
-                        # for resetting animation
-                        if self.__anim_counter >= len(sprites):
-                            self.__anim_counter = 0
+                    # for resetting animation
+                    if self.__anim_counter >= len(sprites):
+                        self.__anim_counter = 0
 
                         self.__screen.update()
                         # update player location internally
@@ -586,6 +583,7 @@ class Game:
                 case 'D':
                     self.__guards[x].moveDown()
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x)
+            self.__board.torch_check()
 
     # Main execution loop
     def run(self):
