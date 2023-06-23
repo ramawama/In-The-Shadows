@@ -16,9 +16,10 @@ class Game:
         (self.__width, self.__height) = (64*28, 64*16)
 
         self.__level = 1
+        self.__torch_counter = 0
         self.__move_counter = 0
         self.__move_direction = 'right'
-        self.__home_screen_anim = True
+        self.__anim_torches = True
 
         self.__resolution = 2  # resolution option for scaling
 
@@ -177,8 +178,8 @@ class Game:
 
     # Runs the main menu
     def __run_menu(self):
-        if self.__move_counter % 15 == 0:
-            self.__home_screen_anim = not self.__home_screen_anim
+        if self.__torch_counter % 16 == 0:
+            self.__anim_torches = not self.__anim_torches
         self.__music.play_music('menu')
         self.__screen.background_surface.fill((0, 0, 0))
         self.__screen.foreground_surface.fill((0, 0, 0, 0))
@@ -206,7 +207,7 @@ class Game:
         self.__rects['quit_text_rect'].center = (1.02*quit_width, quit_height + 1.6*quit_height // 4)
 
         # animates torches
-        if self.__home_screen_anim:
+        if self.__anim_torches:
             background = pygame.image.load("assets/graphics/Backgrounds/Home_screen_1.png")
         else:
             background = pygame.image.load("assets/graphics/Backgrounds/Home_screen_2.png")
@@ -220,11 +221,11 @@ class Game:
 
     # Runs the options
     def __run_options(self):
-        if self.__move_counter % 15 == 0:
-            self.__home_screen_anim = not self.__home_screen_anim
+        if self.__torch_counter % 8 == 0:
+            self.__anim_torches = not self.__anim_torches
 
         # animates torches
-        if self.__home_screen_anim:
+        if self.__anim_torches:
             background = pygame.image.load("assets/graphics/Backgrounds/Options_1.png")
         else:
             background = pygame.image.load("assets/graphics/Backgrounds/Options_2.png")
@@ -571,6 +572,23 @@ class Game:
         for x in range(len(self.__guards)):
             self.__guards[x].draw()
 
+    def __animate_torches(self):
+        if self.__torch_counter % 32 == 0:
+            self.__anim_torches = not self.__anim_torches
+
+        width_scale = self.__width // len(self.__board.tiles[0])
+        # have to use 15/16 because tiles are scaled for the 15 rows. The 16th is the HUD
+        height_scale = 15/16*self.__height // len(self.__board.tiles)
+        if self.__anim_torches:
+            big_torch = pygame.image.load("assets/graphics/Level Elements/Torch/Torch_big.png")
+            big_torch = pygame.transform.scale(big_torch, (width_scale, height_scale))
+            for x in range(len(self.__board.tiles)):
+                for y in range(len(self.__board.tiles[0])):
+                    # print(self.__board.tiles[x][y].type, end='')
+                    if self.__board.tiles[x][y].type == 't' and self.__board.tiles[x][y].lit:
+                        # not correct position
+                        self.__screen.foreground_surface.blit(big_torch, (self.__board.tiles[x][y].pos[0] * width_scale, self.__board.tiles[x][y].pos[1] * height_scale))
+
     # Runs the actual game
     def __run_game(self):
         self.__board.draw_level()
@@ -578,6 +596,7 @@ class Game:
         self.__player.draw()
         self.__guards[1].draw()
         self.__draw_guards()
+        self.__animate_torches()
         if self.__check_game_over(self.__player.position()):
             self.__game_over()
             self.__player_spawn, self.__guard_routes = self.__get_spawns()
@@ -618,12 +637,19 @@ class Game:
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         clock = pygame.time.Clock()
         self.__move_counter = 0
+        self.__torch_counter = 0
         self.__move_flag = False
         while self.__running:
             clock.tick(60)
+
             self.__move_counter += 1
-            if self.__move_counter == 16 // self.__resolution:
+            if self.__move_counter >= 16 // self.__resolution:
                 self.__move_counter = 0
+
+            self.__torch_counter += 1
+            if self.__torch_counter >= 64:
+                self.__torch_counter = 0
+
             self.__handle_events()
             match self.__state:
                 case 'menu':
