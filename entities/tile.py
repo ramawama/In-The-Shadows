@@ -2,7 +2,7 @@ import pygame
 
 
 class Tile:
-    def __init__(self, tile_type="o", behind_torch=False, x=0, y=0):
+    def __init__(self, tile_type="o", behind_torch=False, x=0, y=0, image=None):
         self._tile_type = tile_type
         self._pos = [x, y]
         self._lit = False
@@ -44,7 +44,8 @@ class Tile:
                 self._image = pygame.image.load("./assets/graphics/Level Elements/Key.png").convert_alpha()
             case "c":
                 self._image = pygame.image.load("./assets/graphics/Level Elements/Chest_locked.png").convert_alpha()
-
+        if image is not None:
+            self._image = image
     @property
     def image(self):
         return self._image
