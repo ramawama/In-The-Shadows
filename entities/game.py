@@ -531,6 +531,8 @@ class Game:
 
     def __check_game_over(self, player_position):
         if self.__board.tiles[player_position[1]][player_position[0]].type == "g":
+            self.__music.play_music('death')
+            time.sleep(0.5)
             return True
         return False
 
