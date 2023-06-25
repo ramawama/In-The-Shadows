@@ -2,6 +2,8 @@ import copy
 from pathlib import Path
 import pygame
 from intheshadows.tile import Tile
+from ctypes import *
+import numpy as np
 
 
 # Class for the game board (collection of all tiles)
@@ -132,6 +134,16 @@ class Board:
                                                               (tile_width, tile_height))
                     self.__screen.background_surface.blit(scaled_floor, (tile_x, tile_y))
                 self.__screen.foreground_surface.blit(scaled_tile, (tile_x, tile_y))
+    lib = cdll.LoadLibrary('../libraries/libpathing.so')
+    test = np.array([
+        ['a', 'g', 'c', 'w'],
+        ['w', 'w', 'a', 'w'],
+        ['a', 'w', 'c', 'w'],
+        ['w', 'p', 'a', 'w']
+    ])
+    test2 = test.ctypes.data_as(POINTER(c_char))
+
+    print(lib.get_next(4, 4, test2, 3, 1, 0, 1))
 
     # Returns array of tiles
     @property
