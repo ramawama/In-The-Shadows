@@ -1,5 +1,6 @@
 import pygame
-from entities.board import Board
+from intheshadows.board import Board
+from pathlib import Path
 
 
 class Guard:
@@ -16,8 +17,8 @@ class Guard:
                 self.__difficulty = 3
             case _:
                 self.__difficulty = 1
-        self.__right = [pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}.png"), (self.__resolution * 32, self.__resolution * 32)),
-                        pygame.transform.scale(pygame.image.load(f"assets/graphics/Guard/Guard_{difficulty}_walk.png"), (self.__resolution * 32, self.__resolution * 32))]
+        self.__right = [pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}.png"), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_walk.png"), (self.__resolution * 32, self.__resolution * 32))]
         self.__left = [pygame.transform.flip(self.__right[0], True, False),
                        pygame.transform.flip(self.__right[1], True, False)]
         self.__curr_sprites = self.__right

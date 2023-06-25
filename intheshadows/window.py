@@ -1,5 +1,5 @@
 import time
-
+from pathlib import Path
 import pygame
 
 
@@ -10,7 +10,7 @@ class Window:
         self.__screen.fill((0, 0, 0))
         pygame.display.flip()
         pygame.display.set_caption("In The Shadows")
-        pygame.display.set_icon(pygame.image.load("./assets/graphics/Rogue/Rogue_walk_2.png").convert_alpha())
+        pygame.display.set_icon(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_walk_2.png").convert_alpha())
 
         # Create surfaces
         self.__background_surface = pygame.Surface((width, height))

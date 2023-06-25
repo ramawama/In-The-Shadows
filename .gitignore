@@ -1,4 +1,7 @@
 venv
 .idea
 old
-entities/__pycache__
+intheshadows/__pycache__
+libraries
+intheshadows.egg-info
+build
