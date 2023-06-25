@@ -136,13 +136,14 @@ class Board:
                 self.__screen.foreground_surface.blit(scaled_tile, (tile_x, tile_y))
     lib = cdll.LoadLibrary('../libraries/libpathing.so')
     test = np.array([
-        ['a', 'g', 'c', 'w'],
+        ['a', 'p', 'a', 'w'],
         ['w', 'w', 'a', 'w'],
-        ['a', 'w', 'c', 'w'],
-        ['w', 'p', 'a', 'w']
+        ['a', 'w', 'a', 'w'],
+        ['w', 'g', 'a', 'w']
     ])
     test2 = test.ctypes.data_as(POINTER(c_char))
-
+    lib.get_next.restype = c_wchar
+    # Arguments: size of map (x, y), map, guard coordinates (x, y), dest coordinates (x, y)
     print(lib.get_next(4, 4, test2, 3, 1, 0, 1))
 
     # Returns array of tiles

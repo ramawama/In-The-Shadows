@@ -28,7 +28,7 @@ int manhattan_dist(int row, int col, int destRow, int destCol) {
 }
 
 extern "C" {
-int get_next(int x, int y, char *map, int startx, int starty, int endx, int endy) {
+char get_next(int x, int y, char *map, int startx, int starty, int endx, int endy) {
     int rows = y;
     int cols = x;
     vector<int> moveRows = {-1, 1, 0, 0};
@@ -70,13 +70,13 @@ int get_next(int x, int y, char *map, int startx, int starty, int endx, int endy
             int row_diff = path[1].first - start_row;
             int col_diff = path[1].second - start_col;
             if (row_diff > 0) {
-                return 1;
+                return 'd';
             } else if (row_diff < 0) {
-                return 0;
+                return 'u';
             } else if (col_diff > 0) {
-                return 3;
+                return 'r';
             } else if (col_diff < 0) {
-                return 2;
+                return 'l';
             }
         }
 
@@ -102,6 +102,6 @@ int get_next(int x, int y, char *map, int startx, int starty, int endx, int endy
             }
         }
     }
-    return -1;
+    return 'z';
 }
 }

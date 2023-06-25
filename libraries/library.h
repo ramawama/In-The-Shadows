@@ -23,6 +23,6 @@ bool not_wall(const vector<vector<char>>& map, int row, int col);
 int manhattan_dist(int row, int col, int destRow, int destCol);
 
 extern "C"
-int get_next(int x, int y, char* map, int startx, int starty, int endx, int endy);
+char get_next(int x, int y, char* map, int startx, int starty, int endx, int endy);
 
 #endif //LIBRARIES_LIBRARY_H
