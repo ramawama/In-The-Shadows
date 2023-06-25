@@ -1,4 +1,5 @@
 import pygame
+from pathlib import Path
 
 # Class for music playback
 class Music():
@@ -18,7 +19,7 @@ class Music():
         if choice != self.__current_music:
             pygame.mixer.music.stop()
             pygame.mixer.music.unload()
-            pygame.mixer.music.load('./assets/sounds/' + choice + '.wav')
+            pygame.mixer.music.load(Path(__file__).parent / ('assets/sounds/' + choice + '.wav'))
             pygame.mixer.music.play(-1)
             if not self.__music:
                 pygame.mixer.music.pause()

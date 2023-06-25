@@ -1,7 +1,7 @@
 import cProfile
 import time
 
-from entities.game import Game
+from intheshadows.game import Game
 
 
 # I think you're looking for run() in game.py

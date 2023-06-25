@@ -1,7 +1,7 @@
 import copy
-
+from pathlib import Path
 import pygame
-from entities.tile import Tile
+from intheshadows.tile import Tile
 
 
 # Class for the game board (collection of all tiles)
@@ -31,7 +31,7 @@ class Board:
         if not self.__loaded:
             try:
                 self.__level = name
-                with open('./levels/level_' + str(name), 'r') as file:
+                with open(Path(__file__).parent / ('levels/level_' + str(name)), 'r') as file:
                     file.readline().strip()
                     lines = file.readlines()
                     file.close()
@@ -148,14 +148,14 @@ class Board:
         self.__screen.background_surface.fill((0, 0, 0), pygame.Rect(0, self.__screen_height,
                                                                      self.__screen_width, 128))
         white = (255, 255, 255)
-        text_font = pygame.font.Font('assets/fonts/Digital.TTF', int(self.__screen_height * 0.04))
+        text_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(self.__screen_height * 0.04))
         move_text = text_font.render('MOVE:', True, white)
         move_rect = move_text.get_rect()
         (move_width, move_height) = (self.__screen_width // (16 * self.__resolution),
                                      self.__screen_height + (16 * self.__resolution))
         move_rect.center = (move_width, move_height)
 
-        arrow_key = pygame.image.load("assets/graphics/HUD Elements/arrow_keys.png").convert_alpha()
+        arrow_key = pygame.image.load(Path(__file__).parent / "assets/graphics/HUD Elements/arrow_keys.png").convert_alpha()
         scaled_arrow = pygame.transform.scale(arrow_key, (32 * self.__resolution, 32 * self.__resolution))
         (movement_width, movement_height) = (move_width + (32 * self.__resolution), self.__screen_height)
 

@@ -1,13 +1,13 @@
 import time
-
+from pathlib import Path
 import pygame
 import os
-from entities.guard import Guard
-from entities.tile import Tile
-from entities.window import Window
-from entities.music import Music
-from entities.board import Board
-from entities.player import Player
+from intheshadows.guard import Guard
+from intheshadows.tile import Tile
+from intheshadows.window import Window
+from intheshadows.music import Music
+from intheshadows.board import Board
+from intheshadows.player import Player
 
 
 class Game:
@@ -197,8 +197,8 @@ class Game:
         self.__music.play_music('menu')
         self.__screen.background_surface.fill((0, 0, 0))
         self.__screen.foreground_surface.fill((0, 0, 0, 0))
-        big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
-        small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.15))
+        big_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
+        small_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.15))
 
         (start_width, start_height) = (self.__width // 2, self.__height // 2)
         (options_width, options_height) = (start_width, start_height + start_height // 32)
@@ -222,9 +222,9 @@ class Game:
 
         # animates torches
         if self.__anim_torches:
-            background = pygame.image.load("assets/graphics/Backgrounds/Home_screen_1.png")
+            background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Home_screen_1.png")
         else:
-            background = pygame.image.load("assets/graphics/Backgrounds/Home_screen_2.png")
+            background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Home_screen_2.png")
         background = pygame.transform.scale(background, (self.__width, self.__height))
 
         self.__screen.background_surface.blit(background, (0, 0))
@@ -240,16 +240,16 @@ class Game:
 
         # animates torches
         if self.__anim_torches:
-            background = pygame.image.load("assets/graphics/Backgrounds/Options_1.png")
+            background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_1.png")
         else:
-            background = pygame.image.load("assets/graphics/Backgrounds/Options_2.png")
+            background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_2.png")
         background = pygame.transform.scale(background, (self.__width, self.__height))
 
         self.__screen.background_surface.fill(self.__black)
         self.__screen.background_surface.blit(background, (0, 0))
 
-        big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
-        small_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.09))
+        big_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
+        small_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.09))
 
         (opt_width, opt_height) = (self.__width // 2, self.__height // 8)
         text = big_font.render('OPTIONS', True, self.__white)
@@ -286,16 +286,16 @@ class Game:
 
         match self.__difficulty:
             case "EASY":
-                mode = pygame.image.load("assets/graphics/Backgrounds/Options_easy.png")
+                mode = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_easy.png")
                 # color = (0, 153, 0)
             case "MEDIUM":
-                mode = pygame.image.load("assets/graphics/Backgrounds/Options_medium.png")
+                mode = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_medium.png")
                 # color = (255, 128, 0)
             case "HARD":
-                mode = pygame.image.load("assets/graphics/Backgrounds/Options_hard.png")
+                mode = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_hard.png")
                 # color = (255, 0, 0)
             case _:
-                mode = pygame.image.load("assets/graphics/Backgrounds/Options_easy.png")
+                mode = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_easy.png")
                 # color = (255, 255, 255)
         mode = pygame.transform.scale(mode, (self.__width, self.__height))
         self.__screen.background_surface.blit(mode, (0,0))
@@ -330,7 +330,7 @@ class Game:
         self.__screen.background_surface.fill(self.__black)
         self.__screen.foreground_surface.fill(self.__black)
         self.__music.play_music("win")
-        big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
+        big_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
         text = big_font.render('YOU  HAVE  WON', True, self.__white)
         text_rect = text.get_rect()
         text_rect.center = (self.__width // 2, self.__height // 4)
@@ -347,7 +347,7 @@ class Game:
         self.__screen.background_surface.fill(self.__black)
         self.__screen.foreground_surface.fill(self.__black)
         self.__music.play_music("game_over")
-        big_font = pygame.font.Font('assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
+        big_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
         text = big_font.render('YOU  HAVE  FAILED', True, self.__white)
         text_rect = text.get_rect()
         text_rect.center = (self.__width // 2, self.__height // 4)
@@ -562,7 +562,7 @@ class Game:
         # have to use 15/16 because tiles are scaled for the 15 rows. The 16th is the HUD
         height_scale = 15/16*self.__height // len(self.__board.tiles)
         if self.__anim_torches:
-            big_torch = pygame.image.load("assets/graphics/Level Elements/Torch/Torch_big.png")
+            big_torch = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Torch/Torch_big.png")
             big_torch = pygame.transform.scale(big_torch, (width_scale, height_scale))
             for x in range(len(self.__board.tiles)):
                 for y in range(len(self.__board.tiles[0])):
