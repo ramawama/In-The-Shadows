@@ -13,6 +13,8 @@ from intheshadows.player import Player
 class Game:
     def __init__(self):
         # Create global variables for height, width, and black and white colors
+        self.__move_flag = None
+        self.__anim_counter = None
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
         (self.__width, self.__height) = (64*28, 64*16)
@@ -122,7 +124,6 @@ class Game:
             elif self.__rects['options_back_button'].collidepoint(mouse_pos):
                 self.__state = 'menu'
 
-
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
@@ -197,16 +198,11 @@ class Game:
         self.__music.play_music('menu')
         self.__screen.background_surface.fill((0, 0, 0))
         self.__screen.foreground_surface.fill((0, 0, 0, 0))
-        big_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
         small_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.15))
 
         (start_width, start_height) = (self.__width // 2, self.__height // 2)
         (options_width, options_height) = (start_width, start_height + start_height // 32)
         (quit_width, quit_height) = (start_width, start_height + start_height // 4)
-
-        # text = big_font.render('IN  THE  SHADOWS', True, self.__white)
-        # text_rect = text.get_rect()
-        # text_rect.center = (self.__width // 2, self.__height // 4)
 
         start_text = small_font.render('START__', True, self.__white)
         self.__rects['start_text_rect'] = start_text.get_rect()
@@ -228,10 +224,19 @@ class Game:
         background = pygame.transform.scale(background, (self.__width, self.__height))
 
         self.__screen.background_surface.blit(background, (0, 0))
-        # self.__screen.background_surface.blit(text, text_rect)
-        # self.__screen.background_surface.blit(start_text, self.__rects['start_text_rect'])
-        # self.__screen.background_surface.blit(options_text, self.__rects['options_text_rect'])
-        # self.__screen.background_surface.blit(quit_text, self.__rects['quit_text_rect'])
+        (mouse_x, mouse_y) = pygame.mouse.get_pos()
+        if self.__rects['start_text_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/start.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['options_text_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/options.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['quit_text_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/quit.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
 
     # Runs the options
     def __run_options(self):
@@ -258,10 +263,6 @@ class Game:
         # self.__screen.background_surface.blit(text, text_rect)
 
         (diff_width, diff_height) = (opt_width // 2, opt_height + self.__height // 6)
-        # difficulty = small_font.render('SELECT DIFFICULTY', True, (255, 255, 255))
-        # difficulty_rect = difficulty.get_rect()
-        # difficulty_rect.center = (diff_width, diff_height)
-        # self.__screen.background_surface.blit(difficulty, difficulty_rect)
 
         # back button
         self.__rects['options_back_button'] = pygame.Rect((0.05*self.__width, 0.06*self.__height), (0.08*self.__width, 0.09*self.__height))
@@ -270,19 +271,16 @@ class Game:
         easy_difficulty = small_font.render('EASY_', True, (0, 153, 0))
         self.__rects['easy_difficulty_rect'] = easy_difficulty.get_rect()
         self.__rects['easy_difficulty_rect'].center = (easy_width, easy_height)
-        # self.__screen.background_surface.blit(easy_difficulty, self.__rects['easy_difficulty_rect'])
 
         (med_width, med_height) = (diff_width, easy_height + 1.27*self.__height // 8)
         medium_difficulty = small_font.render('_MEDIUM_', True, (255, 128, 0))
         self.__rects['medium_difficulty_rect'] = medium_difficulty.get_rect()
         self.__rects['medium_difficulty_rect'].center = (med_width, med_height)
-        # self.__screen.background_surface.blit(medium_difficulty, self.__rects['medium_difficulty_rect'])
 
         (hard_width, hard_height) = (diff_width, med_height + 1.30*self.__height // 8)
         hard_difficulty = small_font.render('HARD_', True, (255, 0, 0))
         self.__rects['hard_difficulty_rect'] = hard_difficulty.get_rect()
         self.__rects['hard_difficulty_rect'].center = (hard_width, hard_height)
-        # self.__screen.background_surface.blit(hard_difficulty, self.__rects['hard_difficulty_rect'])
 
         match self.__difficulty:
             case "EASY":
@@ -298,17 +296,9 @@ class Game:
                 mode = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_easy.png")
                 # color = (255, 255, 255)
         mode = pygame.transform.scale(mode, (self.__width, self.__height))
-        self.__screen.background_surface.blit(mode, (0,0))
-        # text = small_font.render(str(self.__difficulty) + "  MODE  CHOSEN!", True, color)
-        # text_rect = text.get_rect()
-        # text_rect.center = (diff_width, hard_height + self.__height // 8)
-        # self.__screen.background_surface.blit(text, text_rect)
+        self.__screen.background_surface.blit(mode, (0, 0))
 
         (res_width, res_height) = (self.__width - self.__width // 4, opt_height + self.__height // 6)
-        # resolution = small_font.render('SELECT  RESOLUTION', True, self.__white)
-        # resolution_rect = resolution.get_rect()
-        # resolution_rect.center = (res_width, res_height)
-        # self.__screen.background_surface.blit(resolution, resolution_rect)
 
         (res_def_width, res_def_height) = (res_width, res_height + self.__height // 8)
         resolution_def = small_font.render('_WINDOW_', True, (255, 0, 0))
@@ -321,6 +311,33 @@ class Game:
         self.__rects['resolution_2_rect'] = resolution_def.get_rect()
         self.__rects['resolution_2_rect'].center = (0.93*res_2_width, 1.07*res_2_height)
         # self.__screen.background_surface.blit(resolution_2, self.__rects['resolution_2_rect'])
+
+        (mouse_x, mouse_y) = pygame.mouse.get_pos()
+        if self.__rects['resolution_def_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/window.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['resolution_2_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/fullscreen.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['easy_difficulty_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/easy.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['medium_difficulty_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/medium.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['hard_difficulty_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/hard.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['options_back_button'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/back_arrow.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+
 
         pygame.display.update()
 
