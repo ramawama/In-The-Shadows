@@ -11,6 +11,7 @@ from intheshadows.board import Board
 from intheshadows.player import Player
 import site
 from ctypes import *
+import platform
 
 
 class Game:
@@ -71,7 +72,10 @@ class Game:
                 break
             else:
                 target_dir = None
-        self.__lib = cdll.LoadLibrary(target_dir + '/library.cpython-310-x86_64-linux-gnu.so')
+        if platform.system() == 'Linux':
+            self.__lib = cdll.LoadLibrary(target_dir + '/library.cpython-310-x86_64-linux-gnu.so')
+        elif platform.system() == 'Windows':
+            self.__lib = cdll.LoadLibrary(target_dir + '/library.cp310-win_amd64.pyd')
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
