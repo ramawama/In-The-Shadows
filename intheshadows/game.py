@@ -124,6 +124,16 @@ class Game:
             elif self.__rects['options_back_button'].collidepoint(mouse_pos):
                 self.__state = 'menu'
 
+    def __display_help(self):
+        self.__screen.help_surface.fill((0, 0, 0))
+        text_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF',
+                                     int(self.__screen.background_surface.get_height() * 0.04))
+        text = text_font.render("Press 'M' to toggle music", True, self.__white)
+        text_rect = text.get_rect()
+        text_rect.center = (self.__screen.background_surface.get_width() / 2, self.__screen.background_surface.get_height() / 2)
+        self.__screen.background_surface.blit(text, text_rect)
+        pygame.display.update()
+
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
@@ -133,6 +143,8 @@ class Game:
                         self.__running = False
                     case pygame.KEYDOWN:
                         match ev.key:
+                            case pygame.K_h: # help screen in game
+                                self.__display_help()
                             case pygame.K_m:
                                 self.__music.toggle()
                             case pygame.K_ESCAPE:
