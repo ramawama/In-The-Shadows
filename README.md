@@ -1,6 +1,6 @@
 ﻿# In The Shadows
- A 2D top-down turn-based stealth game written in Python using Pygame.  
- 
+A 2D stealth game where you play as a famous thief tasked with crawling a multi-floored dungeon to collect the treasure at the end. 'In The Shadows' is played in turns where the user can move and interact with the environment, and then the guards can react and proceed accordingly. It is a two-dimensional pixel-based game written in Python using the Pygame framework.
+
  GitHub Repo Link: https://github.com/ramawama/In-The-Shadows  
  
 ## Installation/Play Instructions
