@@ -2,6 +2,9 @@ venv
 .idea
 old
 intheshadows/__pycache__
-libraries
+*.cmake
+intheshadows/libraries/cmake-build-debug
+intheshadows/libraries/CMakeFiles
+intheshadows/libraries/CMakeCache.txt
 intheshadows.egg-info
 build

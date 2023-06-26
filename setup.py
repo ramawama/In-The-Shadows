@@ -1,5 +1,6 @@
 from setuptools import setup
 
+
 setup(
      name='intheshadows',
      version='0.1.0',
@@ -9,7 +10,7 @@ setup(
      author='Carson Sobolewski',
      author_email='csobolewski@ufl.edu',
      description='Turn-based stealth game written in pygame!',
-     install_requires=['pygame>=2.4.0'],
+     install_requires=['pygame>=2.4.0', 'numpy'],
 
      entry_points =
      {  "console_scripts":
@@ -18,6 +19,6 @@ setup(
              ]
      },
     package_data = {
-        '': ['assets/**/*', 'levels/**/*'],
+        '': ['assets/**/*', 'levels/**/*', 'libraries/*'],
     }
  )
