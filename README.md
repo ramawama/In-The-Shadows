@@ -1,7 +1,10 @@
 ﻿# In The Shadows
  A 2D top-down turn-based stealth game written in Python using Pygame.
-
-## Setup Instructions
+## Installation/Play Instructions
+  1. Clone the repository
+  2. Run `pip install .` in the directory with setup.py
+  3. Run `intheshadows` from the command line.
+## Dev Environment Instructions
   **Requires Python 3.10 to Run**
   1. Clone the repository
   2. Create a virtual environment using your IDE
