@@ -510,22 +510,22 @@ class Game:
             case 'R':
                 if guard.x + 1 > 27:
                     return False
-                if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p', 'g', 'k', 'e']:
+                if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p']:
                     return False
             case 'L':
                 if guard.x - 1 < 1:
                     return False
-                if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p', 'g', 'k', 'e']:
+                if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p']:
                     return False
             case 'U':
                 if guard.y - 1 < 1:
                     return False
-                if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p', 'g', 'k', 'e']:
+                if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p']:
                     return False
             case 'D':
                 if guard.y + 1 > 27:
                     return False
-                if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p', 'g', 'k', 'e']:
+                if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p']:
                     return False
         return True
 
