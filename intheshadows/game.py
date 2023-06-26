@@ -346,6 +346,8 @@ class Game:
         return True
 
     def __game_over(self):
+        pygame.mixer.Sound.play(pygame.mixer.Sound("./assets/sounds/death.wav"))
+        time.sleep(0.5)
         self.__board.unload()
         self.__level = 1
         self.__state = "game_over"
@@ -539,8 +541,6 @@ class Game:
 
     def __check_game_over(self, player_position):
         if self.__board.tiles[player_position[1]][player_position[0]].type == "g":
-            pygame.mixer.Sound.play(pygame.mixer.Sound("death.wav"))
-            time.sleep(0.5)
             return True
         return False
 
