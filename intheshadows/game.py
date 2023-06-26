@@ -85,6 +85,8 @@ class Game:
                 self.__state = 'menu'
             case 'win':
                 self.__state = 'menu'
+            case 'help':
+                self.__state = 'game'
 
     # Changes state based on button click
     def __mouse_click(self, mouse_pos):
@@ -125,14 +127,30 @@ class Game:
                 self.__state = 'menu'
 
     def __display_help(self):
-        self.__screen.help_surface.fill((0, 0, 0))
-        text_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF',
-                                     int(self.__screen.background_surface.get_height() * 0.04))
-        text = text_font.render("Press 'M' to toggle music", True, self.__white)
+        background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/woodBackground_old.png")
+        background = pygame.transform.scale(background, (self.__width // 2, self.__height // 2))
+        font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(self.__height * 0.09))
+
+        (title_width, title_height) = (self.__width // 4, self.__height // 16)
+        text = font.render("HOW TO PLAY", True, self.__white)
         text_rect = text.get_rect()
-        text_rect.center = (self.__screen.background_surface.get_width() / 2, self.__screen.background_surface.get_height() / 2)
-        self.__screen.background_surface.blit(text, text_rect)
-        pygame.display.update()
+        text_rect.center = (title_width, title_height)
+
+        move_text = font.render('MOVE:', True, (255, 255, 255))
+        move_rect = move_text.get_rect()
+        (move_width, move_height) = (title_width // 4, title_height + 48 * self.__resolution)
+        move_rect.center = (move_width, move_height)
+
+        (movement_width, movement_height) = (title_width // 4 + move_width, title_height + 16 * self.__resolution)
+        arrow_key = pygame.image.load(
+            Path(__file__).parent / "assets/graphics/HUD Elements/arrow_keys.png").convert_alpha()
+        scaled_arrow = pygame.transform.scale(arrow_key, (self.__width // 8, self.__height // 8))
+
+        self.__screen.help_surface.blit(background, (0, 0))
+        self.__screen.help_surface.blit(text, text_rect)
+        self.__screen.help_surface.blit(move_text, move_rect)
+        self.__screen.help_surface.blit(scaled_arrow, (movement_width, movement_height))
+        self.__screen.foreground_surface.blit(self.__screen.help_surface, (self.__width // 4, self.__height // 4))
 
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
@@ -144,7 +162,7 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_h: # help screen in game
-                                self.__display_help()
+                                self.__state = 'help'
                             case pygame.K_m:
                                 self.__music.toggle()
                             case pygame.K_ESCAPE:
@@ -189,6 +207,17 @@ class Game:
                                 for x in range(len(self.__guards)):
                                     self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
                                                        self.__guards[x].position()[1] * 32 * self.__resolution)
+        elif self.__state == 'help':
+            for ev in pygame.event.get():
+                match ev.type:
+                    case pygame.QUIT:
+                        self.__running = False
+                    case pygame.K_ESCAPE:
+                        self.__escape_state()
+                    case pygame.KEYDOWN:
+                        match ev.key:
+                            case pygame.K_ESCAPE | pygame.K_h:
+                                self.__state = 'game'
         else:
             for ev in pygame.event.get():
                 match ev.type:
@@ -677,6 +706,8 @@ class Game:
                         self.__run_game()
                     except Exception as E:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
+                case 'help':
+                    self.__display_help()
                 case 'game_over':
                     pass
                 case 'move':

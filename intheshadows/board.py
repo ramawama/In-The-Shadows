@@ -155,10 +155,6 @@ class Board:
                                      self.__screen_height + (16 * self.__resolution))
         move_rect.center = (move_width, move_height)
 
-        arrow_key = pygame.image.load(Path(__file__).parent / "assets/graphics/HUD Elements/arrow_keys.png").convert_alpha()
-        scaled_arrow = pygame.transform.scale(arrow_key, (32 * self.__resolution, 32 * self.__resolution))
-        (movement_width, movement_height) = (move_width + (32 * self.__resolution), self.__screen_height)
-
         curr_level = text_font.render('LEVEL ' + str(self.__level), True, white)
         curr_level_rect = curr_level.get_rect()
         (curr_level_width, curr_level_height) = (self.__screen_width // 2 - 32, move_height)
@@ -177,6 +173,5 @@ class Board:
         instructions_rect.center = (instructions_width, instructions_height)
 
         self.__screen.background_surface.blit(move_text, move_rect)
-        self.__screen.background_surface.blit(scaled_arrow, (movement_width, movement_height))
         self.__screen.background_surface.blit(curr_level, curr_level_rect)
         self.__screen.background_surface.blit(instructions, instructions_rect)

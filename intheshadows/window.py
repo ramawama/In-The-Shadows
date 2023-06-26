@@ -15,7 +15,8 @@ class Window:
         # Create surfaces
         self.__background_surface = pygame.Surface((width, height))
         self.__foreground_surface = pygame.Surface((width, height), pygame.SRCALPHA)
-        self.__help_surface = pygame.Surface((width / 2, height / 2), pygame.SRCALPHA)
+        self.__help_surface = pygame.Surface((width // 2, height // 2), pygame.SRCALPHA)
+
 
     # Refresh all display elements every cycle
     def update(self):
@@ -27,7 +28,8 @@ class Window:
         self.__screen = pygame.display.set_mode((width, height), pygame.SCALED + pygame.FULLSCREEN, 60)
         self.__background_surface = pygame.transform.scale(self.__background_surface, (width, height))
         self.__foreground_surface = pygame.transform.scale(self.__foreground_surface, (width, height))
-        self.__help_surface = pygame.transform.scale(self.__help_surface, (width / 2, height / 2))
+        self.__help_surface = pygame.transform.scale(self.__help_surface, (width // 2, height // 2))
+
 
     # Returns background surface
     @property
@@ -38,3 +40,7 @@ class Window:
     @property
     def foreground_surface(self):
         return self.__foreground_surface
+
+    @property
+    def help_surface(self):
+        return self.__help_surface
