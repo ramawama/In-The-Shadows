@@ -228,7 +228,7 @@ class Game:
                     case pygame.MOUSEBUTTONDOWN:
                         self.__mouse_click(pygame.mouse.get_pos())
 
-    def move_player(self):
+    def __move_player(self):
         player_position = self.__player.position()
         if self.__move_counter == 15 // self.__resolution:
             self.__state = 'move_guard'
