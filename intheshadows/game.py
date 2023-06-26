@@ -94,6 +94,8 @@ class Game:
                 self.__state = 'menu'
             case 'win':
                 self.__state = 'menu'
+            case 'help':
+                self.__state = 'game'
 
     # Changes state based on button click
     def __mouse_click(self, mouse_pos):
@@ -137,6 +139,46 @@ class Game:
             elif self.__rects['options_back_button'].collidepoint(mouse_pos):
                 self.__state = 'menu'
 
+    def __display_help(self): # displays controls and instructions while in game by clicking h
+        # temp background
+        background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/woodBackground_old.png")
+        background = pygame.transform.scale(background, (self.__width // 2, self.__height // 2))
+        title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(self.__height * 0.09))
+        font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(self.__height * 0.06))
+
+        (title_width, title_height) = (self.__width // 4, self.__height // 16)
+        text = title_font.render("HOW TO PLAY", True, self.__white)
+        text_rect = text.get_rect()
+        text_rect.center = (title_width, title_height)
+
+        (move_width, move_height) = (title_width // 4, title_height + 48 * self.__resolution)
+        move_text = font.render('MOVE:', True, (255, 255, 255))
+        move_rect = move_text.get_rect()
+        move_rect.center = (move_width, move_height)
+
+        (movement_width, movement_height) = (title_width // 4 + move_width, title_height + 16 * self.__resolution)
+        arrow_key = pygame.image.load(
+            Path(__file__).parent / "assets/graphics/HUD Elements/arrow_keys.png").convert_alpha()
+        scaled_arrow = pygame.transform.scale(arrow_key, (self.__width // 10, self.__height // 10))
+
+        (music_width, music_height) = (movement_width + (4 * self.__resolution), move_height + 48 * self.__resolution)
+        music_text = font.render('TOGGLE MUSIC: M', True, (255, 255, 255))
+        music_rect = music_text.get_rect()
+        music_rect.center = (music_width, music_height)
+
+        (quit_width, quit_height) = (music_width - (16 * self.__resolution), music_height + 48 * self.__resolution)
+        quit_text = font.render('QUIT: ESCAPE', True, (255, 255, 255))
+        quit_rect = quit_text.get_rect()
+        quit_rect.center = (quit_width, quit_height)
+
+        self.__screen.help_surface.blit(background, (0, 0))
+        self.__screen.help_surface.blit(text, text_rect)
+        self.__screen.help_surface.blit(move_text, move_rect)
+        self.__screen.help_surface.blit(scaled_arrow, (movement_width, movement_height))
+        self.__screen.help_surface.blit(music_text, music_rect)
+        self.__screen.help_surface.blit(quit_text, quit_rect)
+        self.__screen.foreground_surface.blit(self.__screen.help_surface, (self.__width // 4, self.__height // 4))
+
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
@@ -146,11 +188,16 @@ class Game:
                         self.__running = False
                     case pygame.KEYDOWN:
                         match ev.key:
+                            case pygame.K_h: # help screen in game
+                                self.__state = 'help'
                             case pygame.K_m:
                                 self.__music.toggle()
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                             case pygame.K_w | pygame.K_UP:
+                                if self.__allow_movement is False:
+                                    continue
+                                self.__allow_movement = False
                                 self.__state = 'move'
                                 self.__move_direction = 'up'
                                 self.__move_counter = 0
@@ -162,6 +209,9 @@ class Game:
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_a | pygame.K_LEFT:
+                                if self.__allow_movement is False:
+                                    continue
+                                self.__allow_movement = False
                                 self.__state = 'move'
                                 self.__move_direction = 'left'
                                 self.__move_counter = 0
@@ -172,6 +222,9 @@ class Game:
                                     self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
                                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_s | pygame.K_DOWN:
+                                if self.__allow_movement is False:
+                                    continue
+                                self.__allow_movement = False
                                 self.__state = 'move'
                                 self.__move_direction = 'down'
                                 self.__move_counter = 0
@@ -182,6 +235,9 @@ class Game:
                                     self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
                                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_d | pygame.K_RIGHT:
+                                if self.__allow_movement is False:
+                                    continue
+                                self.__allow_movement = False
                                 self.__state = 'move'
                                 self.__move_direction = 'right'
                                 self.__move_counter = 0
@@ -191,6 +247,19 @@ class Game:
                                 for x in range(len(self.__guards)):
                                     self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
                                                        self.__guards[x].position()[1] * 32 * self.__resolution)
+        elif self.__state == 'help':
+            for ev in pygame.event.get():
+                match ev.type:
+                    case pygame.QUIT:
+                        self.__running = False
+                    case pygame.K_ESCAPE:
+                        self.__escape_state()
+                    case pygame.KEYDOWN:
+                        match ev.key:
+                            case pygame.K_m:
+                                self.__music.toggle()
+                            case pygame.K_ESCAPE | pygame.K_h:
+                                self.__state = 'game'
         else:
             for ev in pygame.event.get():
                 match ev.type:
@@ -791,12 +860,15 @@ class Game:
                             self.__state = 'move_guard'
                             self.__move_flag = "player"
                             continue
+                    self.__allow_movement = True
                     self.__guard_turn_counter = 0
                     self.__move_flag = "none"
                     try:
                         self.__run_game()
                     except Exception as E:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
+                case 'help':
+                    self.__display_help()
                 case 'game_over':
                     pass
                 case 'move':
@@ -805,9 +877,15 @@ class Game:
                     self.move_player()
                 case 'move_guard':
                     if self.__move_flag == "player":
+                        if self.__check_game_over(self.__player.position()):
+                            self.__game_over()
+                            self.__player_spawn, self.__guard_routes = self.__get_spawns()
+                            self.__set_player_and_guards()
+                            continue
                         self.__guard_turn_counter = self.__guard_turn_counter + 1
                         self.__move_counter = 0
                         self.__anim_counter = 0
+                        self.__move_flag = "guard"
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
                             match move_direction:
@@ -816,7 +894,6 @@ class Game:
                                 case 'L':
                                     self.__guards[x].direction = 'left'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
-
                         self.__move_flag = "guard"
                     self.move_guards()
             self.__screen.update()
