@@ -714,6 +714,11 @@ class Game:
                     self.move_player()
                 case 'move_guard':
                     if self.__move_flag == "player":
+                        if self.__check_game_over(self.__player.position()):
+                            self.__game_over()
+                            self.__player_spawn, self.__guard_routes = self.__get_spawns()
+                            self.__set_player_and_guards()
+                            continue
                         self.__guard_turn_counter = self.__guard_turn_counter + 1
                         self.__move_counter = 0
                         self.__anim_counter = 0
