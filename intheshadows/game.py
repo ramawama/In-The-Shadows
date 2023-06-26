@@ -62,7 +62,7 @@ class Game:
 
         self.__fullscreen = True
 
-        self.__lib = cdll.LoadLibrary(Path(__file__).parent / 'libraries/libpathing.so')
+        self.__lib = cdll.LoadLibrary(Path(__file__).parent / 'libraries/pathing.dll')
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
