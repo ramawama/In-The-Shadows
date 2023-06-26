@@ -5,10 +5,10 @@ class Easy_Guard(Enemy):
         super().__init__(self, direction)
         self._state = "Alive"  # alive or dead
         self._direction = direction  # the direction they are facing
-        self._left = pygame.image.load("./assets/graphics/Guard_easy.png")
-        self._right = pygame.image.load("./assets/graphics/Guard_easy.png")
-        self._up = pygame.image.load("./assets/graphics/Guard_easy.png")
-        self._down = pygame.image.load("./assets/graphics/Guard_easy.png")
+        self._left = pygame.image.load("./assets/graphics/Guard_EASY.png")
+        self._right = pygame.image.load("./assets/graphics/Guard_EASY.png")
+        self._up = pygame.image.load("./assets/graphics/Guard_EASY.png")
+        self._down = pygame.image.load("./assets/graphics/Guard_EASY.png")
 
     @property
     def image(self):
