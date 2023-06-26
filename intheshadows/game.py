@@ -143,6 +143,9 @@ class Game:
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                             case pygame.K_w | pygame.K_UP:
+                                if self.__allow_movement is False:
+                                    continue
+                                self.__allow_movement = False
                                 self.__state = 'move'
                                 self.__move_direction = 'up'
                                 self.__move_counter = 0
@@ -153,6 +156,9 @@ class Game:
                                     self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
                                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_a | pygame.K_LEFT:
+                                if self.__allow_movement is False:
+                                    continue
+                                self.__allow_movement = False
                                 self.__state = 'move'
                                 self.__move_direction = 'left'
                                 self.__move_counter = 0
@@ -163,6 +169,9 @@ class Game:
                                     self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
                                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_s | pygame.K_DOWN:
+                                if self.__allow_movement is False:
+                                    continue
+                                self.__allow_movement = False
                                 self.__state = 'move'
                                 self.__move_direction = 'down'
                                 self.__move_counter = 0
@@ -173,6 +182,9 @@ class Game:
                                     self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
                                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_d | pygame.K_RIGHT:
+                                if self.__allow_movement is False:
+                                    continue
+                                self.__allow_movement = False
                                 self.__state = 'move'
                                 self.__move_direction = 'right'
                                 self.__move_counter = 0
@@ -693,6 +705,7 @@ class Game:
                     pygame.mouse.set_visible(True)
                     self.__run_options()
                 case 'game':
+                    self.__allow_movement = True
                     pygame.mouse.set_visible(False)
                     if self.__move_flag == "guard":
                         self.__update_guards()
@@ -722,6 +735,7 @@ class Game:
                         self.__guard_turn_counter = self.__guard_turn_counter + 1
                         self.__move_counter = 0
                         self.__anim_counter = 0
+                        self.__move_flag = "guard"
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
                             match move_direction:
@@ -730,8 +744,6 @@ class Game:
                                 case 'L':
                                     self.__guards[x].direction = 'left'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
-
-                        self.__move_flag = "guard"
                     self.__move_guards()
             self.__screen.update()
         pygame.quit()
