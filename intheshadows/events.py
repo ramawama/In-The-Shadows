@@ -19,6 +19,7 @@ def game_over(width, height, screen, board, black, white):
     screen.update()
     return level, state
 
+
 def win(width, height, screen, black, white):
     level = 1
     state = "win"
