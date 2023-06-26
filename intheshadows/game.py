@@ -224,6 +224,19 @@ class Game:
         background = pygame.transform.scale(background, (self.__width, self.__height))
 
         self.__screen.background_surface.blit(background, (0, 0))
+        (mouse_x, mouse_y) = pygame.mouse.get_pos()
+        if self.__rects['start_text_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/start.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['options_text_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/options.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['quit_text_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/quit.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
 
     # Runs the options
     def __run_options(self):
@@ -298,6 +311,33 @@ class Game:
         self.__rects['resolution_2_rect'] = resolution_def.get_rect()
         self.__rects['resolution_2_rect'].center = (0.93*res_2_width, 1.07*res_2_height)
         # self.__screen.background_surface.blit(resolution_2, self.__rects['resolution_2_rect'])
+
+        (mouse_x, mouse_y) = pygame.mouse.get_pos()
+        if self.__rects['resolution_def_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/window.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['resolution_2_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/fullscreen.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['easy_difficulty_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/easy.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['medium_difficulty_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/medium.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['hard_difficulty_rect'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/hard.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+        if self.__rects['options_back_button'].collidepoint(mouse_x, mouse_y):
+            highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/back_arrow.png")
+            highlight = pygame.transform.scale(highlight, (self.__width, self.__height))
+            self.__screen.background_surface.blit(highlight, (0, 0))
+
 
         pygame.display.update()
 
