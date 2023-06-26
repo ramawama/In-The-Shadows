@@ -4,16 +4,16 @@ from pathlib import Path
 
 
 class Guard:
-    def __init__(self, screen, resolution, x, y, path="LR", difficulty="easy", width=32, height=32):
+    def __init__(self, screen, resolution, x, y, path="LR", difficulty="EASY", width=32, height=32):
         self.__alive = True
         self.__screen = screen
         self.__resolution = resolution
         match difficulty:
-            case "easy":
+            case "EASY":
                 self.__difficulty = 1
-            case "med":
+            case "MEDIUM":
                 self.__difficulty = 2
-            case "hard":
+            case "HARD":
                 self.__difficulty = 3
             case _:
                 self.__difficulty = 1
@@ -31,6 +31,12 @@ class Guard:
         self.__screen.blit(self.__curr_sprites[0],
                            (self.__x * 32 * self.__resolution, self.__y * 32 * self.__resolution))
 
+    def set_difficulty(self, difficulty):
+        self.__difficulty = difficulty
+
+    @property
+    def difficulty(self):
+        return self.__difficulty
 
     @property
     def route(self):

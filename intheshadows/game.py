@@ -15,7 +15,7 @@ class Game:
         # Create global variables for height, width, and black and white colors
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
-        (self.__width, self.__height) = (64*28, 64*16)
+        (self.__width, self.__height) = (64 * 28, 64 * 16)
 
         self.__level = 1
         self.__torch_counter = 0
@@ -63,9 +63,10 @@ class Game:
         self.__guards = []
         self.__guard_positions.clear()
         for x in range(len(self.__guard_routes)):
-            self.__guards.append(Guard(self.__screen.foreground_surface, self.__resolution, self.__guard_routes[x][1][0],
-                                       self.__guard_routes[x][1][1], self.__guard_routes[x][2],
-                                       self.__guard_routes[x][0]))
+            self.__guards.append(
+                Guard(self.__screen.foreground_surface, self.__resolution, self.__guard_routes[x][0][0],
+                      self.__guard_routes[x][0][1], self.__guard_routes[x][1],
+                      self.__difficulty))
             self.__guard_positions.append(())
         self.__turn_counter = 0
 
@@ -91,6 +92,7 @@ class Game:
                 self.__state = 'game'
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
+                self.__set_player_and_guards()
             elif self.__rects['options_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'options'
             elif self.__rects['quit_text_rect'].collidepoint(mouse_pos):
@@ -122,7 +124,6 @@ class Game:
             elif self.__rects['options_back_button'].collidepoint(mouse_pos):
                 self.__state = 'menu'
 
-
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
@@ -144,8 +145,9 @@ class Game:
                                 self.__position = (self.__player.position()[0] * 32 * self.__resolution,
                                                    self.__player.position()[1] * 32 * self.__resolution)
                                 for x in range(len(self.__guards)):
-                                    self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
-                                                       self.__guards[x].position()[1] * 32 * self.__resolution)
+                                    self.__guard_positions[x] = (
+                                        self.__guards[x].position()[0] * 32 * self.__resolution,
+                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_a | pygame.K_LEFT:
                                 self.__state = 'move'
                                 self.__move_direction = 'left'
@@ -154,8 +156,9 @@ class Game:
                                 self.__position = (self.__player.position()[0] * 32 * self.__resolution,
                                                    self.__player.position()[1] * 32 * self.__resolution)
                                 for x in range(len(self.__guards)):
-                                    self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
-                                                       self.__guards[x].position()[1] * 32 * self.__resolution)
+                                    self.__guard_positions[x] = (
+                                        self.__guards[x].position()[0] * 32 * self.__resolution,
+                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_s | pygame.K_DOWN:
                                 self.__state = 'move'
                                 self.__move_direction = 'down'
@@ -164,8 +167,9 @@ class Game:
                                 self.__position = (self.__player.position()[0] * 32 * self.__resolution,
                                                    self.__player.position()[1] * 32 * self.__resolution)
                                 for x in range(len(self.__guards)):
-                                    self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
-                                                       self.__guards[x].position()[1] * 32 * self.__resolution)
+                                    self.__guard_positions[x] = (
+                                        self.__guards[x].position()[0] * 32 * self.__resolution,
+                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_d | pygame.K_RIGHT:
                                 self.__state = 'move'
                                 self.__move_direction = 'right'
@@ -174,8 +178,9 @@ class Game:
                                 self.__position = (self.__player.position()[0] * 32 * self.__resolution,
                                                    self.__player.position()[1] * 32 * self.__resolution)
                                 for x in range(len(self.__guards)):
-                                    self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
-                                                       self.__guards[x].position()[1] * 32 * self.__resolution)
+                                    self.__guard_positions[x] = (
+                                        self.__guards[x].position()[0] * 32 * self.__resolution,
+                                        self.__guards[x].position()[1] * 32 * self.__resolution)
         else:
             for ev in pygame.event.get():
                 match ev.type:
@@ -198,7 +203,8 @@ class Game:
         self.__screen.background_surface.fill((0, 0, 0))
         self.__screen.foreground_surface.fill((0, 0, 0, 0))
         big_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
-        small_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.15))
+        small_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf',
+                                      int(self.__height * 0.15))
 
         (start_width, start_height) = (self.__width // 2, self.__height // 2)
         (options_width, options_height) = (start_width, start_height + start_height // 32)
@@ -210,15 +216,15 @@ class Game:
 
         start_text = small_font.render('START__', True, self.__white)
         self.__rects['start_text_rect'] = start_text.get_rect()
-        self.__rects['start_text_rect'].center = (1.04*start_width, 0.95*start_height)
+        self.__rects['start_text_rect'].center = (1.04 * start_width, 0.95 * start_height)
 
         options_text = small_font.render('OPTIONS_', True, self.__white)
         self.__rects['options_text_rect'] = options_text.get_rect()
-        self.__rects['options_text_rect'].center = (1.02*options_width, options_height + 1.25*options_height // 4)
+        self.__rects['options_text_rect'].center = (1.02 * options_width, options_height + 1.25 * options_height // 4)
 
         quit_text = small_font.render('QUIT__', True, self.__white)
         self.__rects['quit_text_rect'] = quit_text.get_rect()
-        self.__rects['quit_text_rect'].center = (1.02*quit_width, quit_height + 1.6*quit_height // 4)
+        self.__rects['quit_text_rect'].center = (1.02 * quit_width, quit_height + 1.6 * quit_height // 4)
 
         # animates torches
         if self.__anim_torches:
@@ -249,7 +255,8 @@ class Game:
         self.__screen.background_surface.blit(background, (0, 0))
 
         big_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
-        small_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.09))
+        small_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf',
+                                      int(self.__height * 0.09))
 
         (opt_width, opt_height) = (self.__width // 2, self.__height // 8)
         text = big_font.render('OPTIONS', True, self.__white)
@@ -264,7 +271,8 @@ class Game:
         # self.__screen.background_surface.blit(difficulty, difficulty_rect)
 
         # back button
-        self.__rects['options_back_button'] = pygame.Rect((0.05*self.__width, 0.06*self.__height), (0.08*self.__width, 0.09*self.__height))
+        self.__rects['options_back_button'] = pygame.Rect((0.05 * self.__width, 0.06 * self.__height),
+                                                          (0.08 * self.__width, 0.09 * self.__height))
 
         (easy_width, easy_height) = (diff_width, diff_height + self.__height // 8)
         easy_difficulty = small_font.render('EASY_', True, (0, 153, 0))
@@ -272,13 +280,13 @@ class Game:
         self.__rects['easy_difficulty_rect'].center = (easy_width, easy_height)
         # self.__screen.background_surface.blit(easy_difficulty, self.__rects['easy_difficulty_rect'])
 
-        (med_width, med_height) = (diff_width, easy_height + 1.27*self.__height // 8)
+        (med_width, med_height) = (diff_width, easy_height + 1.27 * self.__height // 8)
         medium_difficulty = small_font.render('_MEDIUM_', True, (255, 128, 0))
         self.__rects['medium_difficulty_rect'] = medium_difficulty.get_rect()
         self.__rects['medium_difficulty_rect'].center = (med_width, med_height)
         # self.__screen.background_surface.blit(medium_difficulty, self.__rects['medium_difficulty_rect'])
 
-        (hard_width, hard_height) = (diff_width, med_height + 1.30*self.__height // 8)
+        (hard_width, hard_height) = (diff_width, med_height + 1.30 * self.__height // 8)
         hard_difficulty = small_font.render('HARD_', True, (255, 0, 0))
         self.__rects['hard_difficulty_rect'] = hard_difficulty.get_rect()
         self.__rects['hard_difficulty_rect'].center = (hard_width, hard_height)
@@ -298,7 +306,7 @@ class Game:
                 mode = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_easy.png")
                 # color = (255, 255, 255)
         mode = pygame.transform.scale(mode, (self.__width, self.__height))
-        self.__screen.background_surface.blit(mode, (0,0))
+        self.__screen.background_surface.blit(mode, (0, 0))
         # text = small_font.render(str(self.__difficulty) + "  MODE  CHOSEN!", True, color)
         # text_rect = text.get_rect()
         # text_rect.center = (diff_width, hard_height + self.__height // 8)
@@ -313,13 +321,13 @@ class Game:
         (res_def_width, res_def_height) = (res_width, res_height + self.__height // 8)
         resolution_def = small_font.render('_WINDOW_', True, (255, 0, 0))
         self.__rects['resolution_def_rect'] = resolution_def.get_rect()
-        self.__rects['resolution_def_rect'].center = (1.02*res_def_width, res_def_height)
+        self.__rects['resolution_def_rect'].center = (1.02 * res_def_width, res_def_height)
         # self.__screen.background_surface.blit(resolution_def, self.__rects['resolution_def_rect'])
 
         (res_2_width, res_2_height) = (res_width, res_def_height + self.__height // 8)
         resolution_2 = small_font.render('00__FULLSCREEN_0', True, (255, 0, 0))
         self.__rects['resolution_2_rect'] = resolution_def.get_rect()
-        self.__rects['resolution_2_rect'].center = (0.93*res_2_width, 1.07*res_2_height)
+        self.__rects['resolution_2_rect'].center = (0.93 * res_2_width, 1.07 * res_2_height)
         # self.__screen.background_surface.blit(resolution_2, self.__rects['resolution_2_rect'])
 
         pygame.display.update()
@@ -477,13 +485,14 @@ class Game:
         for x in range(len(self.__guards)):
             sprites = self.__guards[x].currSprites()
             step_size = 2 * self.__resolution * self.__resolution
-            move_direction = self.__guard_routes[x][2][(self.__turn_counter % len(self.__guard_routes[x][2]))]
+            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             match move_direction:
                 case 'R':
                     # draw background
                     # draw animation frame
-                    self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter], (self.__guard_positions[x][0],
-                                                                      self.__guard_positions[x][1]))
+                    self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
+                                                          (self.__guard_positions[x][0],
+                                                           self.__guard_positions[x][1]))
                     # slight movement + decrement distance left to travel
                     self.__guard_positions[x] = (self.__guard_positions[x][0] + step_size, self.__guard_positions[x][1])
                     # update guard location internally
@@ -560,7 +569,7 @@ class Game:
 
         width_scale = self.__width // len(self.__board.tiles[0])
         # have to use 15/16 because tiles are scaled for the 15 rows. The 16th is the HUD
-        height_scale = 15/16*self.__height // len(self.__board.tiles)
+        height_scale = 15 / 16 * self.__height // len(self.__board.tiles)
         if self.__anim_torches:
             big_torch = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Torch/Torch_big.png")
             big_torch = pygame.transform.scale(big_torch, (width_scale, height_scale))
@@ -569,7 +578,9 @@ class Game:
                     # print(self.__board.tiles[x][y].type, end='')
                     if self.__board.tiles[x][y].type == 't' and self.__board.tiles[x][y].lit:
                         # not correct position
-                        self.__screen.foreground_surface.blit(big_torch, (self.__board.tiles[x][y].pos[0] * width_scale, self.__board.tiles[x][y].pos[1] * height_scale))
+                        self.__screen.foreground_surface.blit(big_torch, (
+                            self.__board.tiles[x][y].pos[0] * width_scale,
+                            self.__board.tiles[x][y].pos[1] * height_scale))
 
     # Runs the actual game
     def __run_game(self):
@@ -599,17 +610,22 @@ class Game:
 
     def __update_guards(self):
         for x in range(len(self.__guards)):
-            move_direction = self.__guard_routes[x][2][(self.__turn_counter % len(self.__guard_routes[x][2]))]
+            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             match move_direction:
                 case 'R':
-                    self.__guards[x].moveRight()
+                    if self.__board.tiles[self.__guards[x].y][self.__guards[x].x + (1 * self.__guards[x].difficulty)].type in ['o', 't', 'p']:
+                        self.__guards[x].moveRight()
                 case 'L':
-                    self.__guards[x].moveLeft()
+                    if self.__board.tiles[self.__guards[x].y][self.__guards[x].x - (1 * self.__guards[x].difficulty)].type in ['o', 't', 'p']:
+                        self.__guards[x].moveLeft()
                 case 'U':
-                    self.__guards[x].moveUp()
+                    if self.__board.tiles[self.__guards[x].y - (1 * self.__guards[x].difficulty)][self.__guards[x].x].type in ['o', 't', 'p']:
+                        self.__guards[x].moveUp()
                 case 'D':
-                    self.__guards[x].moveDown()
-            self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x, self.__guards[x].currSprites()[0])
+                    if self.__board.tiles[self.__guards[x].y + (1 * self.__guards[x].difficulty)][self.__guards[x].x].type in ['o', 't', 'p']:
+                        self.__guards[x].moveDown()
+            self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
+                                                 self.__guards[x].currSprites()[0])
             self.__board.torch_check()
         self.__turn_counter = self.__turn_counter + 1
 
@@ -659,7 +675,8 @@ class Game:
                         self.__move_counter = 0
                         self.__anim_counter = 0
                         for x in range(len(self.__guards)):
-                            move_direction = self.__guard_routes[x][2][(self.__turn_counter % len(self.__guard_routes[x][2]))]
+                            move_direction = self.__guard_routes[x][1][
+                                (self.__turn_counter % len(self.__guard_routes[x][1]))]
                             match move_direction:
                                 case 'R':
                                     self.__guards[x].direction = 'right'
