@@ -27,6 +27,7 @@ class Game:
         self.__move_counter = 0
         self.__move_direction = 'right'
         self.__anim_torches = True
+        self.__guard_tracking = False
 
         self.__resolution = 2  # resolution option for scaling
 
@@ -147,6 +148,8 @@ class Game:
                                 self.__state = 'help'
                             case pygame.K_m:
                                 self.__music.toggle()
+                            case pygame.K_k:
+                                self.__guard_tracking = not self.__guard_tracking
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                             case pygame.K_w | pygame.K_UP:
@@ -351,7 +354,7 @@ class Game:
             sprites = self.__guards[x].currSprites()
             step_size = 2 * self.__resolution * self.__resolution
             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
-            if self.__difficulty == "EASY":
+            if self.__guard_tracking:
                 move_direction = self.__temp_bfs(self.__guards[x])
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
@@ -529,7 +532,7 @@ class Game:
     def __update_guards(self):
         for x in range(len(self.__guards)):
             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
-            if self.__difficulty == "EASY":
+            if self.__guard_tracking:
                 move_direction = self.__temp_bfs(self.__guards[x])
             match move_direction:
                 case 'R':
@@ -616,7 +619,7 @@ class Game:
                         self.__move_flag = "guard"
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
-                            if self.__difficulty == "EASY":
+                            if self.__guard_tracking:
                                 move_direction = self.__temp_bfs(self.__guards[x])
                             match move_direction:
                                 case 'R':
