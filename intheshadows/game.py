@@ -689,7 +689,6 @@ class Game:
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
                 self.__set_player_and_guards()
-                self.__player.reset_key()
 
     def __check_guard_path(self, guard, direction):
         match direction:
