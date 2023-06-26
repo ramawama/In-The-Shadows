@@ -132,8 +132,6 @@ class Game:
             elif self.__rects['options_back_button'].collidepoint(mouse_pos):
                 self.__state = 'menu'
 
-
-
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
