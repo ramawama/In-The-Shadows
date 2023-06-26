@@ -1,5 +1,4 @@
 import queue
-import time
 from pathlib import Path
 import pygame
 import os
