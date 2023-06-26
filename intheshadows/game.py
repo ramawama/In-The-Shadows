@@ -487,7 +487,14 @@ class Game:
             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             match move_direction:
                 case 'R':
-                    # draw background
+                    # check if guard should move
+                    try:
+                        for i in range(1, self.__guards[x].difficulty + 2):
+                            if not self.__board.tiles[self.__guards[x].y][self.__guards[x].x + i].type in ['o', 't', 'p',
+                                                                                                           'g']:
+                                continue
+                    except:
+                        continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
                                                           (self.__guard_positions[x][0],
@@ -496,7 +503,14 @@ class Game:
                     self.__guard_positions[x] = (self.__guard_positions[x][0] + step_size, self.__guard_positions[x][1])
                     # update guard location internally
                 case 'L':
-                    # draw background
+                    # check if guard should move
+                    try:
+                        for i in range(1, self.__guards[x].difficulty + 2):
+                            if not self.__board.tiles[self.__guards[x].y][self.__guards[x].x - i].type in ['o', 't', 'p',
+                                                                                                           'g']:
+                                continue
+                    except:
+                        continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
                                                           (self.__guard_positions[x][0],
@@ -504,7 +518,14 @@ class Game:
                     # slight movement + decrement distance left to travel
                     self.__guard_positions[x] = (self.__guard_positions[x][0] - step_size, self.__guard_positions[x][1])
                 case "U":
-                    # draw background
+                    # check if guard should move
+                    try:
+                        for i in range(1, self.__guards[x].difficulty + 2):
+                            if not self.__board.tiles[self.__guards[x].y - i][self.__guards[x].x].type in ['o', 't', 'p',
+                                                                                                           'g']:
+                                continue
+                    except:
+                        continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
                                                           (self.__guard_positions[x][0],
@@ -512,7 +533,14 @@ class Game:
                     # slight movement + decrement distance left to travel
                     self.__guard_positions[x] = (self.__guard_positions[x][0], self.__guard_positions[x][1] - step_size)
                 case "D":
-                    # draw background
+                    # check if guard should move
+                    try:
+                        for i in range(1, self.__guards[x].difficulty + 2):
+                            if not self.__board.tiles[self.__guards[x].y + i][self.__guards[x].x].type in ['o', 't', 'p',
+                                                                                                           'g']:
+                                continue
+                    except:
+                        continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
                                                           (self.__guard_positions[x][0],
@@ -612,25 +640,25 @@ class Game:
             case 'R':
                 if guard.x + guard.difficulty > 27:
                     return False
-                for x in range(guard.difficulty):
+                for x in range(guard.difficulty + 1):
                     if self.__board.tiles[guard.y][guard.x + x].type not in ['o', 't', 'p', 'g']:
                         return False
             case 'L':
                 if guard.x - guard.difficulty < 1:
                     return False
-                for x in range(guard.difficulty):
+                for x in range(guard.difficulty + 1):
                     if self.__board.tiles[guard.y][guard.x - x].type not in ['o', 't', 'p', 'g']:
                         return False
             case 'U':
                 if guard.y - guard.difficulty < 1:
                     return False
-                for x in range(guard.difficulty):
+                for x in range(guard.difficulty + 1):
                     if self.__board.tiles[guard.y - x][guard.x].type not in ['o', 't', 'p', 'g']:
                         return False
             case 'D':
                 if guard.y + guard.difficulty > 27:
                     return False
-                for x in range(guard.difficulty):
+                for x in range(guard.difficulty + 1):
                     if self.__board.tiles[guard.y + x][guard.x].type not in ['o', 't', 'p', 'g']:
                         return False
         return True
