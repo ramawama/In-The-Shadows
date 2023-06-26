@@ -64,8 +64,8 @@ class Game:
         self.__guards = []
         self.__guard_positions.clear()
         for x in range(len(self.__guard_routes)):
-            self.__guards.append(Guard(self.__screen.foreground_surface, self.__resolution, self.__guard_routes[x][1][0],
-                                       self.__guard_routes[x][1][1], self.__guard_routes[x][2],
+            self.__guards.append(Guard(self.__screen.foreground_surface, self.__resolution, self.__guard_routes[x][0][0],
+                                       self.__guard_routes[x][0][1], self.__guard_routes[x][1],
                                        self.__difficulty))
             self.__guard_positions.append(())
         self.__turn_counter = 0
@@ -472,7 +472,7 @@ class Game:
             self.__board.torch_check()
 
     # not done
-    def move_guards(self):
+    def __move_guards(self):
         if self.__move_counter == 15 // self.__resolution:
             self.__state = 'game'
         if self.__anim_counter >= 2:
@@ -482,7 +482,7 @@ class Game:
         for x in range(len(self.__guards)):
             sprites = self.__guards[x].currSprites()
             step_size = 2 * self.__resolution * self.__resolution
-            move_direction = self.__guard_routes[x][2][(self.__turn_counter % len(self.__guard_routes[x][2]))]
+            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
@@ -539,7 +539,7 @@ class Game:
 
     def __check_game_over(self, player_position):
         if self.__board.tiles[player_position[1]][player_position[0]].type == "g":
-            self.__music.play_music('death')
+            pygame.mixer.Sound.play(pygame.mixer.Sound("death.wav"))
             time.sleep(0.5)
             return True
         return False
@@ -631,7 +631,7 @@ class Game:
 
     def __update_guards(self):
         for x in range(len(self.__guards)):
-            move_direction = self.__guard_routes[x][2][(self.__turn_counter % len(self.__guard_routes[x][2]))]
+            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             match move_direction:
                 case 'R':
                     if self.__check_guard_path(self.__guards[x], 'R'):
@@ -679,7 +679,7 @@ class Game:
                     pygame.mouse.set_visible(False)
                     if self.__move_flag == "guard":
                         self.__update_guards()
-                        if self.__guard_turn_counter < self.__guard_difficulty:
+                        if self.__guard_turn_counter < self.__guard_difficulty and not self.__check_game_over(self.__player.position()):
                             self.__state = 'move_guard'
                             self.__move_flag = "player"
                             continue
@@ -701,7 +701,7 @@ class Game:
                         self.__move_counter = 0
                         self.__anim_counter = 0
                         for x in range(len(self.__guards)):
-                            move_direction = self.__guard_routes[x][2][(self.__turn_counter % len(self.__guard_routes[x][2]))]
+                            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
                             match move_direction:
                                 case 'R':
                                     self.__guards[x].direction = 'right'
@@ -710,6 +710,6 @@ class Game:
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
 
                         self.__move_flag = "guard"
-                    self.move_guards()
+                    self.__move_guards()
             self.__screen.update()
         pygame.quit()
