@@ -680,7 +680,7 @@ class Game:
                     if self.__move_flag == "guard":
                         self.__update_guards()
                         if self.__guard_turn_counter < self.__guard_difficulty:
-                            self.___state = 'move_guard'
+                            self.__state = 'move_guard'
                             self.__move_flag = "player"
                             continue
                     self.__guard_turn_counter = 0
