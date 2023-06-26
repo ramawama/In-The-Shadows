@@ -448,7 +448,7 @@ class Game:
         self.__screen.update()
         return True
 
-    def move_player(self):
+    def __move_player(self):
         player_position = self.__player.position()
         if self.__move_counter == 15 // self.__resolution:
             self.__state = 'move_guard'
@@ -783,7 +783,7 @@ class Game:
                 case 'move':
                     if self.__move_flag == "none":
                         self.__move_flag = "player"
-                    self.move_player()
+                    self.__move_player()
                 case 'move_guard':
                     if self.__move_flag == "player":
                         if self.__check_game_over(self.__player.position()):
