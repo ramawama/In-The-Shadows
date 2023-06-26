@@ -784,8 +784,6 @@ class Game:
             self.__lib.get_next.restype = c_wchar
             if self.__difficulty == 'EASY':
                 (player_x, player_y) = self.__player.position()
-                guard_x = self.__guards[x].x
-                guard_y = self.__guards[x].y
                 move_direction = self.__lib.get_next(len(board), len(board[0]), board_ptr, self.__guards[x].x,
                                                      self.__guards[x].y, player_x,
                                                      player_y)
@@ -796,24 +794,16 @@ class Game:
                 move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             match move_direction:
                 case 'R':
-                    if self.__difficulty == 'EASY':
-                        self.__guards[x].moveRight()
-                    elif self.__check_guard_path(self.__guards[x], move_direction):
+                    if self.__check_guard_path(self.__guards[x], move_direction):
                         self.__guards[x].moveRight()
                 case 'L':
-                    if self.__difficulty == 'EASY':
-                        self.__guards[x].moveLeft()
-                    elif self.__check_guard_path(self.__guards[x], move_direction):
+                    if self.__check_guard_path(self.__guards[x], move_direction):
                         self.__guards[x].moveLeft()
                 case 'U':
-                    if self.__difficulty == 'EASY':
-                        self.__guards[x].moveUp()
-                    elif self.__check_guard_path(self.__guards[x], move_direction):
+                    if self.__check_guard_path(self.__guards[x], move_direction):
                         self.__guards[x].moveUp()
                 case 'D':
-                    if self.__difficulty == 'EASY':
-                        self.__guards[x].moveDown()
-                    elif self.__check_guard_path(self.__guards[x], move_direction):
+                    if self.__check_guard_path(self.__guards[x], move_direction):
                         self.__guards[x].moveDown()
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
                                                  self.__guards[x].currSprites()[0])
