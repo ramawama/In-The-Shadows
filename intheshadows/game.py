@@ -9,9 +9,7 @@ from intheshadows.window import Window
 from intheshadows.music import Music
 from intheshadows.board import Board
 from intheshadows.player import Player
-import site
 from ctypes import *
-import platform
 
 
 class Game:
@@ -64,18 +62,7 @@ class Game:
 
         self.__fullscreen = True
 
-        site_packages_dirs = site.getsitepackages()
-        target_dir = ''
-        for dir in site_packages_dirs:
-            if dir.endswith("site-packages"):
-                target_dir = dir
-                break
-            else:
-                target_dir = None
-        if platform.system() == 'Linux':
-            self.__lib = cdll.LoadLibrary(target_dir + '/library.cpython-310-x86_64-linux-gnu.so')
-        elif platform.system() == 'Windows':
-            self.__lib = cdll.LoadLibrary(target_dir + '/library.cp310-win_amd64.pyd')
+        self.__lib = cdll.LoadLibrary(Path(__file__).parent / 'libraries/libpathing.so')
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],

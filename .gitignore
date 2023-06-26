@@ -3,9 +3,8 @@ venv
 old
 intheshadows/__pycache__
 *.cmake
-libraries/cmake-build-debug
-libraries/CMakeFiles
-libraries/CMakeCache.txt
+intheshadows/libraries/cmake-build-debug
+intheshadows/libraries/CMakeFiles
+intheshadows/libraries/CMakeCache.txt
 intheshadows.egg-info
 build
-*.so
