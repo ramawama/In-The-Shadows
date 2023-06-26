@@ -1,3 +1,4 @@
+import queue
 import time
 from pathlib import Path
 import pygame
@@ -350,6 +351,8 @@ class Game:
             sprites = self.__guards[x].currSprites()
             step_size = 2 * self.__resolution * self.__resolution
             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
+            if self.__difficulty == "EASY":
+                move_direction = self.__temp_bfs(self.__guards[x])
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
@@ -417,6 +420,7 @@ class Game:
     def __check_key(self, player_position):
         if self.__board.tiles[player_position[1]][player_position[0]].type == "k":
             self.__board.tiles[player_position[1]][player_position[0]] = Tile()
+            self.__board.orig_tiles[player_position[1]][player_position[0]] = 'o'
             self.__board.torch_check()
             self.__board.unlock()
             self.__player.key = True
@@ -478,28 +482,55 @@ class Game:
             case 'R':
                 if guard.x + 1 > 27:
                     return False
-                if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p', 'g']:
+                if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p', 'g', 'k', 'e']:
                     return False
             case 'L':
                 if guard.x - 1 < 1:
                     return False
-                if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p', 'g']:
+                if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p', 'g', 'k', 'e']:
                     return False
             case 'U':
                 if guard.y - 1 < 1:
                     return False
-                if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p', 'g']:
+                if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p', 'g', 'k', 'e']:
                     return False
             case 'D':
                 if guard.y + 1 > 27:
                     return False
-                if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p', 'g']:
+                if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p', 'g', 'k', 'e']:
                     return False
         return True
+
+    def __temp_bfs(self, guard):
+        player_x, player_y = self.__player.position()
+        visited = [[False for _ in range(27)] for _ in range(27)]
+        dx = [0, 0, -1, 1]
+        dy = [-1, 1, 0, 0]
+        d = ['U', 'D', 'L', 'R']
+        q = queue.Queue()
+        visited[guard.y][guard.x] = True
+        q.put((guard.x, guard.y, 'X'))
+        while not q.empty():
+            curr_x, curr_y, first_direction = q.get()
+            #print(f"{curr_x} {curr_y} {player_x} {player_y} {first_direction}")
+            if curr_x == player_x and curr_y == player_y:
+                return first_direction
+            for i in range(4):
+                new_x = curr_x + dx[i]
+                new_y = curr_y + dy[i]
+                if 0 <= new_x < 27 and 0 <= new_y < 27 and self.__board.tiles[new_y][new_x].type != 'w' and visited[new_y][new_x] is False:
+                    visited[new_y][new_x] = True
+                    if first_direction == 'X':
+                        q.put((new_x, new_y, d[i]))
+                    else:
+                        q.put((new_x, new_y, first_direction))
+        return d[0]
 
     def __update_guards(self):
         for x in range(len(self.__guards)):
             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
+            if self.__difficulty == "EASY":
+                move_direction = self.__temp_bfs(self.__guards[x])
             match move_direction:
                 case 'R':
                     if self.__check_guard_path(self.__guards[x], 'R'):
@@ -568,7 +599,7 @@ class Game:
                 case 'move':
                     if self.__move_flag == "none":
                         self.__move_flag = "player"
-                    self.move_player()
+                    self.__move_player()
                 case 'move_guard':
                     if self.__move_flag == "player":
                         if self.__check_game_over(self.__player.position()):
@@ -585,6 +616,8 @@ class Game:
                         self.__move_flag = "guard"
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
+                            if self.__difficulty == "EASY":
+                                move_direction = self.__temp_bfs(self.__guards[x])
                             match move_direction:
                                 case 'R':
                                     self.__guards[x].direction = 'right'
