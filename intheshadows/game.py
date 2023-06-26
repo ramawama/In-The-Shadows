@@ -625,7 +625,7 @@ class Game:
                     # check if guard should move
                     if self.__check_guard_path(self.__guards[x], move_direction):
                         for i in range(1, self.__guards[x].difficulty + 2):
-                            if not self.__board.tiles[self.__guards[x].y][self.__guards[x].x + i].type in ['o', 't', 'p', 'g']:
+                            if not self.__board.tiles[self.__guards[x].y][self.__guards[x].x + i].type in ['o', 't', 'p']:
                                 self.__guards[x].draw()
                                 continue
                     else:
@@ -640,8 +640,7 @@ class Game:
                     # check if guard should move
                     if self.__check_guard_path(self.__guards[x], move_direction):
                         for i in range(1, self.__guards[x].difficulty + 2):
-                            if not self.__board.tiles[self.__guards[x].y][self.__guards[x].x - i].type in ['o', 't', 'p',
-                                                                                                           'g']:
+                            if not self.__board.tiles[self.__guards[x].y][self.__guards[x].x - i].type in ['o', 't', 'p']:
                                 self.__guards[x].draw()
                                 continue
                     else:
@@ -654,13 +653,12 @@ class Game:
                     self.__guard_positions[x] = (self.__guard_positions[x][0] - step_size, self.__guard_positions[x][1])
                 case "U":
                     # check if guard should move
-                    try:
+                    if self.__check_guard_path(self.__guards[x], move_direction):
                         for i in range(1, self.__guards[x].difficulty + 2):
-                            if not self.__board.tiles[self.__guards[x].y - i][self.__guards[x].x].type in ['o', 't', 'p',
-                                                                                                           'g']:
+                            if not self.__board.tiles[self.__guards[x].y - i][self.__guards[x].x].type in ['o', 't', 'p']:
                                 self.__guards[x].draw()
                                 continue
-                    except:
+                    else:
                         self.__guards[x].draw()
                         continue
                     # draw animation frame
@@ -671,13 +669,12 @@ class Game:
                     self.__guard_positions[x] = (self.__guard_positions[x][0], self.__guard_positions[x][1] - step_size)
                 case "D":
                     # check if guard should move
-                    try:
+                    if self.__check_guard_path(self.__guards[x], move_direction):
                         for i in range(1, self.__guards[x].difficulty + 2):
-                            if not self.__board.tiles[self.__guards[x].y + i][self.__guards[x].x].type in ['o', 't', 'p',
-                                                                                                           'g']:
+                            if not self.__board.tiles[self.__guards[x].y + i][self.__guards[x].x].type in ['o', 't', 'p']:
                                 self.__guards[x].draw()
                                 continue
-                    except:
+                    else:
                         self.__guards[x].draw()
                         continue
                     # draw animation frame
