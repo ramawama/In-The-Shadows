@@ -138,6 +138,9 @@ class Board:
     def tiles(self):
         return self.__tiles
 
+    @property
+    def orig_tiles(self):
+        return self.__orig_tiles
     def unload(self):
         self.__loaded = False
         self.__tiles = []
