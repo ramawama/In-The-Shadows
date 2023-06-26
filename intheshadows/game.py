@@ -2,12 +2,15 @@ import time
 from pathlib import Path
 import pygame
 import os
+import numpy as np
 from intheshadows.guard import Guard
 from intheshadows.tile import Tile
 from intheshadows.window import Window
 from intheshadows.music import Music
 from intheshadows.board import Board
 from intheshadows.player import Player
+import site
+from ctypes import *
 
 
 class Game:
@@ -56,6 +59,16 @@ class Game:
         self.__set_player_and_guards()
 
         self.__fullscreen = True
+
+        site_packages_dirs = site.getsitepackages()
+        target_dir = ''
+        for dir in site_packages_dirs:
+            if dir.endswith("site-packages"):
+                target_dir = dir
+                break
+            else:
+                target_dir = None
+        self.__lib = cdll.LoadLibrary(target_dir + '/library.cpython-310-x86_64-linux-gnu.so')
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
@@ -123,6 +136,7 @@ class Game:
                     self.__fullscreen = True
             elif self.__rects['options_back_button'].collidepoint(mouse_pos):
                 self.__state = 'menu'
+
 
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
@@ -481,10 +495,30 @@ class Game:
             self.__anim_counter = 0
         self.__board.draw_level()
         self.__player.draw()
+        if self.__difficulty == 'EASY':
+            board = []
+            for i in self.__board.tiles:
+                row = []
+                for j in i:
+                    row.append(j.type)
+                board.append(row)
+            board = np.array(board)
+            board_ptr = board.ctypes.data_as(POINTER(c_char))
+            self.__lib.get_next.restype = c_wchar
         for x in range(len(self.__guards)):
             sprites = self.__guards[x].currSprites()
             step_size = 2 * self.__resolution * self.__resolution * self.__guards[x].difficulty
-            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
+            if self.__difficulty == 'EASY':
+                (player_x, player_y) = self.__player.position()
+                guard_x = self.__guards[x].x
+                guard_y = self.__guards[x].y
+                move_direction = self.__lib.get_next(len(board), len(board[0]), board_ptr, self.__guards[x].x,
+                                                     self.__guards[x].y, player_x,
+                                                     player_y)
+                if move_direction == 'z':
+                    move_direction = 'R'
+            else:
+                move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             match move_direction:
                 case 'R':
                     # check if guard should move
@@ -673,19 +707,47 @@ class Game:
 
     def __update_guards(self):
         for x in range(len(self.__guards)):
-            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
+            board = []
+            for i in self.__board.tiles:
+                row = []
+                for j in i:
+                    row.append(j.type)
+                board.append(row)
+            board = np.array(board)
+            board_ptr = board.ctypes.data_as(POINTER(c_char))
+            self.__lib.get_next.restype = c_wchar
+            if self.__difficulty == 'EASY':
+                (player_x, player_y) = self.__player.position()
+                guard_x = self.__guards[x].x
+                guard_y = self.__guards[x].y
+                move_direction = self.__lib.get_next(len(board), len(board[0]), board_ptr, self.__guards[x].x,
+                                                     self.__guards[x].y, player_x,
+                                                     player_y)
+                if move_direction == 'z':
+                    move_direction = 'R'
+                print(move_direction)
+            else:
+                move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             match move_direction:
                 case 'R':
-                    if self.__check_guard_path(self.__guards[x], move_direction):
+                    if self.__difficulty == 'EASY':
+                        self.__guards[x].moveRight()
+                    elif self.__check_guard_path(self.__guards[x], move_direction):
                         self.__guards[x].moveRight()
                 case 'L':
-                    if self.__check_guard_path(self.__guards[x], move_direction):
+                    if self.__difficulty == 'EASY':
+                        self.__guards[x].moveLeft()
+                    elif self.__check_guard_path(self.__guards[x], move_direction):
                         self.__guards[x].moveLeft()
                 case 'U':
-                    if self.__check_guard_path(self.__guards[x], move_direction):
+                    if self.__difficulty == 'EASY':
+                        self.__guards[x].moveUp()
+                    elif self.__check_guard_path(self.__guards[x], move_direction):
                         self.__guards[x].moveUp()
                 case 'D':
-                    if self.__check_guard_path(self.__guards[x], move_direction):
+                    if self.__difficulty == 'EASY':
+                        self.__guards[x].moveDown()
+                    elif self.__check_guard_path(self.__guards[x], move_direction):
                         self.__guards[x].moveDown()
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
                                                  self.__guards[x].currSprites()[0])

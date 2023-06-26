@@ -8,3 +8,4 @@ libraries/CMakeFiles
 libraries/CMakeCache.txt
 intheshadows.egg-info
 build
+*.so

@@ -64,19 +64,32 @@ char get_next(int x, int y, char *map, int startx, int starty, int endx, int end
                 col = parent_tile.second;
             }
             reverse(path.begin(), path.end());
-            for (int i = 0; i < path.size(); i++) {
-                cout << path[i].first << ' ' << path[i].second << endl;
-            }
             int row_diff = path[1].first - start_row;
             int col_diff = path[1].second - start_col;
             if (row_diff > 0) {
-                return 'd';
+                for (int i = 0; i < path.size(); i++) {
+                    cout << "RIGHT" << endl;
+                    cout << path[i].first << ' ' << path[i].second << endl;
+                }
+                return 'R';
             } else if (row_diff < 0) {
-                return 'u';
+                cout << "LEFT" << endl;
+                for (int i = 0; i < path.size(); i++) {
+                    cout << path[i].first << ' ' << path[i].second << endl;
+                }
+                return 'L';
             } else if (col_diff > 0) {
-                return 'r';
+                cout << "DOWN" << endl;
+                for (int i = 0; i < path.size(); i++) {
+                    cout << path[i].first << ' ' << path[i].second << endl;
+                }
+                return 'D';
             } else if (col_diff < 0) {
-                return 'l';
+                cout << "UP" << endl;
+                for (int i = 0; i < path.size(); i++) {
+                    cout << path[i].first << ' ' << path[i].second << endl;
+                }
+                return 'U';
             }
         }
 
