@@ -77,7 +77,7 @@ class Board:
                 print("Error from load_tiles function!")
 
     def replace_tile_with_original(self, x, y):
-        self.__tiles[x][y] = Tile(self.__orig_tiles[x][y], self.__tiles[x][y].lit, x, y)
+        self.__tiles[x][y] = Tile(self.__orig_tiles[x][y], self.__tiles[x][y].lit, y, x)
         self.torch_check()
 
     def replace_tile_with_guard(self, x, y, image):
