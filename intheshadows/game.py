@@ -762,7 +762,6 @@ class Game:
                     pygame.mouse.set_visible(True)
                     self.__run_options()
                 case 'game':
-                    self.__allow_movement = True
                     pygame.mouse.set_visible(False)
                     if self.__move_flag == "guard":
                         self.__update_guards()
@@ -770,6 +769,7 @@ class Game:
                             self.__state = 'move_guard'
                             self.__move_flag = "player"
                             continue
+                    self.__allow_movement = True
                     self.__guard_turn_counter = 0
                     self.__move_flag = "none"
                     try:
