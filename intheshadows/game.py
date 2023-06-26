@@ -2,12 +2,15 @@ import time
 from pathlib import Path
 import pygame
 import os
+import numpy as np
 from intheshadows.guard import Guard
 from intheshadows.tile import Tile
 from intheshadows.window import Window
 from intheshadows.music import Music
 from intheshadows.board import Board
 from intheshadows.player import Player
+import site
+from ctypes import *
 
 
 class Game:
@@ -59,6 +62,16 @@ class Game:
         self.__set_player_and_guards()
 
         self.__fullscreen = True
+
+        site_packages_dirs = site.getsitepackages()
+        target_dir = ''
+        for dir in site_packages_dirs:
+            if dir.endswith("site-packages"):
+                target_dir = dir
+                break
+            else:
+                target_dir = None
+        self.__lib = cdll.LoadLibrary(target_dir + '/library.cpython-310-x86_64-linux-gnu.so')
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
@@ -150,8 +163,9 @@ class Game:
                                 self.__position = (self.__player.position()[0] * 32 * self.__resolution,
                                                    self.__player.position()[1] * 32 * self.__resolution)
                                 for x in range(len(self.__guards)):
-                                    self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
-                                                       self.__guards[x].position()[1] * 32 * self.__resolution)
+                                    self.__guard_positions[x] = (
+                                        self.__guards[x].position()[0] * 32 * self.__resolution,
+                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_a | pygame.K_LEFT:
                                 self.__state = 'move'
                                 self.__move_direction = 'left'
@@ -490,24 +504,49 @@ class Game:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
             self.__board.torch_check()
 
-    # not done
-    def __move_guards(self):
+    def move_guards(self):
         if self.__move_counter == 15 // self.__resolution:
             self.__state = 'game'
         if self.__anim_counter >= 2:
             self.__anim_counter = 0
         self.__board.draw_level()
         self.__player.draw()
+        if self.__difficulty == 'EASY':
+            board = []
+            for i in self.__board.tiles:
+                row = []
+                for j in i:
+                    row.append(j.type)
+                board.append(row)
+            board = np.array(board)
+            board_ptr = board.ctypes.data_as(POINTER(c_char))
+            self.__lib.get_next.restype = c_wchar
         for x in range(len(self.__guards)):
             sprites = self.__guards[x].currSprites()
-            step_size = 2 * self.__resolution * self.__resolution
-            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
-            if self.__check_guard_path(self.__guards[x], move_direction) is False:
-                self.__guards[x].draw()
-                continue
+            step_size = 2 * self.__resolution * self.__resolution * self.__guards[x].difficulty
+            if self.__difficulty == 'EASY':
+                (player_x, player_y) = self.__player.position()
+                guard_x = self.__guards[x].x
+                guard_y = self.__guards[x].y
+                move_direction = self.__lib.get_next(len(board), len(board[0]), board_ptr, self.__guards[x].x,
+                                                     self.__guards[x].y, player_x,
+                                                     player_y)
+                if move_direction == 'z':
+                    move_direction = 'R'
+            else:
+                move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             match move_direction:
                 case 'R':
-                    # draw background
+                    # check if guard should move
+                    try:
+                        for i in range(1, self.__guards[x].difficulty + 2):
+                            if not self.__board.tiles[self.__guards[x].y][self.__guards[x].x + i].type in ['o', 't', 'p',
+                                                                                                           'g']:
+                                self.__guards[x].draw()
+                                continue
+                    except:
+                        self.__guards[x].draw()
+                        continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter], (self.__guard_positions[x][0],
                                                                       self.__guard_positions[x][1]))
@@ -515,7 +554,16 @@ class Game:
                     self.__guard_positions[x] = (self.__guard_positions[x][0] + step_size, self.__guard_positions[x][1])
                     # update guard location internally
                 case 'L':
-                    # draw background
+                    # check if guard should move
+                    try:
+                        for i in range(1, self.__guards[x].difficulty + 2):
+                            if not self.__board.tiles[self.__guards[x].y][self.__guards[x].x - i].type in ['o', 't', 'p',
+                                                                                                           'g']:
+                                self.__guards[x].draw()
+                                continue
+                    except:
+                        self.__guards[x].draw()
+                        continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
                                                           (self.__guard_positions[x][0],
@@ -523,7 +571,16 @@ class Game:
                     # slight movement + decrement distance left to travel
                     self.__guard_positions[x] = (self.__guard_positions[x][0] - step_size, self.__guard_positions[x][1])
                 case "U":
-                    # draw background
+                    # check if guard should move
+                    try:
+                        for i in range(1, self.__guards[x].difficulty + 2):
+                            if not self.__board.tiles[self.__guards[x].y - i][self.__guards[x].x].type in ['o', 't', 'p',
+                                                                                                           'g']:
+                                self.__guards[x].draw()
+                                continue
+                    except:
+                        self.__guards[x].draw()
+                        continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
                                                           (self.__guard_positions[x][0],
@@ -531,7 +588,16 @@ class Game:
                     # slight movement + decrement distance left to travel
                     self.__guard_positions[x] = (self.__guard_positions[x][0], self.__guard_positions[x][1] - step_size)
                 case "D":
-                    # draw background
+                    # check if guard should move
+                    try:
+                        for i in range(1, self.__guards[x].difficulty + 2):
+                            if not self.__board.tiles[self.__guards[x].y + i][self.__guards[x].x].type in ['o', 't', 'p',
+                                                                                                           'g']:
+                                self.__guards[x].draw()
+                                continue
+                    except:
+                        self.__guards[x].draw()
+                        continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
                                                           (self.__guard_positions[x][0],
@@ -649,20 +715,50 @@ class Game:
     def __update_guards(self):
         for x in range(len(self.__guards)):
             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
+            board = []
+            for i in self.__board.tiles:
+                row = []
+                for j in i:
+                    row.append(j.type)
+                board.append(row)
+            board = np.array(board)
+            board_ptr = board.ctypes.data_as(POINTER(c_char))
+            self.__lib.get_next.restype = c_wchar
+            if self.__difficulty == 'EASY':
+                (player_x, player_y) = self.__player.position()
+                guard_x = self.__guards[x].x
+                guard_y = self.__guards[x].y
+                move_direction = self.__lib.get_next(len(board), len(board[0]), board_ptr, self.__guards[x].x,
+                                                     self.__guards[x].y, player_x,
+                                                     player_y)
+                if move_direction == 'z':
+                    move_direction = 'R'
+                print(move_direction)
+            else:
+                move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             match move_direction:
                 case 'R':
-                    if self.__check_guard_path(self.__guards[x], 'R'):
+                    if self.__difficulty == 'EASY':
+                        self.__guards[x].moveRight()
+                    elif self.__check_guard_path(self.__guards[x], move_direction):
                         self.__guards[x].moveRight()
                 case 'L':
-                    if self.__check_guard_path(self.__guards[x], 'L'):
+                    if self.__difficulty == 'EASY':
+                        self.__guards[x].moveLeft()
+                    elif self.__check_guard_path(self.__guards[x], move_direction):
                         self.__guards[x].moveLeft()
                 case 'U':
-                    if self.__check_guard_path(self.__guards[x], 'U'):
+                    if self.__difficulty == 'EASY':
+                        self.__guards[x].moveUp()
+                    elif self.__check_guard_path(self.__guards[x], move_direction):
                         self.__guards[x].moveUp()
                 case 'D':
-                    if self.__check_guard_path(self.__guards[x], 'D'):
+                    if self.__difficulty == 'EASY':
                         self.__guards[x].moveDown()
-            self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x, self.__guards[x].currSprites()[0])
+                    elif self.__check_guard_path(self.__guards[x], move_direction):
+                        self.__guards[x].moveDown()
+            self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
+                                                 self.__guards[x].currSprites()[0])
             self.__board.torch_check()
         self.__turn_counter = self.__turn_counter + 1
 

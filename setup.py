@@ -1,4 +1,9 @@
-from setuptools import setup
+from setuptools import setup, Extension
+
+
+module = Extension('library',
+                   sources = ['libraries/library.cpp'],
+                   extra_compile_args=['-fPIC'])
 
 setup(
      name='intheshadows',
@@ -10,6 +15,7 @@ setup(
      author_email='csobolewski@ufl.edu',
      description='Turn-based stealth game written in pygame!',
      install_requires=['pygame>=2.4.0'],
+     ext_modules=[module],
 
      entry_points =
      {  "console_scripts":
