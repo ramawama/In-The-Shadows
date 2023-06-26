@@ -492,8 +492,10 @@ class Game:
                         for i in range(1, self.__guards[x].difficulty + 2):
                             if not self.__board.tiles[self.__guards[x].y][self.__guards[x].x + i].type in ['o', 't', 'p',
                                                                                                            'g']:
+                                self.__guards[x].draw()
                                 continue
                     except:
+                        self.__guards[x].draw()
                         continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
@@ -508,8 +510,10 @@ class Game:
                         for i in range(1, self.__guards[x].difficulty + 2):
                             if not self.__board.tiles[self.__guards[x].y][self.__guards[x].x - i].type in ['o', 't', 'p',
                                                                                                            'g']:
+                                self.__guards[x].draw()
                                 continue
                     except:
+                        self.__guards[x].draw()
                         continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
@@ -523,8 +527,10 @@ class Game:
                         for i in range(1, self.__guards[x].difficulty + 2):
                             if not self.__board.tiles[self.__guards[x].y - i][self.__guards[x].x].type in ['o', 't', 'p',
                                                                                                            'g']:
+                                self.__guards[x].draw()
                                 continue
                     except:
+                        self.__guards[x].draw()
                         continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
@@ -538,8 +544,10 @@ class Game:
                         for i in range(1, self.__guards[x].difficulty + 2):
                             if not self.__board.tiles[self.__guards[x].y + i][self.__guards[x].x].type in ['o', 't', 'p',
                                                                                                            'g']:
+                                self.__guards[x].draw()
                                 continue
                     except:
+                        self.__guards[x].draw()
                         continue
                     # draw animation frame
                     self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
