@@ -47,6 +47,7 @@ class Game:
 
         # Load difficulty
         self.__difficulty = "EASY"
+        self.__guard_difficulty = 1
 
         self.__position = ()
         self.__guard_positions = []
@@ -65,7 +66,7 @@ class Game:
         for x in range(len(self.__guard_routes)):
             self.__guards.append(Guard(self.__screen.foreground_surface, self.__resolution, self.__guard_routes[x][1][0],
                                        self.__guard_routes[x][1][1], self.__guard_routes[x][2],
-                                       self.__guard_routes[x][0]))
+                                       self.__difficulty))
             self.__guard_positions.append(())
         self.__turn_counter = 0
 
@@ -91,6 +92,7 @@ class Game:
                 self.__state = 'game'
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
+                self.__set_player_and_guards()
             elif self.__rects['options_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'options'
             elif self.__rects['quit_text_rect'].collidepoint(mouse_pos):
@@ -98,10 +100,13 @@ class Game:
         elif self.__state == 'options':
             if self.__rects['easy_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "EASY"
+                self.__guard_difficulty = 1
             elif self.__rects['medium_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "MEDIUM"
+                self.__guard_difficulty = 2
             elif self.__rects['hard_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "HARD"
+                self.__guard_difficulty = 3
             elif self.__rects['resolution_def_rect'].collidepoint(mouse_pos):
                 if self.__fullscreen:
                     (self.__width, self.__height) = (32 * 28, 32 * 16)
@@ -478,6 +483,9 @@ class Game:
             sprites = self.__guards[x].currSprites()
             step_size = 2 * self.__resolution * self.__resolution
             move_direction = self.__guard_routes[x][2][(self.__turn_counter % len(self.__guard_routes[x][2]))]
+            if self.__check_guard_path(self.__guards[x], move_direction) is False:
+                self.__guards[x].draw()
+                continue
             match move_direction:
                 case 'R':
                     # draw background
@@ -597,18 +605,46 @@ class Game:
                 self.__set_player_and_guards()
                 self.__player.reset_key()
 
+    def __check_guard_path(self, guard, direction):
+        match direction:
+            case 'R':
+                if guard.x + 1 > 27:
+                    return False
+                if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p', 'g']:
+                    return False
+            case 'L':
+                if guard.x - 1 < 1:
+                    return False
+                if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p', 'g']:
+                    return False
+            case 'U':
+                if guard.y - 1 < 1:
+                    return False
+                if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p', 'g']:
+                    return False
+            case 'D':
+                if guard.y + 1 > 27:
+                    return False
+                if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p', 'g']:
+                    return False
+        return True
+
     def __update_guards(self):
         for x in range(len(self.__guards)):
             move_direction = self.__guard_routes[x][2][(self.__turn_counter % len(self.__guard_routes[x][2]))]
             match move_direction:
                 case 'R':
-                    self.__guards[x].moveRight()
+                    if self.__check_guard_path(self.__guards[x], 'R'):
+                        self.__guards[x].moveRight()
                 case 'L':
-                    self.__guards[x].moveLeft()
+                    if self.__check_guard_path(self.__guards[x], 'L'):
+                        self.__guards[x].moveLeft()
                 case 'U':
-                    self.__guards[x].moveUp()
+                    if self.__check_guard_path(self.__guards[x], 'U'):
+                        self.__guards[x].moveUp()
                 case 'D':
-                    self.__guards[x].moveDown()
+                    if self.__check_guard_path(self.__guards[x], 'D'):
+                        self.__guards[x].moveDown()
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x, self.__guards[x].currSprites()[0])
             self.__board.torch_check()
         self.__turn_counter = self.__turn_counter + 1
@@ -643,6 +679,11 @@ class Game:
                     pygame.mouse.set_visible(False)
                     if self.__move_flag == "guard":
                         self.__update_guards()
+                        if self.__guard_turn_counter < self.__guard_difficulty:
+                            self.___state = 'move_guard'
+                            self.__move_flag = "player"
+                            continue
+                    self.__guard_turn_counter = 0
                     self.__move_flag = "none"
                     try:
                         self.__run_game()
@@ -656,6 +697,7 @@ class Game:
                     self.move_player()
                 case 'move_guard':
                     if self.__move_flag == "player":
+                        self.__guard_turn_counter = self.__guard_turn_counter + 1
                         self.__move_counter = 0
                         self.__anim_counter = 0
                         for x in range(len(self.__guards)):
