@@ -483,7 +483,7 @@ class Game:
         self.__player.draw()
         for x in range(len(self.__guards)):
             sprites = self.__guards[x].currSprites()
-            step_size = 2 * self.__resolution * self.__resolution
+            step_size = 2 * self.__resolution * self.__resolution * self.__guards[x].difficulty
             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             match move_direction:
                 case 'R':
