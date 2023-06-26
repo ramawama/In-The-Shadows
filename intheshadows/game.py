@@ -13,6 +13,8 @@ from intheshadows.player import Player
 class Game:
     def __init__(self):
         # Create global variables for height, width, and black and white colors
+        self.__move_flag = None
+        self.__anim_counter = None
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
         (self.__width, self.__height) = (64*28, 64*16)
@@ -122,7 +124,6 @@ class Game:
             elif self.__rects['options_back_button'].collidepoint(mouse_pos):
                 self.__state = 'menu'
 
-
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
@@ -197,7 +198,6 @@ class Game:
         self.__music.play_music('menu')
         self.__screen.background_surface.fill((0, 0, 0))
         self.__screen.foreground_surface.fill((0, 0, 0, 0))
-        big_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
         small_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.15))
 
         (start_width, start_height) = (self.__width // 2, self.__height // 2)
