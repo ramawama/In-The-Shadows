@@ -10,6 +10,7 @@ from intheshadows.music import Music
 from intheshadows.board import Board
 from intheshadows.player import Player
 from ctypes import *
+import platform
 
 
 class Game:
@@ -62,7 +63,10 @@ class Game:
 
         self.__fullscreen = True
 
-        self.__lib = cdll.LoadLibrary(str(Path(__file__).parent / 'libraries/pathing.dll'))
+        if platform.system() == 'Windows':
+            self.__lib = cdll.LoadLibrary(str(Path(__file__).parent / 'libraries/pathing.dll'))
+        else:
+            self.__lib = cdll.LoadLibrary(str(Path(__file__).parent / 'libraries/libpathing.so'))
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
@@ -814,6 +818,6 @@ class Game:
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
 
                         self.__move_flag = "guard"
-                    self.__move_guards()
+                    self.move_guards()
             self.__screen.update()
         pygame.quit()

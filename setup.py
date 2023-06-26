@@ -19,6 +19,6 @@ setup(
              ]
      },
     package_data = {
-        '': ['assets/**/*', 'levels/**/*', 'libraries/libpathing.so'],
+        '': ['assets/**/*', 'levels/**/*', 'libraries/*'],
     }
  )
