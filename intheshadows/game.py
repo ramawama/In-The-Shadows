@@ -474,7 +474,6 @@ class Game:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
             self.__board.torch_check()
 
-    # not done
     def move_guards(self):
         if self.__move_counter == 15 // self.__resolution:
             self.__state = 'game'
@@ -613,16 +612,16 @@ class Game:
             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             match move_direction:
                 case 'R':
-                    if self.__board.tiles[self.__guards[x].y][self.__guards[x].x + (1 * self.__guards[x].difficulty)].type in ['o', 't', 'p']:
+                    if self.__board.tiles[self.__guards[x].y][self.__guards[x].x + (1 * self.__guards[x].difficulty)].type in ['o', 't', 'p', 'g']:
                         self.__guards[x].moveRight()
                 case 'L':
-                    if self.__board.tiles[self.__guards[x].y][self.__guards[x].x - (1 * self.__guards[x].difficulty)].type in ['o', 't', 'p']:
+                    if self.__board.tiles[self.__guards[x].y][self.__guards[x].x - (1 * self.__guards[x].difficulty)].type in ['o', 't', 'p', 'g']:
                         self.__guards[x].moveLeft()
                 case 'U':
-                    if self.__board.tiles[self.__guards[x].y - (1 * self.__guards[x].difficulty)][self.__guards[x].x].type in ['o', 't', 'p']:
+                    if self.__board.tiles[self.__guards[x].y - (1 * self.__guards[x].difficulty)][self.__guards[x].x].type in ['o', 't', 'p', 'g']:
                         self.__guards[x].moveUp()
                 case 'D':
-                    if self.__board.tiles[self.__guards[x].y + (1 * self.__guards[x].difficulty)][self.__guards[x].x].type in ['o', 't', 'p']:
+                    if self.__board.tiles[self.__guards[x].y + (1 * self.__guards[x].difficulty)][self.__guards[x].x].type in ['o', 't', 'p', 'g']:
                         self.__guards[x].moveDown()
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
                                                  self.__guards[x].currSprites()[0])
@@ -672,6 +671,11 @@ class Game:
                     self.move_player()
                 case 'move_guard':
                     if self.__move_flag == "player":
+                        if self.__check_game_over(self.__player.position()):
+                            self.__game_over()
+                            self.__player_spawn, self.__guard_routes = self.__get_spawns()
+                            self.__set_player_and_guards()
+                            continue
                         self.__move_counter = 0
                         self.__anim_counter = 0
                         for x in range(len(self.__guards)):
