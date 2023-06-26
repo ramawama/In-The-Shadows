@@ -3,7 +3,6 @@ from pathlib import Path
 import pygame
 from intheshadows.tile import Tile
 
-
 # Class for the game board (collection of all tiles)
 class Board:
     def __init__(self, screen, width, height):
@@ -132,6 +131,8 @@ class Board:
                                                               (tile_width, tile_height))
                     self.__screen.background_surface.blit(scaled_floor, (tile_x, tile_y))
                 self.__screen.foreground_surface.blit(scaled_tile, (tile_x, tile_y))
+
+
 
     # Returns array of tiles
     @property
