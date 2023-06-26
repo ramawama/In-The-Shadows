@@ -126,30 +126,44 @@ class Game:
             elif self.__rects['options_back_button'].collidepoint(mouse_pos):
                 self.__state = 'menu'
 
-    def __display_help(self):
+    def __display_help(self): # displays controls and instructions while in game by clicking h
+        # temp background
         background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/woodBackground_old.png")
         background = pygame.transform.scale(background, (self.__width // 2, self.__height // 2))
-        font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(self.__height * 0.09))
+        title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(self.__height * 0.09))
+        font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(self.__height * 0.06))
 
         (title_width, title_height) = (self.__width // 4, self.__height // 16)
-        text = font.render("HOW TO PLAY", True, self.__white)
+        text = title_font.render("HOW TO PLAY", True, self.__white)
         text_rect = text.get_rect()
         text_rect.center = (title_width, title_height)
 
+        (move_width, move_height) = (title_width // 4, title_height + 48 * self.__resolution)
         move_text = font.render('MOVE:', True, (255, 255, 255))
         move_rect = move_text.get_rect()
-        (move_width, move_height) = (title_width // 4, title_height + 48 * self.__resolution)
         move_rect.center = (move_width, move_height)
 
         (movement_width, movement_height) = (title_width // 4 + move_width, title_height + 16 * self.__resolution)
         arrow_key = pygame.image.load(
             Path(__file__).parent / "assets/graphics/HUD Elements/arrow_keys.png").convert_alpha()
-        scaled_arrow = pygame.transform.scale(arrow_key, (self.__width // 8, self.__height // 8))
+        scaled_arrow = pygame.transform.scale(arrow_key, (self.__width // 10, self.__height // 10))
+
+        (music_width, music_height) = (movement_width + (4 * self.__resolution), move_height + 48 * self.__resolution)
+        music_text = font.render('TOGGLE MUSIC: M', True, (255, 255, 255))
+        music_rect = music_text.get_rect()
+        music_rect.center = (music_width, music_height)
+
+        (quit_width, quit_height) = (music_width - (16 * self.__resolution), music_height + 48 * self.__resolution)
+        quit_text = font.render('QUIT: ESCAPE', True, (255, 255, 255))
+        quit_rect = quit_text.get_rect()
+        quit_rect.center = (quit_width, quit_height)
 
         self.__screen.help_surface.blit(background, (0, 0))
         self.__screen.help_surface.blit(text, text_rect)
         self.__screen.help_surface.blit(move_text, move_rect)
         self.__screen.help_surface.blit(scaled_arrow, (movement_width, movement_height))
+        self.__screen.help_surface.blit(music_text, music_rect)
+        self.__screen.help_surface.blit(quit_text, quit_rect)
         self.__screen.foreground_surface.blit(self.__screen.help_surface, (self.__width // 4, self.__height // 4))
 
     # Handles quitting, key presses, and mouse clicks, including in game
@@ -216,6 +230,8 @@ class Game:
                         self.__escape_state()
                     case pygame.KEYDOWN:
                         match ev.key:
+                            case pygame.K_m:
+                                self.__music.toggle()
                             case pygame.K_ESCAPE | pygame.K_h:
                                 self.__state = 'game'
         else:
