@@ -3,6 +3,7 @@ from pathlib import Path
 import pygame
 import os
 from intheshadows.print import display_help, run_menu, run_options
+from intheshadows.events import game_over
 from intheshadows.guard import Guard
 from intheshadows.tile import Tile
 from intheshadows.window import Window
@@ -242,23 +243,6 @@ class Game:
 
         return True
 
-    def __game_over(self):
-        pygame.mixer.Sound.play(pygame.mixer.Sound("./assets/sounds/death.wav"))
-        time.sleep(0.5)
-        self.__board.unload()
-        self.__level = 1
-        self.__state = "game_over"
-        self.__screen.background_surface.fill(self.__black)
-        self.__screen.foreground_surface.fill(self.__black)
-        self.__music.play_music("game_over")
-        big_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(self.__height * 0.2))
-        text = big_font.render('YOU  HAVE  FAILED', True, self.__white)
-        text_rect = text.get_rect()
-        text_rect.center = (self.__width // 2, self.__height // 4)
-        self.__screen.foreground_surface.blit(text, text_rect)
-        self.__screen.update()
-        return True
-
     def move_player(self):
         player_position = self.__player.position()
         if self.__move_counter == 15 // self.__resolution:
@@ -484,7 +468,9 @@ class Game:
         self.__draw_guards()
         self.__animate_torches()
         if self.__check_game_over(self.__player.position()):
-            self.__game_over()
+            self.__music.play_music("game_over")
+            self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
+                                                   self.__board, self.__black, (255, 255, 255))
             self.__player_spawn, self.__guard_routes = self.__get_spawns()
             self.__set_player_and_guards()
 
@@ -600,7 +586,10 @@ class Game:
                 case 'move_guard':
                     if self.__move_flag == "player":
                         if self.__check_game_over(self.__player.position()):
-                            self.__game_over()
+                            self.__music.play_music("game_over")
+                            self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
+                                                                   self.__board, self.__black, (255, 255, 255))
+
                             self.__player_spawn, self.__guard_routes = self.__get_spawns()
                             self.__set_player_and_guards()
                             continue
