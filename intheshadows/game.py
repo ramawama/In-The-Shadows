@@ -467,7 +467,7 @@ class Game:
         self.__check_key(self.__player.position())  # change to if statement if you want to do hud stuff
 
         if self.__check_next_level(self.__player.position()):
-            if self.__level == 3:
+            if self.__level == 2:
                 self.__board.unload()
                 self.__level, self.__state = win(self.__width, self.__height, self.__screen, self.__black, (255, 255, 255))
                 self.__music.play_music("win")
