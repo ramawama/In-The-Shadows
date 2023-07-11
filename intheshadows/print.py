@@ -43,6 +43,7 @@ def display_help(width, height, resolution, screen):
     screen.help_surface.blit(quit_text, quit_rect)
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
+
 def display_inventory(width, height, resolution, screen, inventory):
     background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/dungeon_old.jpg")
     background = pygame.transform.scale(background, (width // 2, height // 2))
