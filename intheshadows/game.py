@@ -433,10 +433,6 @@ class Game:
         for x in range(len(self.__guards)):
             self.__guards[x].draw()
 
-    def __animate_torches(self):
-        if self.__torch_counter % 32 == 0:
-            self.__anim_torches = not self.__anim_torches
-
         width_scale = self.__width // len(self.__board.tiles[0])
         # have to use 15/16 because tiles are scaled for the 15 rows. The 16th is the HUD
         height_scale = 15/16*self.__height // len(self.__board.tiles)
@@ -456,7 +452,6 @@ class Game:
         self.__board.display_hud(self.__player.key)
         self.__player.draw()
         self.__draw_guards()
-        self.__animate_torches()
         if self.__check_game_over(self.__player.position()):
             self.__music.play_music("game_over")
             self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
@@ -565,8 +560,9 @@ class Game:
                 self.__move_counter = 0
 
             self.__torch_counter += 1
-            if self.__torch_counter >= 64:
+            if self.__torch_counter >= 16:
                 self.__torch_counter = 0
+                self.__anim_torches = not self.__anim_torches
 
             self.__handle_events()
             match self.__state:
@@ -574,11 +570,11 @@ class Game:
                     pygame.mouse.set_visible(True)
                     self.__music.play_music('menu')
                     run_menu(self.__width, self.__height, self.__rects, self.__screen,
-                             self.__torch_counter, self.__anim_torches, self.__white)
+                             self.__anim_torches)
                 case 'options':
                     pygame.mouse.set_visible(True)
-                    run_options(self.__width, self.__height, self.__rects, self.__screen, self.__torch_counter,
-                                self.__anim_torches, (255, 255, 255), self.__white, self.__difficulty)
+                    run_options(self.__width, self.__height, self.__rects, self.__screen,
+                                self.__anim_torches, self.__difficulty)
                 case 'game':
                     pygame.mouse.set_visible(False)
                     if self.__move_flag == "guard":
