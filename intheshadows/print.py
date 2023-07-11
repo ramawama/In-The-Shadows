@@ -43,6 +43,21 @@ def display_help(width, height, resolution, screen):
     screen.help_surface.blit(quit_text, quit_rect)
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
+def display_inventory(width, height, resolution, screen, inventory):
+    background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/dungeon_old.jpg")
+    background = pygame.transform.scale(background, (width // 2, height // 2))
+    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.09))
+    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.06))
+
+    (title_width, title_height) = (width // 4, height // 16)
+    text = title_font.render("INVENTORY", True, (255, 255, 255))
+    text_rect = text.get_rect()
+    text_rect.center = (title_width, title_height)
+
+    screen.help_surface.blit(background, (0, 0))
+    screen.help_surface.blit(text, text_rect)
+    screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
+
 
 def run_menu(width, height, rects, screen, anim_torches):
     # animates torches

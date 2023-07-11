@@ -21,6 +21,10 @@ class Guard:
                         pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_walk.png"), (self.__resolution * 32, self.__resolution * 32))]
         self.__left = [pygame.transform.flip(self.__right[0], True, False),
                        pygame.transform.flip(self.__right[1], True, False)]
+        self.__up = [pygame.transform.flip(self.__right[0], True, False),
+                       pygame.transform.flip(self.__right[1], True, False)]
+        self.__down = [pygame.transform.flip(self.__right[0], True, False),
+                       pygame.transform.flip(self.__right[1], True, False)]
         self.__curr_sprites = self.__right
         self.__direction = "right"
         self.__x = int(x)
@@ -48,10 +52,8 @@ class Guard:
         self.__direction = direction
 
     def moveUp(self):
-        if self.__direction == "right":
-            self.__curr_sprites = self.__right
-        else:
-            self.__curr_sprites = self.__left
+        self.__direction = "up"
+        self.__curr_sprites = self.__up
         self.__y -= 1
 
     def moveLeft(self):
@@ -60,10 +62,8 @@ class Guard:
         self.__x -= 1
 
     def moveDown(self):
-        if self.__direction == "right":
-            self.__curr_sprites = self.__right
-        else:
-            self.__curr_sprites = self.__left
+        self.__direction = "down"
+        self.__curr_sprites = self.__down
         self.__y += 1
 
     def moveRight(self):
