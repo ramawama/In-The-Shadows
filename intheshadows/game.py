@@ -2,6 +2,7 @@ import queue
 from pathlib import Path
 import pygame
 import os
+import time
 from intheshadows.print import display_help, run_menu, run_options, display_inventory
 from intheshadows.events import game_over, win
 from intheshadows.guard import Guard
@@ -477,6 +478,7 @@ class Game:
                                                    self.__board, self.__black, (255, 255, 255))
             self.__player_spawn, self.__guard_routes = self.__get_spawns()
             self.__set_player_and_guards()
+            self.__guard_tracking = False
 
         self.__check_key(self.__player.position())  # change to if statement if you want to do hud stuff
 
@@ -545,6 +547,7 @@ class Game:
     def __alert_mode_on(self):
         self.__guard_tracking = True
         self.__music.play_music('alert')
+
 
     def __check_guard_vision(self):
         player_position = self.__player.position()
@@ -632,6 +635,8 @@ class Game:
                             self.__state = 'move_guard'
                             self.__move_flag = "player"
                             continue
+                        if self.__guard_tracking is False:
+                            self.__check_guard_vision()
                     self.__allow_movement = True
                     self.__guard_turn_counter = 0
                     self.__move_flag = "none"
@@ -663,6 +668,8 @@ class Game:
                             self.__player_spawn, self.__guard_routes = self.__get_spawns()
                             self.__set_player_and_guards()
                             continue
+                        if self.__guard_tracking is False:
+                            self.__check_guard_vision()
                         self.__guard_turn_counter = self.__guard_turn_counter + 1
                         self.__move_counter = 0
                         self.__anim_counter = 0
@@ -678,7 +685,5 @@ class Game:
                                     self.__guards[x].direction = 'left'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
                     self.__move_guards()
-                    if self.__guard_tracking is False:
-                        self.__check_guard_vision()
             self.__screen.update()
         pygame.quit()
