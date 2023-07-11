@@ -55,8 +55,14 @@ def display_inventory(width, height, resolution, screen, inventory):
     text_rect = text.get_rect()
     text_rect.center = (title_width, title_height)
 
+    (dash_width, dash_height) = (title_width - 128 * resolution, title_height + 48 * resolution)
+    dash_text = font.render('SPACE TO DASH:', True, (255, 255, 255))
+    dash_rect = dash_text.get_rect()
+    dash_rect.center = (dash_width, dash_height)
+
     screen.help_surface.blit(background, (0, 0))
     screen.help_surface.blit(text, text_rect)
+    screen.help_surface.blit(dash_text, dash_rect)
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
 
