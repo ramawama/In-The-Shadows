@@ -4,17 +4,16 @@ import random
 
 
 class Tile:
-    def __init__(self, tile_type="o", behind_torch=False, x=0, y=0, image=None):
+    def __init__(self, tile_type="o", behind_torch=False, x=0, y=0, image=None, floor_type=""):
         self._tile_type = tile_type
         self._pos = [x, y]
         self._lit = False
         self.unlight()
         self.__torch_counter = 0
         self._image = image
-        if behind_torch is False:
-            self._backgroundtile = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor.png").convert_alpha()
-        else:
-            self._backgroundtile = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_lit.png").convert_alpha()
+        self._floor_type = floor_type
+        random_selector = random.randint(0, 4)
+        rand_int = random.randint(2, 4)
         if image is None:
             match tile_type:
                 case "t":
@@ -49,21 +48,26 @@ class Tile:
                 case "c":
                     self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Chest_locked.png").convert_alpha()
                 case "o":
-                    random_selector = random.randint(0, 4)
                     if random_selector == 0:
-                        rand_int = random.randint(2, 4)
                         match rand_int:
                             case 2:
-                                self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_cracked.png").convert_alpha()
+                                self._floor_type = "_cracked"
                             case 3:
-                                self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_cracked_mossy.png").convert_alpha()
+                                self._floor_type = "_cracked_mossy"
                             case 4:
-                                self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_mossy.png").convert_alpha()
-                    else:
-                        self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor.png").convert_alpha()
+                                self._floor_type = "_mossy"
+                        self._image = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + ".png")).convert_alpha()
+        if behind_torch is False:
+            self._backgroundtile = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + ".png")).convert_alpha()
+        else:
+            self._backgroundtile = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + "_lit.png")).convert_alpha()
     @property
     def image(self):
         return self._image
+
+    @property
+    def floor_type(self):
+        return self._floor_type
 
     @property
     def type(self):
@@ -85,14 +89,14 @@ class Tile:
     def light(self):
         self._lit = True
         if self.type == "o":
-            self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_lit.png").convert_alpha()
+            self._image = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + "_lit.png")).convert_alpha()
         elif self.type == "t":
             self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Torch/Torch_small.png").convert_alpha()
 
     def unlight(self):
         self._lit = False
         if self.type == "o":
-            self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor.png").convert_alpha()
+            self._image = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + ".png")).convert_alpha()
         elif self.type == "t":
             self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Torch/Torch_unlit.png").convert_alpha()
 

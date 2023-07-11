@@ -50,16 +50,16 @@ class Board:
                                 playerPos = [x, y]
                                 temp_Tile = Tile("o", False, x, y)
                                 row_array.append(temp_Tile)
-                                row_char_array.append(Tile("o", False, x, y, temp_Tile.image))
+                                row_char_array.append(Tile("o", False, x, y, temp_Tile.image, temp_Tile.floor_type))
                             elif char in ['e', 'c']:
                                 self.__exit_tile = x, y
                                 temp_Tile = Tile(char, False, x, y)
                                 row_array.append(temp_Tile)
-                                row_char_array.append(Tile(char, False, x, y, temp_Tile.image))
+                                row_char_array.append(Tile(char, False, x, y, temp_Tile.image, temp_Tile.floor_type))
                             else:
                                 temp_Tile = Tile(char, False, x, y)
                                 row_array.append(temp_Tile)
-                                row_char_array.append(Tile(char, False, x, y, temp_Tile.image))
+                                row_char_array.append(Tile(char, False, x, y, temp_Tile.image, temp_Tile.floor_type))
                             # if char == "g":
                             # print("guard at: x:", x, " y: ", y)
                             # if char == "p":
@@ -79,11 +79,12 @@ class Board:
                 print("Error from load_tiles function!")
 
     def replace_tile_with_original(self, x, y):
-        self.__tiles[x][y] = Tile(self.__orig_tiles[x][y], self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image)
+        self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image)
         self.torch_check()
 
     def replace_tile_with_guard(self, x, y, image):
         self.__tiles[x][y] = Tile("g", self.__tiles[x][y].lit, x, y, image)
+        self.torch_check()
 
     def check_for_key(self):
         for row in range(len(self.__tiles)):
@@ -128,7 +129,7 @@ class Board:
                 scaled_tile = pygame.transform.scale(self.__tiles[row][col].image, (tile_width, tile_height))
                 if self.__tiles[row][col].type != "o":
                     if self.__tiles[row][col].lit:
-                        scaled_floor = pygame.transform.scale(Tile("o", True).backgroundtile, (tile_width, tile_height))
+                        scaled_floor = pygame.transform.scale(self.orig_tiles[row][col].image, (tile_width, tile_height))
                     else:
                         scaled_floor = pygame.transform.scale(self.__tiles[row][col].backgroundtile,
                                                               (tile_width, tile_height))
