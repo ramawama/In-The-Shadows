@@ -10,55 +10,57 @@ class Tile:
         self._lit = False
         self.unlight()
         self.__torch_counter = 0
+        self._image = image
         if behind_torch is False:
             self._backgroundtile = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor.png").convert_alpha()
         else:
             self._backgroundtile = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_lit.png").convert_alpha()
-        match tile_type:
-            case "t":
-                self.light()
-            case "g":
-                self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Guard/Guard_EASY.png").convert_alpha()
-            case "p":
-                self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue.png").convert_alpha()
-            case "w":
-                if x == 0 and y == 0:
-                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_corner_tl.png").convert_alpha()
-                elif x == 0 and y == 14:
-                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_corner_bl.png").convert_alpha()
-                elif x == 27 and y == 0:
-                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_corner_tr.png").convert_alpha()
-                elif x == 27 and y == 14:
-                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_corner_br.png").convert_alpha()
-                elif y == 0:
-                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_t.png").convert_alpha()
-                elif x == 0:
-                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_l.png").convert_alpha()
-                elif x == 27:
-                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_r.png").convert_alpha()
-                elif y == 14:
-                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_b.png").convert_alpha()
-                else:
-                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_t.png").convert_alpha()
-            case "e":
-                self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Exit_locked.png").convert_alpha()
-            case "k":
-                self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Key.png").convert_alpha()
-            case "c":
-                self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Chest_locked.png").convert_alpha()
-            case "o":
-                random_selector = random.randint(0, 4)
-                if random_selector == 0:
-                    rand_int = random.randint(2, 4)
-                    match rand_int:
-                        case 2:
-                            self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_cracked.png").convert_alpha()
-                        case 3:
-                            self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_cracked_mossy.png").convert_alpha()
-                        case 4:
-                            self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_mossy.png").convert_alpha()
-        if image is not None:
-            self._image = image
+        if image is None:
+            match tile_type:
+                case "t":
+                    self.light()
+                case "g":
+                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Guard/Guard_EASY.png").convert_alpha()
+                case "p":
+                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue.png").convert_alpha()
+                case "w":
+                    if x == 0 and y == 0:
+                        self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_corner_tl.png").convert_alpha()
+                    elif x == 0 and y == 14:
+                        self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_corner_bl.png").convert_alpha()
+                    elif x == 27 and y == 0:
+                        self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_corner_tr.png").convert_alpha()
+                    elif x == 27 and y == 14:
+                        self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_corner_br.png").convert_alpha()
+                    elif y == 0:
+                        self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_t.png").convert_alpha()
+                    elif x == 0:
+                        self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_l.png").convert_alpha()
+                    elif x == 27:
+                        self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_r.png").convert_alpha()
+                    elif y == 14:
+                        self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_b.png").convert_alpha()
+                    else:
+                        self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Wall_t.png").convert_alpha()
+                case "e":
+                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Exit_locked.png").convert_alpha()
+                case "k":
+                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Key.png").convert_alpha()
+                case "c":
+                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Chest_locked.png").convert_alpha()
+                case "o":
+                    random_selector = random.randint(0, 4)
+                    if random_selector == 0:
+                        rand_int = random.randint(2, 4)
+                        match rand_int:
+                            case 2:
+                                self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_cracked.png").convert_alpha()
+                            case 3:
+                                self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_cracked_mossy.png").convert_alpha()
+                            case 4:
+                                self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_mossy.png").convert_alpha()
+                    else:
+                        self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor.png").convert_alpha()
     @property
     def image(self):
         return self._image

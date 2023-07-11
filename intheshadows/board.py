@@ -1,7 +1,7 @@
-import copy
 from pathlib import Path
 import pygame
 from intheshadows.tile import Tile
+
 
 # Class for the game board (collection of all tiles)
 class Board:
@@ -48,15 +48,18 @@ class Board:
                         for char in line.strip():
                             if char == "p":
                                 playerPos = [x, y]
-                                row_array.append(Tile("o", False, x, y))
-                                row_char_array.append("o")
+                                temp_Tile = Tile("o", False, x, y)
+                                row_array.append(temp_Tile)
+                                row_char_array.append(Tile("o", False, x, y, temp_Tile.image))
                             elif char in ['e', 'c']:
                                 self.__exit_tile = x, y
-                                row_array.append(Tile(char, False, x, y))
-                                row_char_array.append(char)
+                                temp_Tile = Tile(char, False, x, y)
+                                row_array.append(temp_Tile)
+                                row_char_array.append(Tile(char, False, x, y, temp_Tile.image))
                             else:
-                                row_array.append(Tile(char, False, x, y))
-                                row_char_array.append(char)
+                                temp_Tile = Tile(char, False, x, y)
+                                row_array.append(temp_Tile)
+                                row_char_array.append(Tile(char, False, x, y, temp_Tile.image))
                             # if char == "g":
                             # print("guard at: x:", x, " y: ", y)
                             # if char == "p":
@@ -76,7 +79,7 @@ class Board:
                 print("Error from load_tiles function!")
 
     def replace_tile_with_original(self, x, y):
-        self.__tiles[x][y] = Tile(self.__orig_tiles[x][y], self.__tiles[x][y].lit, y, x)
+        self.__tiles[x][y] = Tile(self.__orig_tiles[x][y], self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image)
         self.torch_check()
 
     def replace_tile_with_guard(self, x, y, image):
@@ -151,7 +154,8 @@ class Board:
         self.__screen.background_surface.fill((0, 0, 0), pygame.Rect(0, self.__screen_height,
                                                                      self.__screen_width, 128))
         white = (255, 255, 255)
-        text_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(self.__screen_height * 0.04))
+        text_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF',
+                                     int(self.__screen_height * 0.04))
         help_text = text_font.render('H FOR HELP', True, white)
         help_rect = help_text.get_rect()
         (help_width, help_height) = (self.__screen_width // (10 * self.__resolution),
