@@ -87,4 +87,3 @@ class Player:
     # add item to inventory
     def add_item(self, item):
         self.__items.append(item)
-
