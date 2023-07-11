@@ -263,40 +263,44 @@ class Game:
             self.__state = 'move_guard'
             match self.__move_direction:
                 case 'up':
-                    if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type != "w":
-                        self.__player.moveUp()
-                        self.__check_key(self.__player.position())
-                        self.__player.moveUp()
-                        dashed = True
-                    elif self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
-                        self.__player.moveUp()
+                    if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type != "w":
+                            self.__player.moveUp()
+                            self.__check_key(self.__player.position())
+                            self.__player.moveUp()
+                            dashed = True
+                        else:
+                            self.__player.moveUp()
                     self.__player.dash = False
                 case 'down':
-                    if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type != "w":
-                        self.__player.moveDown()
-                        self.__check_key(self.__player.position())
-                        self.__player.moveDown()
-                        dashed = True
-                    elif self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
-                        self.__player.moveDown()
+                    if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type != "w":
+                            self.__player.moveDown()
+                            self.__check_key(self.__player.position())
+                            self.__player.moveDown()
+                            dashed = True
+                        else:
+                            self.__player.moveDown()
                     self.__player.dash = False
                 case 'left':
-                    if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type != "w":
-                        self.__player.moveLeft()
-                        self.__check_key(self.__player.position())
-                        self.__player.moveLeft()
-                        dashed = True
-                    elif self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
-                        self.__player.moveLeft()
+                    if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type != "w":
+                            self.__player.moveLeft()
+                            self.__check_key(self.__player.position())
+                            self.__player.moveLeft()
+                            dashed = True
+                        else:
+                            self.__player.moveLeft()
                     self.__player.dash = False
                 case 'right':
-                    if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type != "w":
-                        self.__player.moveRight()
-                        self.__check_key(self.__player.position())
-                        self.__player.moveRight()
-                        dashed = True
-                    elif self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
-                        self.__player.moveRight()
+                    if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type != "w":
+                            self.__player.moveRight()
+                            self.__check_key(self.__player.position())
+                            self.__player.moveRight()
+                            dashed = True
+                        else:
+                            self.__player.moveRight()
                     self.__player.dash = False
 
         # changes sprites depending on if moving left or right (stays the same with up/down)
