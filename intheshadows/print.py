@@ -44,6 +44,23 @@ def display_help(width, height, resolution, screen):
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
 
+def display_inventory(width, height, resolution, screen, inventory):
+    background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/dungeon_old.jpg")
+    background = pygame.transform.scale(background, (width // 2, height // 2))
+    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.09))
+    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.06))
+
+    (title_width, title_height) = (width // 4, height // 16)
+    text = title_font.render("INVENTORY", True, (255, 255, 255))
+    text_rect = text.get_rect()
+    text_rect.center = (title_width, title_height)
+
+    screen.help_surface.blit(background, (0, 0))
+    screen.help_surface.blit(text, text_rect)
+    screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
+
+
+
 def run_menu(width, height, rects, screen, torch_counter, anim_torches, white):
     if torch_counter % 16 == 0:
         anim_torches = not anim_torches
@@ -57,15 +74,15 @@ def run_menu(width, height, rects, screen, torch_counter, anim_torches, white):
 
     start_text = small_font.render('START__', True, white)
     rects['start_text_rect'] = start_text.get_rect()
-    rects['start_text_rect'].center = (1.04*start_width, 0.95*start_height)
+    rects['start_text_rect'].center = (1.04 * start_width, 0.95 * start_height)
 
     options_text = small_font.render('OPTIONS_', True, white)
     rects['options_text_rect'] = options_text.get_rect()
-    rects['options_text_rect'].center = (1.02*options_width, options_height + 1.25*options_height // 4)
+    rects['options_text_rect'].center = (1.02 * options_width, options_height + 1.25 * options_height // 4)
 
     quit_text = small_font.render('QUIT__', True, white)
     rects['quit_text_rect'] = quit_text.get_rect()
-    rects['quit_text_rect'].center = (1.02*quit_width, quit_height + 1.6*quit_height // 4)
+    rects['quit_text_rect'].center = (1.02 * quit_width, quit_height + 1.6 * quit_height // 4)
 
     # animates torches
     if anim_torches:
@@ -116,19 +133,19 @@ def run_options(width, height, rects, screen, torch_counter, anim_torches, black
     (diff_width, diff_height) = (opt_width // 2, opt_height + height // 6)
 
     # back button
-    rects['options_back_button'] = pygame.Rect((0.05*width, 0.06*height), (0.08*width, 0.09*height))
+    rects['options_back_button'] = pygame.Rect((0.05 * width, 0.06 * height), (0.08 * width, 0.09 * height))
 
     (easy_width, easy_height) = (diff_width, diff_height + height // 8)
     easy_difficulty = small_font.render('EASY_', True, (0, 153, 0))
     rects['easy_difficulty_rect'] = easy_difficulty.get_rect()
     rects['easy_difficulty_rect'].center = (easy_width, easy_height)
 
-    (med_width, med_height) = (diff_width, easy_height + 1.27*height // 8)
+    (med_width, med_height) = (diff_width, easy_height + 1.27 * height // 8)
     medium_difficulty = small_font.render('_MEDIUM_', True, (255, 128, 0))
     rects['medium_difficulty_rect'] = medium_difficulty.get_rect()
     rects['medium_difficulty_rect'].center = (med_width, med_height)
 
-    (hard_width, hard_height) = (diff_width, med_height + 1.30*height // 8)
+    (hard_width, hard_height) = (diff_width, med_height + 1.30 * height // 8)
     hard_difficulty = small_font.render('HARD_', True, (255, 0, 0))
     rects['hard_difficulty_rect'] = hard_difficulty.get_rect()
     rects['hard_difficulty_rect'].center = (hard_width, hard_height)
@@ -154,13 +171,13 @@ def run_options(width, height, rects, screen, torch_counter, anim_torches, black
     (res_def_width, res_def_height) = (res_width, res_height + height // 8)
     resolution_def = small_font.render('_WINDOW_', True, (255, 0, 0))
     rects['resolution_def_rect'] = resolution_def.get_rect()
-    rects['resolution_def_rect'].center = (1.02*res_def_width, res_def_height)
+    rects['resolution_def_rect'].center = (1.02 * res_def_width, res_def_height)
     # screen.background_surface.blit(resolution_def, rects['resolution_def_rect'])
 
     (res_2_width, res_2_height) = (res_width, res_def_height + height // 8)
     resolution_2 = small_font.render('00__FULLSCREEN_0', True, (255, 0, 0))
     rects['resolution_2_rect'] = resolution_def.get_rect()
-    rects['resolution_2_rect'].center = (0.93*res_2_width, 1.07*res_2_height)
+    rects['resolution_2_rect'].center = (0.93 * res_2_width, 1.07 * res_2_height)
     # screen.background_surface.blit(resolution_2, rects['resolution_2_rect'])
 
     (mouse_x, mouse_y) = pygame.mouse.get_pos()
