@@ -145,6 +145,8 @@ class Game:
                         self.__running = False
                     case pygame.KEYDOWN:
                         match ev.key:
+                            case pygame.K_SPACE:
+                                self.__player.dash = True
                             case pygame.K_h: # help screen in game
                                 self.__state = 'help'
                             case pygame.K_i:
@@ -255,17 +257,34 @@ class Game:
             self.__state = 'move_guard'
             match self.__move_direction:
                 case 'up':
-                    if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type != "w":
+                            self.__player.moveUp()
+                            self.__player.moveUp()
+                    elif self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
                         self.__player.moveUp()
+                    self.__player.dash = False
                 case 'down':
-                    if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type != "w":
+                            self.__player.moveDown()
+                            self.__player.moveDown()
+                    elif self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
                         self.__player.moveDown()
+                    self.__player.dash = False
                 case 'left':
-                    if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type != "w":
+                            self.__player.moveLeft()
+                            self.__player.moveLeft()
+                    elif self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
                         self.__player.moveLeft()
+                    self.__player.dash = False
                 case 'right':
-                    if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type != "w":
+                            self.__player.moveRight()
+                            self.__player.moveRight()
+                    elif self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
                         self.__player.moveRight()
+                    self.__player.dash = False
+
         # changes sprites depending on if moving left or right (stays the same with up/down)
         if self.__move_direction == "right" or self.__move_direction == "left":
             self.__player.direction = self.__move_direction
