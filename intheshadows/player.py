@@ -29,6 +29,7 @@ class Player:
         self.__y = y
         self.__items = []
         self.__key = False
+        self.__dash = False
 
     def draw(self):
         self.__screen.blit(self.__curr_sprites[0], (self.__x * 32 * self.__resolution, self.__y * 32 * self.__resolution))
@@ -44,6 +45,14 @@ class Player:
     @property
     def key(self):
         return self.__key
+
+    @property
+    def dash(self):
+        return self.__dash
+
+    @dash.setter
+    def dash(self, dash):
+        self.__dash = dash
 
     @key.setter
     def key(self, key):
