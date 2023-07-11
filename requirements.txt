@@ -1,5 +1,4 @@
 igraph==0.10.5
-intheshadows @ file:///home/carsons/PycharmProjects/In-The-Shadows/dist/intheshadows-0.1.0.tar.gz
 numpy==1.25.0
 pygame==2.4.0
 texttable==1.6.7
