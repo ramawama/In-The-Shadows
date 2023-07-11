@@ -60,38 +60,23 @@ def display_inventory(width, height, resolution, screen, inventory):
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
 
-
-def run_menu(width, height, rects, screen, torch_counter, anim_torches, white):
-    if torch_counter % 16 == 0:
-        anim_torches = not anim_torches
-    screen.background_surface.fill((0, 0, 0))
-    screen.foreground_surface.fill((0, 0, 0, 0))
-    small_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(height * 0.15))
-
-    (start_width, start_height) = (width // 2, height // 2)
-    (options_width, options_height) = (start_width, start_height + start_height // 32)
-    (quit_width, quit_height) = (start_width, start_height + start_height // 4)
-
-    start_text = small_font.render('START__', True, white)
-    rects['start_text_rect'] = start_text.get_rect()
-    rects['start_text_rect'].center = (1.04 * start_width, 0.95 * start_height)
-
-    options_text = small_font.render('OPTIONS_', True, white)
-    rects['options_text_rect'] = options_text.get_rect()
-    rects['options_text_rect'].center = (1.02 * options_width, options_height + 1.25 * options_height // 4)
-
-    quit_text = small_font.render('QUIT__', True, white)
-    rects['quit_text_rect'] = quit_text.get_rect()
-    rects['quit_text_rect'].center = (1.02 * quit_width, quit_height + 1.6 * quit_height // 4)
-
+def run_menu(width, height, rects, screen, anim_torches):
     # animates torches
     if anim_torches:
         background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Home_screen_1.png")
     else:
         background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Home_screen_2.png")
     background = pygame.transform.scale(background, (width, height))
+    screen.background_surface.fill((0, 0, 0))
+    screen.foreground_surface.fill((0, 0, 0, 0))
 
+    # rects for collision
+    rects['start_text_rect'] = pygame.Rect((0.39*width, 0.43*height), (0.25*width, 0.1*height))
+    rects['options_text_rect'] = pygame.Rect((0.35*width, 0.64*height), (0.32*width, 0.1*height))
+    rects['quit_text_rect'] = pygame.Rect((0.42*width, 0.82*height), (0.20*width, 0.11*height))
     screen.background_surface.blit(background, (0, 0))
+
+    # highlight text when hovering
     (mouse_x, mouse_y) = pygame.mouse.get_pos()
     if rects['start_text_rect'].collidepoint(mouse_x, mouse_y):
         highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/start.png")
@@ -107,79 +92,38 @@ def run_menu(width, height, rects, screen, torch_counter, anim_torches, white):
         screen.background_surface.blit(highlight, (0, 0))
 
 
-def run_options(width, height, rects, screen, torch_counter, anim_torches, black, white, difficulty):
-    if torch_counter % 8 == 0:
-        anim_torches = not anim_torches
-
+def run_options(width, height, rects, screen, anim_torches, difficulty):
     # animates torches
     if anim_torches:
         background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_1.png")
     else:
         background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_2.png")
     background = pygame.transform.scale(background, (width, height))
-
-    screen.background_surface.fill(black)
+    screen.background_surface.fill((255, 255, 255))
     screen.background_surface.blit(background, (0, 0))
 
-    big_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(height * 0.2))
-    small_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Enchanted Land.otf', int(height * 0.09))
+    # rects for collision
+    rects['options_back_button'] = pygame.Rect((0.05*width, 0.06*height), (0.08*width, 0.09*height))
+    rects['easy_difficulty_rect'] = pygame.Rect((0.17*width, 0.37*height), (0.16*width, 0.09*height))
+    rects['medium_difficulty_rect'] = pygame.Rect((0.14*width, 0.53*height), (0.22*width, 0.09*height))
+    rects['hard_difficulty_rect'] = pygame.Rect((0.17*width, 0.7*height), (0.16*width, 0.09*height))
+    rects['resolution_def_rect'] = pygame.Rect((0.66*width, 0.37*height), (0.21*width, 0.09*height))
+    rects['resolution_2_rect'] = pygame.Rect((0.59*width, 0.53*height), (0.35*width, 0.09*height))
 
-    (opt_width, opt_height) = (width // 2, height // 8)
-    text = big_font.render('OPTIONS', True, white)
-    text_rect = text.get_rect()
-    text_rect.center = (opt_width, opt_height)
-    # screen.background_surface.blit(text, text_rect)
-
-    (diff_width, diff_height) = (opt_width // 2, opt_height + height // 6)
-
-    # back button
-    rects['options_back_button'] = pygame.Rect((0.05 * width, 0.06 * height), (0.08 * width, 0.09 * height))
-
-    (easy_width, easy_height) = (diff_width, diff_height + height // 8)
-    easy_difficulty = small_font.render('EASY_', True, (0, 153, 0))
-    rects['easy_difficulty_rect'] = easy_difficulty.get_rect()
-    rects['easy_difficulty_rect'].center = (easy_width, easy_height)
-
-    (med_width, med_height) = (diff_width, easy_height + 1.27 * height // 8)
-    medium_difficulty = small_font.render('_MEDIUM_', True, (255, 128, 0))
-    rects['medium_difficulty_rect'] = medium_difficulty.get_rect()
-    rects['medium_difficulty_rect'].center = (med_width, med_height)
-
-    (hard_width, hard_height) = (diff_width, med_height + 1.30 * height // 8)
-    hard_difficulty = small_font.render('HARD_', True, (255, 0, 0))
-    rects['hard_difficulty_rect'] = hard_difficulty.get_rect()
-    rects['hard_difficulty_rect'].center = (hard_width, hard_height)
-
+    # update difficulty
     match difficulty:
         case "EASY":
             mode = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_easy.png")
-            # color = (0, 153, 0)
         case "MEDIUM":
             mode = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_medium.png")
-            # color = (255, 128, 0)
         case "HARD":
             mode = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_hard.png")
-            # color = (255, 0, 0)
         case _:
             mode = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Options_easy.png")
-            # color = (255, 255, 255)
     mode = pygame.transform.scale(mode, (width, height))
     screen.background_surface.blit(mode, (0, 0))
 
-    (res_width, res_height) = (width - width // 4, opt_height + height // 6)
-
-    (res_def_width, res_def_height) = (res_width, res_height + height // 8)
-    resolution_def = small_font.render('_WINDOW_', True, (255, 0, 0))
-    rects['resolution_def_rect'] = resolution_def.get_rect()
-    rects['resolution_def_rect'].center = (1.02 * res_def_width, res_def_height)
-    # screen.background_surface.blit(resolution_def, rects['resolution_def_rect'])
-
-    (res_2_width, res_2_height) = (res_width, res_def_height + height // 8)
-    resolution_2 = small_font.render('00__FULLSCREEN_0', True, (255, 0, 0))
-    rects['resolution_2_rect'] = resolution_def.get_rect()
-    rects['resolution_2_rect'].center = (0.93 * res_2_width, 1.07 * res_2_height)
-    # screen.background_surface.blit(resolution_2, rects['resolution_2_rect'])
-
+    # highlight text when hovering
     (mouse_x, mouse_y) = pygame.mouse.get_pos()
     if rects['resolution_def_rect'].collidepoint(mouse_x, mouse_y):
         highlight = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Hover Text/window.png")
