@@ -132,8 +132,6 @@ class Board:
                     self.__screen.background_surface.blit(scaled_floor, (tile_x, tile_y))
                 self.__screen.foreground_surface.blit(scaled_tile, (tile_x, tile_y))
 
-
-
     # Returns array of tiles
     @property
     def tiles(self):
@@ -142,6 +140,7 @@ class Board:
     @property
     def orig_tiles(self):
         return self.__orig_tiles
+
     def unload(self):
         self.__loaded = False
         self.__tiles = []
@@ -153,11 +152,16 @@ class Board:
                                                                      self.__screen_width, 128))
         white = (255, 255, 255)
         text_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(self.__screen_height * 0.04))
-        help_text = text_font.render('H FOR HELP:', True, white)
+        help_text = text_font.render('H FOR HELP', True, white)
         help_rect = help_text.get_rect()
         (help_width, help_height) = (self.__screen_width // (10 * self.__resolution),
                                      self.__screen_height + (16 * self.__resolution))
         help_rect.center = (help_width, help_height)
+
+        inventory_text = text_font.render('I FOR INVENTORY:', True, white)
+        inventory_rect = inventory_text.get_rect()
+        (inventory_width, inventory_height) = (help_width + (192 * self.__resolution), help_height)
+        inventory_rect.center = (inventory_width, inventory_height)
 
         curr_level = text_font.render('LEVEL ' + str(self.__level), True, white)
         curr_level_rect = curr_level.get_rect()
@@ -177,5 +181,6 @@ class Board:
         instructions_rect.center = (instructions_width, instructions_height)
 
         self.__screen.background_surface.blit(help_text, help_rect)
+        self.__screen.background_surface.blit(inventory_text, inventory_rect)
         self.__screen.background_surface.blit(curr_level, curr_level_rect)
         self.__screen.background_surface.blit(instructions, instructions_rect)

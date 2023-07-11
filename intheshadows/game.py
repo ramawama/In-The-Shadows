@@ -2,7 +2,7 @@ import queue
 from pathlib import Path
 import pygame
 import os
-from intheshadows.print import display_help, run_menu, run_options
+from intheshadows.print import display_help, run_menu, run_options, display_inventory
 from intheshadows.events import game_over, win
 from intheshadows.guard import Guard
 from intheshadows.tile import Tile
@@ -91,6 +91,8 @@ class Game:
                 self.__state = 'menu'
             case 'help':
                 self.__state = 'game'
+            case 'inventory':
+                self.__state = 'game'
 
     # Changes state based on button click
     def __mouse_click(self, mouse_pos):
@@ -145,6 +147,8 @@ class Game:
                         match ev.key:
                             case pygame.K_h: # help screen in game
                                 self.__state = 'help'
+                            case pygame.K_i:
+                                self.__state = 'inventory'
                             case pygame.K_m:
                                 self.__music.toggle()
                             case pygame.K_k:
@@ -215,6 +219,21 @@ class Game:
                             case pygame.K_m:
                                 self.__music.toggle()
                             case pygame.K_ESCAPE | pygame.K_h:
+                                self.__state = 'game'
+        elif self.__state == 'inventory':
+            for ev in pygame.event.get():
+                match ev.type:
+                    case pygame.QUIT:
+                        self.__running = False
+                    case pygame.K_ESCAPE:
+                        self.__escape_state()
+                    case pygame.KEYDOWN:
+                        match ev.key:
+                            case pygame.K_m:
+                                self.__music.toggle()
+                            case pygame.K_ESCAPE:
+                                self.__escape_state()
+                            case pygame.K_ESCAPE | pygame.K_i:
                                 self.__state = 'game'
         else:
             for ev in pygame.event.get():
@@ -596,6 +615,12 @@ class Game:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
                 case 'help':
                     display_help(self.__width, self.__height, self.__resolution, self.__screen)
+                case 'inventory':
+                    display_inventory(self.__width, self.__height, self.__resolution, self.__screen, None)
+                    '''
+                    TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
+                    also have it track what items are used etc
+                    '''
                 case 'game_over':
                     pass
                 case 'move':
