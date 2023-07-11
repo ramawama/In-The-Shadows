@@ -266,9 +266,8 @@ class Game:
                 case 'right':
                     if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
                         self.__player.moveRight()
-        # changes sprites depending on if moving left or right (stays the same with up/down)
-        if self.__move_direction == "right" or self.__move_direction == "left":
-            self.__player.direction = self.__move_direction
+        # changes sprites depending on if moving left, right, up, or down
+        self.__player.direction = self.__move_direction
         sprites = self.__player.currSprites()
         step_size = 2 * self.__resolution * self.__resolution
         match self.__move_direction:
