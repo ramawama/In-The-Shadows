@@ -257,6 +257,7 @@ class Game:
                         self.__mouse_click(pygame.mouse.get_pos())
 
     def __move_player(self):
+        dashed = False # if player dashed, torch will be lit, conditional at end of function
         player_position = self.__player.position()
         if self.__move_counter == 15 // self.__resolution:
             self.__state = 'move_guard'
@@ -264,28 +265,36 @@ class Game:
                 case 'up':
                     if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type != "w":
                         self.__player.moveUp()
+                        self.__check_key(self.__player.position())
                         self.__player.moveUp()
+                        dashed = True
                     elif self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
                         self.__player.moveUp()
                     self.__player.dash = False
                 case 'down':
                     if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type != "w":
                         self.__player.moveDown()
+                        self.__check_key(self.__player.position())
                         self.__player.moveDown()
+                        dashed = True
                     elif self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
                         self.__player.moveDown()
                     self.__player.dash = False
                 case 'left':
                     if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type != "w":
                         self.__player.moveLeft()
+                        self.__check_key(self.__player.position())
                         self.__player.moveLeft()
+                        dashed = True
                     elif self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
                         self.__player.moveLeft()
                     self.__player.dash = False
                 case 'right':
                     if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type != "w":
                         self.__player.moveRight()
+                        self.__check_key(self.__player.position())
                         self.__player.moveRight()
+                        dashed = True
                     elif self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
                         self.__player.moveRight()
                     self.__player.dash = False
@@ -316,6 +325,12 @@ class Game:
 
                     self.__screen.update()
                     # update player location internally
+                if dashed:
+                    if self.__board.tiles[player_position[1]][player_position[0] + 1].type == "t" and \
+                            self.__board.tiles[player_position[1]][player_position[0] + 1].lit:
+                        self.__board.tiles[player_position[1]][player_position[0] + 1].unlight()
+                        self.__board.torch_check()
+
             case "left":
                 if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
                     # draw background
@@ -336,6 +351,12 @@ class Game:
 
                     self.__screen.update()
                     # update player location internally
+                if dashed:
+                    if self.__board.tiles[player_position[1]][player_position[0] - 1].type == "t" and \
+                            self.__board.tiles[player_position[1]][player_position[0] - 1].lit:
+                        self.__board.tiles[player_position[1]][player_position[0] - 1].unlight()
+                        self.__board.torch_check()
+
             case "up":
                 if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
                     # draw background
@@ -356,6 +377,13 @@ class Game:
 
                     self.__screen.update()
                     # update player location internally
+
+                if dashed:
+                    if self.__board.tiles[player_position[1] - 1][player_position[0]].type == "t" and \
+                            self.__board.tiles[player_position[1] - 1][player_position[0]].lit:
+                        self.__board.tiles[player_position[1] - 1][player_position[0]].unlight()
+                        self.__board.torch_check()
+
             case "down":
                 if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
                     # draw background
@@ -376,9 +404,13 @@ class Game:
 
                     self.__screen.update()
                     # update player location internally
+                if dashed:
+                    if self.__board.tiles[player_position[1] + 1][player_position[0]].type == "t" and \
+                            self.__board.tiles[player_position[1] + 1][player_position[0] ].lit:
+                        self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
+                        self.__board.torch_check()
 
         player_position = self.__player.position()
-
         if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
                 self.__board.tiles[player_position[1]][player_position[0]].lit:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
