@@ -1,5 +1,6 @@
 import pygame
 from pathlib import Path
+import random
 
 
 class Tile:
@@ -45,6 +46,17 @@ class Tile:
                 self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Key.png").convert_alpha()
             case "c":
                 self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Chest_locked.png").convert_alpha()
+            case "o":
+                random_selector = random.randint(0, 4)
+                if random_selector == 0:
+                    rand_int = random.randint(2, 4)
+                    match rand_int:
+                        case 2:
+                            self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_cracked.png").convert_alpha()
+                        case 3:
+                            self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_cracked_mossy.png").convert_alpha()
+                        case 4:
+                            self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Floor/Floor_mossy.png").convert_alpha()
         if image is not None:
             self._image = image
     @property
