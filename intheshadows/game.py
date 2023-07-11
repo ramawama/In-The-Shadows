@@ -20,7 +20,7 @@ class Game:
         self.__anim_counter = None
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
-        (self.__width, self.__height) = (64*28, 64*16)
+        (self.__width, self.__height) = (64 * 28, 64 * 16)
 
         self.__level = 1
         self.__torch_counter = 0
@@ -70,9 +70,10 @@ class Game:
         self.__guards = []
         self.__guard_positions.clear()
         for x in range(len(self.__guard_routes)):
-            self.__guards.append(Guard(self.__screen.foreground_surface, self.__resolution, self.__guard_routes[x][0][0],
-                                       self.__guard_routes[x][0][1], self.__guard_routes[x][1],
-                                       self.__difficulty))
+            self.__guards.append(
+                Guard(self.__screen.foreground_surface, self.__resolution, self.__guard_routes[x][0][0],
+                      self.__guard_routes[x][0][1], self.__guard_routes[x][1],
+                      self.__difficulty))
             self.__guard_positions.append(())
         self.__turn_counter = 0
 
@@ -146,7 +147,9 @@ class Game:
                         self.__running = False
                     case pygame.KEYDOWN:
                         match ev.key:
-                            case pygame.K_h: # help screen in game
+                            case pygame.K_SPACE:
+                                self.__player.dash = True
+                            case pygame.K_h:  # help screen in game
                                 self.__state = 'help'
                             case pygame.K_i:
                                 self.__state = 'inventory'
@@ -167,8 +170,9 @@ class Game:
                                 self.__position = (self.__player.position()[0] * 32 * self.__resolution,
                                                    self.__player.position()[1] * 32 * self.__resolution)
                                 for x in range(len(self.__guards)):
-                                    self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
-                                                       self.__guards[x].position()[1] * 32 * self.__resolution)
+                                    self.__guard_positions[x] = (
+                                        self.__guards[x].position()[0] * 32 * self.__resolution,
+                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_a | pygame.K_LEFT:
                                 if self.__allow_movement is False:
                                     continue
@@ -180,8 +184,9 @@ class Game:
                                 self.__position = (self.__player.position()[0] * 32 * self.__resolution,
                                                    self.__player.position()[1] * 32 * self.__resolution)
                                 for x in range(len(self.__guards)):
-                                    self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
-                                                       self.__guards[x].position()[1] * 32 * self.__resolution)
+                                    self.__guard_positions[x] = (
+                                        self.__guards[x].position()[0] * 32 * self.__resolution,
+                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_s | pygame.K_DOWN:
                                 if self.__allow_movement is False:
                                     continue
@@ -193,8 +198,9 @@ class Game:
                                 self.__position = (self.__player.position()[0] * 32 * self.__resolution,
                                                    self.__player.position()[1] * 32 * self.__resolution)
                                 for x in range(len(self.__guards)):
-                                    self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
-                                                       self.__guards[x].position()[1] * 32 * self.__resolution)
+                                    self.__guard_positions[x] = (
+                                        self.__guards[x].position()[0] * 32 * self.__resolution,
+                                        self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_d | pygame.K_RIGHT:
                                 if self.__allow_movement is False:
                                     continue
@@ -206,8 +212,9 @@ class Game:
                                 self.__position = (self.__player.position()[0] * 32 * self.__resolution,
                                                    self.__player.position()[1] * 32 * self.__resolution)
                                 for x in range(len(self.__guards)):
-                                    self.__guard_positions[x] = (self.__guards[x].position()[0] * 32 * self.__resolution,
-                                                       self.__guards[x].position()[1] * 32 * self.__resolution)
+                                    self.__guard_positions[x] = (
+                                        self.__guards[x].position()[0] * 32 * self.__resolution,
+                                        self.__guards[x].position()[1] * 32 * self.__resolution)
         elif self.__state == 'help':
             for ev in pygame.event.get():
                 match ev.type:
@@ -251,22 +258,52 @@ class Game:
                         self.__mouse_click(pygame.mouse.get_pos())
 
     def __move_player(self):
+        dashed = False # if player dashed, torch will be lit, conditional at end of function
         player_position = self.__player.position()
         if self.__move_counter == 15 // self.__resolution:
             self.__state = 'move_guard'
             match self.__move_direction:
                 case 'up':
                     if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
-                        self.__player.moveUp()
+                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type != "w":
+                            self.__player.moveUp()
+                            self.__check_key(self.__player.position())
+                            self.__player.moveUp()
+                            dashed = True
+                        else:
+                            self.__player.moveUp()
+                    self.__player.dash = False
                 case 'down':
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
-                        self.__player.moveDown()
+                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type != "w":
+                            self.__player.moveDown()
+                            self.__check_key(self.__player.position())
+                            self.__player.moveDown()
+                            dashed = True
+                        else:
+                            self.__player.moveDown()
+                    self.__player.dash = False
                 case 'left':
                     if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
-                        self.__player.moveLeft()
+                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type != "w":
+                            self.__player.moveLeft()
+                            self.__check_key(self.__player.position())
+                            self.__player.moveLeft()
+                            dashed = True
+                        else:
+                            self.__player.moveLeft()
+                    self.__player.dash = False
                 case 'right':
                     if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
-                        self.__player.moveRight()
+                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type != "w":
+                            self.__player.moveRight()
+                            self.__check_key(self.__player.position())
+                            self.__player.moveRight()
+                            dashed = True
+                        else:
+                            self.__player.moveRight()
+                    self.__player.dash = False
+
         # changes sprites depending on if moving left or right (stays the same with up/down)
         if self.__move_direction == "right" or self.__move_direction == "left":
             self.__player.direction = self.__move_direction
@@ -293,6 +330,12 @@ class Game:
 
                     self.__screen.update()
                     # update player location internally
+                if dashed:
+                    if self.__board.tiles[player_position[1]][player_position[0] + 1].type == "t" and \
+                            self.__board.tiles[player_position[1]][player_position[0] + 1].lit:
+                        self.__board.tiles[player_position[1]][player_position[0] + 1].unlight()
+                        self.__board.torch_check()
+
             case "left":
                 if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
                     # draw background
@@ -313,6 +356,12 @@ class Game:
 
                     self.__screen.update()
                     # update player location internally
+                if dashed:
+                    if self.__board.tiles[player_position[1]][player_position[0] - 1].type == "t" and \
+                            self.__board.tiles[player_position[1]][player_position[0] - 1].lit:
+                        self.__board.tiles[player_position[1]][player_position[0] - 1].unlight()
+                        self.__board.torch_check()
+
             case "up":
                 if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
                     # draw background
@@ -333,6 +382,13 @@ class Game:
 
                     self.__screen.update()
                     # update player location internally
+
+                if dashed:
+                    if self.__board.tiles[player_position[1] - 1][player_position[0]].type == "t" and \
+                            self.__board.tiles[player_position[1] - 1][player_position[0]].lit:
+                        self.__board.tiles[player_position[1] - 1][player_position[0]].unlight()
+                        self.__board.torch_check()
+
             case "down":
                 if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
                     # draw background
@@ -353,9 +409,13 @@ class Game:
 
                     self.__screen.update()
                     # update player location internally
+                if dashed:
+                    if self.__board.tiles[player_position[1] + 1][player_position[0]].type == "t" and \
+                            self.__board.tiles[player_position[1] + 1][player_position[0] ].lit:
+                        self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
+                        self.__board.torch_check()
 
         player_position = self.__player.position()
-
         if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
                 self.__board.tiles[player_position[1]][player_position[0]].lit:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
@@ -382,8 +442,9 @@ class Game:
                 case 'R':
                     # draw background
                     # draw animation frame
-                    self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter], (self.__guard_positions[x][0],
-                                                                      self.__guard_positions[x][1]))
+                    self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
+                                                          (self.__guard_positions[x][0],
+                                                           self.__guard_positions[x][1]))
                     # slight movement + decrement distance left to travel
                     self.__guard_positions[x] = (self.__guard_positions[x][0] + step_size, self.__guard_positions[x][1])
                     # update guard location internally
@@ -455,7 +516,7 @@ class Game:
 
         width_scale = self.__width // len(self.__board.tiles[0])
         # have to use 15/16 because tiles are scaled for the 15 rows. The 16th is the HUD
-        height_scale = 15/16*self.__height // len(self.__board.tiles)
+        height_scale = 15 / 16 * self.__height // len(self.__board.tiles)
         if self.__anim_torches:
             big_torch = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Torch/Torch_big.png")
             big_torch = pygame.transform.scale(big_torch, (width_scale, height_scale))
@@ -464,7 +525,9 @@ class Game:
                     # print(self.__board.tiles[x][y].type, end='')
                     if self.__board.tiles[x][y].type == 't' and self.__board.tiles[x][y].lit:
                         # not correct position
-                        self.__screen.foreground_surface.blit(big_torch, (self.__board.tiles[x][y].pos[0] * width_scale, self.__board.tiles[x][y].pos[1] * height_scale))
+                        self.__screen.foreground_surface.blit(big_torch, (
+                            self.__board.tiles[x][y].pos[0] * width_scale,
+                            self.__board.tiles[x][y].pos[1] * height_scale))
 
     # Runs the actual game
     def __run_game(self):
@@ -485,7 +548,8 @@ class Game:
         if self.__check_next_level(self.__player.position()):
             if self.__level == 3:
                 self.__board.unload()
-                self.__level, self.__state = win(self.__width, self.__height, self.__screen, self.__black, (255, 255, 255))
+                self.__level, self.__state = win(self.__width, self.__height, self.__screen, self.__black,
+                                                 (255, 255, 255))
                 self.__music.play_music("win")
                 self.__player_spawn, guards = self.__board.load_level()
                 self.__set_player_and_guards()
@@ -530,13 +594,14 @@ class Game:
         q.put((guard.x, guard.y, 'X'))
         while not q.empty():
             curr_x, curr_y, first_direction = q.get()
-            #print(f"{curr_x} {curr_y} {player_x} {player_y} {first_direction}")
+            # print(f"{curr_x} {curr_y} {player_x} {player_y} {first_direction}")
             if curr_x == player_x and curr_y == player_y:
                 return first_direction
             for i in range(4):
                 new_x = curr_x + dx[i]
                 new_y = curr_y + dy[i]
-                if 0 <= new_x < 27 and 0 <= new_y < 27 and self.__board.tiles[new_y][new_x].type != 'w' and visited[new_y][new_x] is False:
+                if 0 <= new_x < 27 and 0 <= new_y < 27 and self.__board.tiles[new_y][new_x].type != 'w' and \
+                        visited[new_y][new_x] is False:
                     visited[new_y][new_x] = True
                     if first_direction == 'X':
                         q.put((new_x, new_y, d[i]))
@@ -593,7 +658,8 @@ class Game:
                 case 'D':
                     if self.__check_guard_path(self.__guards[x], 'D'):
                         self.__guards[x].moveDown()
-            self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x, self.__guards[x].currSprites()[0])
+            self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
+                                                 self.__guards[x].currSprites()[0])
             self.__board.torch_check()
         self.__turn_counter = self.__turn_counter + 1
 
@@ -631,7 +697,8 @@ class Game:
                     pygame.mouse.set_visible(False)
                     if self.__move_flag == "guard":
                         self.__update_guards()
-                        if self.__guard_turn_counter < self.__guard_difficulty and not self.__check_game_over(self.__player.position()):
+                        if self.__guard_turn_counter < self.__guard_difficulty and not self.__check_game_over(
+                                self.__player.position()):
                             self.__state = 'move_guard'
                             self.__move_flag = "player"
                             continue
@@ -675,7 +742,8 @@ class Game:
                         self.__anim_counter = 0
                         self.__move_flag = "guard"
                         for x in range(len(self.__guards)):
-                            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
+                            move_direction = self.__guard_routes[x][1][
+                                (self.__turn_counter % len(self.__guard_routes[x][1]))]
                             if self.__guard_tracking:
                                 move_direction = self.__temp_bfs(self.__guards[x])
                             match move_direction:
