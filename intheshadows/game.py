@@ -547,6 +547,36 @@ class Game:
                         q.put((new_x, new_y, first_direction))
         return d[0]
 
+    def __alert_mode_on(self):
+        self.__guard_tracking = True
+        self.__music.play_music('alert')
+
+    def __check_guard_vision(self):
+        player_position = self.__player.position()
+        for x in range(len(self.__guards)):
+            guard_x = self.__guards[x].x
+            guard_y = self.__guards[x].y
+            match self.__guards[x].direction:
+                case "up":
+                    dx = [-1, 0, 1, -1, 0, 1]
+                    dy = [-1, -1, -1, -2, -2, -2]
+                case "down":
+                    dx = [-1, 0, 1, -1, 0, 1]
+                    dy = [1, 1, 1, 2, 2, 2]
+                case "right":
+                    dx = [1, 1, 1, 2, 2, 2]
+                    dy = [-1, 0, 1, -1, 0, 1]
+                case "left":
+                    dx = [-1, -1, -1, -2, -2, -2]
+                    dy = [-1, 0, 1, -1, 0, 1]
+            for i in range(0,6):
+                try:
+                    if guard_y + dy[i] == player_position[1] and guard_x + dx[i] == player_position[0]:
+                        self.__alert_mode_on()
+                        break
+                except:
+                    pass
+
     def __update_guards(self):
         for x in range(len(self.__guards)):
             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
@@ -652,5 +682,7 @@ class Game:
                                     self.__guards[x].direction = 'left'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
                     self.__move_guards()
+                    if self.__guard_tracking is False:
+                        self.__check_guard_vision()
             self.__screen.update()
         pygame.quit()
