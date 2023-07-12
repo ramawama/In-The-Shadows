@@ -87,3 +87,13 @@ class Player:
     # add item to inventory
     def add_item(self, item):
         self.__items.append(item)
+
+    def update_sprites(self):
+        if self.__direction == "right":
+            self.__curr_sprites = self.__right
+        elif self.__direction == "left":
+            self.__curr_sprites = self.__left
+        elif self.__direction == "up":
+            self.__curr_sprites = self.__up
+        elif self.__direction == "down":
+            self.__curr_sprites = self.__down
