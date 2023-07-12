@@ -80,18 +80,18 @@ class Board:
 
     def replace_tile_with_original(self, x, y):
         if self.__tiles[x][y].lit:
-            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].behind_torch, y, x, self.__orig_tiles[x][y].image)
+            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image)
             self.__tiles[x][y].light()
         else:
-            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].behind_torch, y, x, self.__orig_tiles[x][y].image)
+            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image)
         self.torch_check()
 
     def replace_tile_with_guard(self, x, y, image):
         if self.__tiles[x][y].lit:
-            self.__tiles[x][y] = Tile("g", self.__tiles[x][y].behind_torch, y, x, image)
+            self.__tiles[x][y] = Tile("g", self.__tiles[x][y].lit, y, x, image)
             self.__tiles[x][y].light()
         else:
-            self.__tiles[x][y] = Tile("g", self.__tiles[x][y].behind_torch, y, x, image)
+            self.__tiles[x][y] = Tile("g", self.__tiles[x][y].lit, y, x, image)
         self.torch_check()
 
     def check_for_key(self):
