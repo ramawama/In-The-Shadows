@@ -304,8 +304,7 @@ class Game:
                             self.__player.moveRight()
                     self.__player.dash = False
 
-        # changes sprites depending on if moving left or right (stays the same with up/down)
-        if self.__move_direction == "right" or self.__move_direction == "left":
+                # changes sprites depending on if moving left, right, up, or down
             self.__player.direction = self.__move_direction
         sprites = self.__player.currSprites()
         step_size = 2 * self.__resolution * self.__resolution

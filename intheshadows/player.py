@@ -15,6 +15,14 @@ class Player:
                        pygame.transform.flip(self.__right[1], True, False),
                        pygame.transform.flip(self.__right[2], True, False),
                        pygame.transform.flip(self.__right[3], True, False)]
+        self.__up = [pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_up.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_up_walk_1.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_up_walk_2.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_up_walk_3.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32))]
+        self.__down = [pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd_walk_1.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd_walk_2.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd_walk_3.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32))]
         self.__curr_sprites = self.__right
         self.__direction = "right"
         self.__x = x
@@ -51,10 +59,8 @@ class Player:
         self.__key = key
 
     def moveUp(self):
-        if self.__direction == "right":
-            self.__curr_sprites = self.__right
-        else:
-            self.__curr_sprites = self.__left
+        self.__direction = "up"
+        self.__curr_sprites = self.__up
         self.__y -= 1
 
     def moveLeft(self):
@@ -63,10 +69,8 @@ class Player:
         self.__x -= 1
 
     def moveDown(self):
-        if self.__direction == "right":
-            self.__curr_sprites = self.__right
-        else:
-            self.__curr_sprites = self.__left
+        self.__direction = "down"
+        self.__curr_sprites = self.__down
         self.__y += 1
 
     def moveRight(self):
@@ -75,16 +79,11 @@ class Player:
         self.__x += 1
 
     def currSprites(self):
-        if self.__direction == "right":
-            self.__curr_sprites = self.__right
-        else:
-            self.__curr_sprites = self.__left
         return self.__curr_sprites
 
     def position(self):
         return self.__x, self.__y
 
-    #add item to inventory
+    # add item to inventory
     def add_item(self, item):
         self.__items.append(item)
-
