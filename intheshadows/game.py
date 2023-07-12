@@ -258,9 +258,9 @@ class Game:
                         self.__mouse_click(pygame.mouse.get_pos())
 
     def __move_player(self):
-        dashed = False # if player dashed, torch will be lit, conditional at end of function
+        dashed = False  # if player dashed, torch will be lit, conditional at end of function
         player_position = self.__player.position()
-        if self.__move_counter == 15 // self.__resolution:
+        if self.__move_counter == 31 // self.__resolution:
             self.__state = 'move_guard'
             match self.__move_direction:
                 case 'up':
@@ -304,10 +304,12 @@ class Game:
                             self.__player.moveRight()
                     self.__player.dash = False
 
-                # changes sprites depending on if moving left, right, up, or down
-            self.__player.direction = self.__move_direction
+        # changes sprites depending on if moving left, right, up, or down
+        self.__player.direction = self.__move_direction
+        self.__player.update_sprites()
         sprites = self.__player.currSprites()
-        step_size = 2 * self.__resolution * self.__resolution
+        step_size = 1 * self.__resolution * self.__resolution
+        anim_spd = 4 // self.__resolution
         match self.__move_direction:
             case "right":
                 if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
@@ -320,7 +322,7 @@ class Game:
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0] + step_size, self.__position[1])
-                    if not (self.__move_counter % 4):
+                    if not (self.__move_counter % anim_spd):
                         self.__anim_counter += 1
 
                     # for resetting animation
@@ -346,7 +348,7 @@ class Game:
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0] - step_size, self.__position[1])
-                    if not (self.__move_counter % 4):
+                    if not (self.__move_counter % anim_spd):
                         self.__anim_counter += 1
 
                     # for resetting animation
@@ -372,7 +374,7 @@ class Game:
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0], self.__position[1] - step_size)
-                    if not (self.__move_counter % 4):
+                    if not (self.__move_counter % anim_spd):
                         self.__anim_counter += 1
 
                     # for resetting animation
@@ -399,7 +401,7 @@ class Game:
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0], self.__position[1] + step_size)
-                    if not (self.__move_counter % 4):
+                    if not (self.__move_counter % anim_spd):
                         self.__anim_counter += 1
 
                     # for resetting animation
@@ -673,7 +675,7 @@ class Game:
             clock.tick(60)
 
             self.__move_counter += 1
-            if self.__move_counter >= 16 // self.__resolution:
+            if self.__move_counter >= 32 // self.__resolution:
                 self.__move_counter = 0
 
             self.__torch_counter += 1
