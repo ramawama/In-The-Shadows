@@ -8,7 +8,8 @@ class Tile:
         self._tile_type = tile_type
         self._pos = [x, y]
         self._lit = False
-        self.unlight()
+        self._behind_torch = behind_torch
+        #self.unlight()
         self.__torch_counter = 0
         self._image = image
         self._floor_type = floor_type
@@ -56,14 +57,21 @@ class Tile:
                                 self._floor_type = "_cracked_mossy"
                             case 4:
                                 self._floor_type = "_mossy"
-                        self._image = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + ".png")).convert_alpha()
+                        # print(("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + ".png"))
+                    self._image = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + ".png")).convert_alpha()
         if behind_torch is False:
+            #print(("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + ".png"))
             self._backgroundtile = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + ".png")).convert_alpha()
         else:
+            #print(("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + ".png"))
             self._backgroundtile = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + "_lit.png")).convert_alpha()
     @property
     def image(self):
         return self._image
+
+    @property
+    def behind_torch(self):
+        return self._behind_torch
 
     @property
     def floor_type(self):
