@@ -539,7 +539,7 @@ class Game:
         if self.__check_game_over(self.__player.position()):
             self.__music.play_music("game_over")
             self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
-                                                   self.__board, self.__black, (255, 255, 255))
+                                                   self.__board)
             self.__player_spawn, self.__guard_routes = self.__get_spawns()
             self.__set_player_and_guards()
             self.__guard_tracking = False
@@ -673,6 +673,7 @@ class Game:
         self.__move_flag = False
         while self.__running:
             clock.tick(60)
+            # print(clock.get_fps())
 
             self.__move_counter += 1
             if self.__move_counter >= 32 // self.__resolution:
@@ -731,7 +732,7 @@ class Game:
                         if self.__check_game_over(self.__player.position()):
                             self.__music.play_music("game_over")
                             self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
-                                                                   self.__board, self.__black, (255, 255, 255))
+                                                                   self.__board)
 
                             self.__player_spawn, self.__guard_routes = self.__get_spawns()
                             self.__set_player_and_guards()
