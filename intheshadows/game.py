@@ -23,7 +23,7 @@ class Game:
         self.__white = (255, 255, 255)
         (self.__width, self.__height) = (64 * 28, 64 * 16)
 
-        self.__level = 1
+        self.__level = self.load_level()
         self.__torch_counter = 0
         self.__move_counter = 0
         self.__move_direction = 'right'
@@ -79,7 +79,7 @@ class Game:
         if save_file.stat().st_size != 0:
             # if file is has saved progress
             with open(save_file, 'r') as file:
-                self.__level = int(file.read())
+                return int(file.read())
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
@@ -245,7 +245,10 @@ class Game:
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
         elif self.__state == 'load':
             for ev in pygame.event.get():
-                if ev.type == pygame.KEYDOWN:
+                if ev.type == pygame.K_r:
+                    self.__level = 1
+                    self.save_level()
+                elif ev.type == pygame.KEYDOWN:
                     self.__escape_state()
         elif self.__state == 'help':
             for ev in pygame.event.get():
@@ -744,7 +747,6 @@ class Game:
         self.__move_counter = 0
         self.__torch_counter = 0
         self.__move_flag = False
-        self.load_level()
         while self.__running:
             clock.tick(60)
             # print(clock.get_fps())
@@ -762,7 +764,7 @@ class Game:
             match self.__state:
                 case 'load':
                     pygame.mouse.set_visible(False)
-                    loading_screen(self.__width, self.__height, self.__resolution, self.__screen)
+                    loading_screen(self.__width, self.__height, self.__resolution, self.__screen, self.__level)
                 case 'menu':
                     pygame.mouse.set_visible(True)
                     self.__music.play_music('menu')
