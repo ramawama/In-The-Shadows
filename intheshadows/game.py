@@ -70,13 +70,16 @@ class Game:
                                self.__resolution)
         self.__guards = []
         self.__guard_positions.clear()
+        self.__guard_returning = []
+        self.__turn_counter = []
         for x in range(len(self.__guard_routes)):
             self.__guards.append(
                 Guard(self.__screen.foreground_surface, self.__resolution, self.__guard_routes[x][0][0],
                       self.__guard_routes[x][0][1], self.__guard_routes[x][1],
                       self.__difficulty))
             self.__guard_positions.append(())
-        self.__turn_counter = 0
+            self.__guard_returning.append(False)
+            self.__turn_counter.append(0)
 
     # Changes states when escape is pressed
     def __escape_state(self):
@@ -157,7 +160,10 @@ class Game:
                             case pygame.K_m:
                                 self.__music.toggle()
                             case pygame.K_k:
-                                self.__guard_tracking = not self.__guard_tracking
+                                if self.__guard_tracking:
+                                    self.__alert_mode_off()
+                                else:
+                                    self.__alert_mode_on()
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                             case pygame.K_w | pygame.K_UP:
@@ -434,9 +440,13 @@ class Game:
         for x in range(len(self.__guards)):
             sprites = self.__guards[x].currSprites()
             step_size = 2 * self.__resolution * self.__resolution
-            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
+            move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
+                self.__turn_counter[x] = self.__turn_counter[x] - 1
+            elif self.__guard_returning[x]:
+                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                      self.__guard_position_before_tracking[x])
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
@@ -555,11 +565,15 @@ class Game:
                 self.__music.play_music("win")
                 self.__player_spawn, guards = self.__board.load_level()
                 self.__set_player_and_guards()
+                if self.__guard_tracking:
+                    self.__alert_mode_on()
             else:
                 self.__level += 1
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
                 self.__set_player_and_guards()
+                if self.__guard_tracking:
+                    self.__alert_mode_off()
 
     def __check_guard_path(self, guard, direction):
         match direction:
@@ -653,7 +667,16 @@ class Game:
     def __alert_mode_on(self):
         self.__guard_tracking = True
         self.__music.play_music('alert')
+        self.__guard_position_before_tracking = []
+        for i in range(0, len(self.__guards)):
+            self.__guard_position_before_tracking.append((self.__guards[i].x, self.__guards[i].y))
 
+    def __alert_mode_off(self):
+        self.__guard_tracking = False
+        self.__music.play_music('game')
+        self.__guard_returning = []
+        for i in range(0, len(self.__guards)):
+            self.__guard_returning.append(True)
 
     def __check_guard_vision(self):
         player_position = self.__player.position()
@@ -683,9 +706,13 @@ class Game:
 
     def __update_guards(self):
         for x in range(len(self.__guards)):
-            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
+            move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
+                self.__turn_counter[x] = self.__turn_counter[x] - 1
+            elif self.__guard_returning[x]:
+                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                      self.__guard_position_before_tracking[x])
             match move_direction:
                 case 'R':
                     if self.__check_guard_path(self.__guards[x], 'R'):
@@ -702,7 +729,7 @@ class Game:
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
                                                  self.__guards[x].currSprites()[0])
             self.__board.torch_check()
-        self.__turn_counter = self.__turn_counter + 1
+            self.__turn_counter[x] = self.__turn_counter[x] + 1
 
     # Main execution loop
     def run(self):
@@ -785,9 +812,12 @@ class Game:
                         self.__move_flag = "guard"
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][
-                                (self.__turn_counter % len(self.__guard_routes[x][1]))]
+                                (self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
                             if self.__guard_tracking:
                                 self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
+                            elif self.__guard_returning[x]:
+                                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                                      self.__guard_position_before_tracking[x])
                             match move_direction:
                                 case 'R':
                                     self.__guards[x].direction = 'right'
