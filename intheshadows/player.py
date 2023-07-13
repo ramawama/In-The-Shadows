@@ -15,12 +15,21 @@ class Player:
                        pygame.transform.flip(self.__right[1], True, False),
                        pygame.transform.flip(self.__right[2], True, False),
                        pygame.transform.flip(self.__right[3], True, False)]
+        self.__up = [pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_up.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_up_walk_1.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_up_walk_2.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_up_walk_3.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32))]
+        self.__down = [pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd_walk_1.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd_walk_2.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
+                    pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd_walk_3.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32))]
         self.__curr_sprites = self.__right
         self.__direction = "right"
         self.__x = x
         self.__y = y
         self.__items = []
         self.__key = False
+        self.__dash = False
 
     def draw(self):
         self.__screen.blit(self.__curr_sprites[0], (self.__x * 32 * self.__resolution, self.__y * 32 * self.__resolution))
@@ -37,15 +46,21 @@ class Player:
     def key(self):
         return self.__key
 
+    @property
+    def dash(self):
+        return self.__dash
+
+    @dash.setter
+    def dash(self, dash):
+        self.__dash = dash
+
     @key.setter
     def key(self, key):
         self.__key = key
 
     def moveUp(self):
-        if self.__direction == "right":
-            self.__curr_sprites = self.__right
-        else:
-            self.__curr_sprites = self.__left
+        self.__direction = "up"
+        self.__curr_sprites = self.__up
         self.__y -= 1
 
     def moveLeft(self):
@@ -54,10 +69,8 @@ class Player:
         self.__x -= 1
 
     def moveDown(self):
-        if self.__direction == "right":
-            self.__curr_sprites = self.__right
-        else:
-            self.__curr_sprites = self.__left
+        self.__direction = "down"
+        self.__curr_sprites = self.__down
         self.__y += 1
 
     def moveRight(self):
@@ -66,16 +79,21 @@ class Player:
         self.__x += 1
 
     def currSprites(self):
-        if self.__direction == "right":
-            self.__curr_sprites = self.__right
-        else:
-            self.__curr_sprites = self.__left
         return self.__curr_sprites
 
     def position(self):
         return self.__x, self.__y
 
-    #add item to inventory
+    # add item to inventory
     def add_item(self, item):
         self.__items.append(item)
 
+    def update_sprites(self):
+        if self.__direction == "right":
+            self.__curr_sprites = self.__right
+        elif self.__direction == "left":
+            self.__curr_sprites = self.__left
+        elif self.__direction == "up":
+            self.__curr_sprites = self.__up
+        elif self.__direction == "down":
+            self.__curr_sprites = self.__down
