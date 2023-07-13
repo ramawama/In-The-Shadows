@@ -38,6 +38,8 @@ class Game:
         # Set Initial State
         self.__state = 'menu'
 
+        self.__vertices = []
+
         self.__rects = {}
 
         # Initialize Fonts
@@ -499,6 +501,30 @@ class Game:
     def __load_game(self):
         self.__music.play_music('game')
         player_spawn, guards = self.__board.load_level(self.__level)
+        self.__vertices = ig.Graph()
+        count = 0
+        for i in self.__board.tiles:
+            for j in i:
+                count += 1
+        self.__vertices.add_vertices(count)
+        width = len(self.__board.tiles[0])
+        height = len(self.__board.tiles)
+        for i, mains in enumerate(self.__board.tiles):
+            for j, nexts in enumerate(mains):
+                if nexts.type != 'w':
+                    if j != 0:
+                        if self.__board.tiles[i][j - 1].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), (j - 1) + (i * width))
+                    if j != (width - 1):
+                        if self.__board.tiles[i][j + 1].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), (j + 1) + (i * width))
+                    if i != 0:
+                        if self.__board.tiles[i - 1][j].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), j + ((i - 1) * width))
+                    if i != (height - 1):
+                        if self.__board.tiles[i + 1][j].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), j + ((i + 1) * width))
+        self.__vertices = self.__vertices.simplify()
         return player_spawn, guards
 
     def __check_game_over(self, player_position):
@@ -598,34 +624,12 @@ class Game:
                     return False
         return True
 
-    def __shortest_path_wip(self, start, end):
+    def __shortest_path(self, start, end):
         width = len(self.__board.tiles[0])
         height = len(self.__board.tiles)
         start_num = (start[1] * width) + start[0]
         end_num = (end[1] * width) + end[0]
-        g = ig.Graph()
-        count = 0
-        for i in self.__board.tiles:
-            for j in i:
-                count += 1
-        g.add_vertices(count)
-        for i, mains in enumerate(self.__board.tiles):
-            for j, nexts in enumerate(mains):
-                if nexts.type != 'w':
-                    if j != 0:
-                        if self.__board.tiles[i][j - 1].type != 'w':
-                            g.add_edge(j + (i * width), (j - 1) + (i * width))
-                    if j != (width - 1):
-                        if self.__board.tiles[i][j + 1].type != 'w':
-                            g.add_edge(j + (i * width), (j + 1) + (i * width))
-                    if i != 0:
-                        if self.__board.tiles[i - 1][j].type != 'w':
-                            g.add_edge(j + (i * width), j + ((i - 1) * width))
-                    if i != (height - 1):
-                        if self.__board.tiles[i + 1][j].type != 'w':
-                            g.add_edge(j + (i * width), j + ((i + 1) * width))
-        g = g.simplify()
-        shortest = g.get_shortest_paths(start_num, end_num)
+        shortest = self.__vertices.get_shortest_paths(start_num, end_num)
         dist = shortest[0][1] - shortest[0][0]
         if dist == 1:
             return 'R'
@@ -636,33 +640,6 @@ class Game:
         elif dist == -1 * width:
             return 'U'
         return 'H'
-
-    def __shortest_path(self, start, target):
-        player_x, player_y = target
-        guard_x, guard_y = start
-        visited = [[False for _ in range(27)] for _ in range(27)]
-        dx = [0, 0, -1, 1]
-        dy = [-1, 1, 0, 0]
-        d = ['U', 'D', 'L', 'R']
-        q = queue.Queue()
-        visited[guard_y][guard_x] = True
-        q.put((guard_x, guard_y, 'X'))
-        while not q.empty():
-            curr_x, curr_y, first_direction = q.get()
-            # print(f"{curr_x} {curr_y} {player_x} {player_y} {first_direction}")
-            if curr_x == player_x and curr_y == player_y:
-                return first_direction
-            for i in range(4):
-                new_x = curr_x + dx[i]
-                new_y = curr_y + dy[i]
-                if 0 <= new_x < 27 and 0 <= new_y < 27 and self.__board.tiles[new_y][new_x].type != 'w' and \
-                        visited[new_y][new_x] is False:
-                    visited[new_y][new_x] = True
-                    if first_direction == 'X':
-                        q.put((new_x, new_y, d[i]))
-                    else:
-                        q.put((new_x, new_y, first_direction))
-        return d[0]
 
     def __alert_mode_on(self):
         self.__guard_tracking = True
