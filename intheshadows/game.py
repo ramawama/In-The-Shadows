@@ -343,6 +343,8 @@ class Game:
         self.__player.update_sprites()
         sprites = self.__player.currSprites()
         step_size = 1 * self.__resolution * self.__resolution
+        if self.__player.dash:
+            step_size = 2 * self.__resolution * self.__resolution
         anim_spd = 4 // self.__resolution
         match self.__move_direction:
             case "right":

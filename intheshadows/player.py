@@ -24,7 +24,9 @@ class Player:
                     pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd_walk_2.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
                     pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd_walk_3.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32))]
         self.__curr_sprites = self.__right
+        self.__dash_sprites = [self.__curr_sprites[0], self.__curr_sprites[1], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[3]]
         self.__direction = "right"
+        self.__dash = False
         self.__x = x
         self.__y = y
         self.__items = []
@@ -33,6 +35,14 @@ class Player:
 
     def draw(self):
         self.__screen.blit(self.__curr_sprites[0], (self.__x * 32 * self.__resolution, self.__y * 32 * self.__resolution))
+
+    @property
+    def dash(self):
+        return self.__dash
+
+    @dash.setter
+    def dash(self, dash):
+        self.__dash = dash
 
     @property
     def direction(self):
@@ -97,3 +107,12 @@ class Player:
             self.__curr_sprites = self.__up
         elif self.__direction == "down":
             self.__curr_sprites = self.__down
+        if self.__dash:
+            self.__curr_sprites = self.update_dash_sprites()
+
+
+    def update_dash_sprites(self):
+        self.__dash_sprites = [self.__curr_sprites[0], self.__curr_sprites[1], self.__curr_sprites[2], self.__curr_sprites[2],
+                       self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[3]]
+        return self.__dash_sprites
+
