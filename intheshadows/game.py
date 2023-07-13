@@ -458,15 +458,12 @@ class Game:
 
     # not done
     def __move_guards(self):
-        if self.__move_counter == 15 // self.__resolution:
+        if self.__move_counter == 31 // self.__resolution:
             self.__state = 'game'
-        if self.__anim_counter >= 2:
-            self.__anim_counter = 0
         self.__board.draw_level()
         self.__player.draw()
         for x in range(len(self.__guards)):
-            sprites = self.__guards[x].currSprites()
-            step_size = 2 * self.__resolution * self.__resolution
+            step_size = 1 * self.__resolution * self.__resolution
             move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
@@ -477,6 +474,7 @@ class Game:
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
+            self.__guards[x].update_sprites()
             match move_direction:
                 case 'R':
                     # draw background
@@ -516,7 +514,7 @@ class Game:
             self.__anim_counter += 1
 
         # for resetting animation
-        if self.__anim_counter >= 2:
+        if self.__anim_counter >= 4:
             self.__anim_counter = 0
         self.__screen.update()
 
@@ -834,6 +832,10 @@ class Game:
                                     self.__guards[x].direction = 'right'
                                 case 'L':
                                     self.__guards[x].direction = 'left'
+                                case 'U':
+                                    self.__guards[x].direction = 'up'
+                                case 'D':
+                                    self.__guards[x].direction = 'down'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
                     self.__move_guards()
             self.__screen.update()
