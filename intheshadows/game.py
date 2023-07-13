@@ -4,7 +4,7 @@ import pygame
 import os
 import igraph as ig
 import time
-from intheshadows.print import display_help, run_menu, run_options, display_inventory
+from intheshadows.print import display_help, run_menu, run_options, display_inventory, loading_screen
 from intheshadows.events import game_over, win
 from intheshadows.guard import Guard
 from intheshadows.tile import Tile
@@ -23,7 +23,7 @@ class Game:
         self.__white = (255, 255, 255)
         (self.__width, self.__height) = (64 * 28, 64 * 16)
 
-        self.__level = 1
+        self.__level = self.load_level()
         self.__torch_counter = 0
         self.__move_counter = 0
         self.__move_direction = 'right'
@@ -79,8 +79,7 @@ class Game:
         if save_file.stat().st_size != 0:
             # if file is has saved progress
             with open(save_file, 'r') as file:
-                self.__level = int(file.read())
-
+                return int(file.read())
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
@@ -102,6 +101,8 @@ class Game:
     # Changes states when escape is pressed
     def __escape_state(self):
         match self.__state:
+            case 'load':
+                self.__state = 'game'
             case 'options':
                 self.__state = 'menu'
             case 'game':
@@ -122,10 +123,7 @@ class Game:
     def __mouse_click(self, mouse_pos):
         if self.__state == 'menu':
             if self.__rects['start_text_rect'].collidepoint(mouse_pos):
-                self.__state = 'game'
-                self.__board.unload()
-                self.__player_spawn, self.__guard_routes = self.__load_game()
-                self.__set_player_and_guards()
+                self.__state = 'load'
             elif self.__rects['options_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'options'
             elif self.__rects['quit_text_rect'].collidepoint(mouse_pos):
@@ -240,6 +238,17 @@ class Game:
                                     self.__guard_positions[x] = (
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
+        elif self.__state == 'load':
+            for ev in pygame.event.get():
+                if ev.type == pygame.KEYDOWN:
+                    if ev.key == pygame.K_r:
+                        self.__level = 1
+                        self.save_level()
+                if ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
+                    self.__state = 'game'
+                    self.__board.unload()
+                    self.__player_spawn, self.__guard_routes = self.__load_game()
+                    self.__set_player_and_guards()
         elif self.__state == 'help':
             for ev in pygame.event.get():
                 match ev.type:
@@ -290,8 +299,7 @@ class Game:
             match self.__move_direction:
                 case 'up':
                     if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][
-                            player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type != "w":
                             self.__player.moveUp()
                             self.__check_key(self.__player.position())
                             self.__player.moveUp()
@@ -301,8 +309,7 @@ class Game:
                     self.__player.dash = False
                 case 'down':
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][
-                            player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type != "w":
                             self.__player.moveDown()
                             self.__check_key(self.__player.position())
                             self.__player.moveDown()
@@ -312,8 +319,7 @@ class Game:
                     self.__player.dash = False
                 case 'left':
                     if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1]][
-                            player_position[0] - 2].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type != "w":
                             self.__player.moveLeft()
                             self.__check_key(self.__player.position())
                             self.__player.moveLeft()
@@ -323,8 +329,7 @@ class Game:
                     self.__player.dash = False
                 case 'right':
                     if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1]][
-                            player_position[0] + 2].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type != "w":
                             self.__player.moveRight()
                             self.__check_key(self.__player.position())
                             self.__player.moveRight()
@@ -739,7 +744,6 @@ class Game:
         self.__move_counter = 0
         self.__torch_counter = 0
         self.__move_flag = False
-        self.load_level()
         while self.__running:
             clock.tick(60)
             # print(clock.get_fps())
@@ -755,6 +759,9 @@ class Game:
 
             self.__handle_events()
             match self.__state:
+                case 'load':
+                    pygame.mouse.set_visible(False)
+                    loading_screen(self.__width, self.__height, self.__resolution, self.__screen, self.__level)
                 case 'menu':
                     pygame.mouse.set_visible(True)
                     self.__music.play_music('menu')
