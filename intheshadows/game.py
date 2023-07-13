@@ -38,6 +38,8 @@ class Game:
         # Set Initial State
         self.__state = 'menu'
 
+        self.__vertices = []
+
         self.__rects = {}
 
         # Initialize Fonts
@@ -490,6 +492,30 @@ class Game:
     def __load_game(self):
         self.__music.play_music('game')
         player_spawn, guards = self.__board.load_level(self.__level)
+        self.__vertices = ig.Graph()
+        count = 0
+        for i in self.__board.tiles:
+            for j in i:
+                count += 1
+        self.__vertices.add_vertices(count)
+        width = len(self.__board.tiles[0])
+        height = len(self.__board.tiles)
+        for i, mains in enumerate(self.__board.tiles):
+            for j, nexts in enumerate(mains):
+                if nexts.type != 'w':
+                    if j != 0:
+                        if self.__board.tiles[i][j - 1].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), (j - 1) + (i * width))
+                    if j != (width - 1):
+                        if self.__board.tiles[i][j + 1].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), (j + 1) + (i * width))
+                    if i != 0:
+                        if self.__board.tiles[i - 1][j].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), j + ((i - 1) * width))
+                    if i != (height - 1):
+                        if self.__board.tiles[i + 1][j].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), j + ((i + 1) * width))
+        self.__vertices = self.__vertices.simplify()
         return player_spawn, guards
 
     def __check_game_over(self, player_position):
@@ -590,29 +616,7 @@ class Game:
         height = len(self.__board.tiles)
         start_num = (start[1] * width) + start[0]
         end_num = (end[1] * width) + end[0]
-        g = ig.Graph()
-        count = 0
-        for i in self.__board.tiles:
-            for j in i:
-                count += 1
-        g.add_vertices(count)
-        for i, mains in enumerate(self.__board.tiles):
-            for j, nexts in enumerate(mains):
-                if nexts.type != 'w':
-                    if j != 0:
-                        if self.__board.tiles[i][j - 1].type != 'w':
-                            g.add_edge(j + (i * width), (j - 1) + (i * width))
-                    if j != (width - 1):
-                        if self.__board.tiles[i][j + 1].type != 'w':
-                            g.add_edge(j + (i * width), (j + 1) + (i * width))
-                    if i != 0:
-                        if self.__board.tiles[i - 1][j].type != 'w':
-                            g.add_edge(j + (i * width), j + ((i - 1) * width))
-                    if i != (height - 1):
-                        if self.__board.tiles[i + 1][j].type != 'w':
-                            g.add_edge(j + (i * width), j + ((i + 1) * width))
-        g = g.simplify()
-        shortest = g.get_shortest_paths(start_num, end_num)
+        shortest = self.__vertices.get_shortest_paths(start_num, end_num)
         dist = shortest[0][1] - shortest[0][0]
         if dist == 1:
             return 'R'
