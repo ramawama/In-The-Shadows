@@ -93,6 +93,10 @@ class Tile:
     def backgroundtile(self):
         return self._backgroundtile
 
+    @backgroundtile.setter
+    def backgroundtile(self, backgroundtile):
+        self._backgroundtile = backgroundtile
+
     # Sets a tile as lit
     def light(self):
         self._lit = True
@@ -100,6 +104,9 @@ class Tile:
             self._image = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + "_lit.png")).convert_alpha()
         elif self.type == "t":
             self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Torch/Torch_small.png").convert_alpha()
+            self._backgroundtile = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + "_lit.png")).convert_alpha()
+        elif self.type == 'g':
+            self._backgroundtile = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + "_lit.png")).convert_alpha()
 
     def unlight(self):
         self._lit = False
@@ -107,6 +114,7 @@ class Tile:
             self._image = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + ".png")).convert_alpha()
         elif self.type == "t":
             self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Torch/Torch_unlit.png").convert_alpha()
+            self._backgroundtile = pygame.image.load(Path(__file__).parent / ("assets/graphics/Level Elements/Floor/Floor" + self._floor_type + ".png")).convert_alpha()
 
     def unlock(self):
         if self.type == "e":

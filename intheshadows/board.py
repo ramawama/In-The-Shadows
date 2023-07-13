@@ -56,6 +56,10 @@ class Board:
                                 temp_Tile = Tile(char, False, x, y)
                                 row_array.append(temp_Tile)
                                 row_char_array.append(Tile(char, False, x, y, temp_Tile.image, temp_Tile.floor_type))
+                            elif char == 't':
+                                temp_Tile = Tile(char, True, x, y)
+                                row_array.append(temp_Tile)
+                                row_char_array.append(Tile(char, True, x, y, temp_Tile.image, temp_Tile.floor_type))
                             else:
                                 temp_Tile = Tile(char, False, x, y)
                                 row_array.append(temp_Tile)
@@ -84,14 +88,18 @@ class Board:
             self.__tiles[x][y].light()
         else:
             self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image)
+            if self.__tiles[x][y].type == 't':
+                self.__tiles[x][y].light()
         self.torch_check()
 
     def replace_tile_with_guard(self, x, y, image):
+        temp_background = self.__tiles[x][y].floor_type
         if self.__tiles[x][y].lit:
-            self.__tiles[x][y] = Tile("g", self.__tiles[x][y].lit, y, x, image)
+            self.__tiles[x][y] = Tile("g", self.__tiles[x][y].lit, y, x, image, temp_background)
             self.__tiles[x][y].light()
         else:
-            self.__tiles[x][y] = Tile("g", self.__tiles[x][y].lit, y, x, image)
+            self.__tiles[x][y] = Tile("g", self.__tiles[x][y].lit, y, x, image, temp_background)
+        #self.__tiles[x][y].backgroundtile = temp_background
         self.torch_check()
 
     def check_for_key(self):
@@ -137,7 +145,7 @@ class Board:
                 scaled_tile = pygame.transform.scale(self.__tiles[row][col].image, (tile_width, tile_height))
                 if self.__tiles[row][col].type != "o":
                     if self.__tiles[row][col].lit:
-                        scaled_floor = pygame.transform.scale(self.orig_tiles[row][col].image, (tile_width, tile_height))
+                        scaled_floor = pygame.transform.scale(self.orig_tiles[row][col].backgroundtile, (tile_width, tile_height))
                     else:
                         scaled_floor = pygame.transform.scale(self.__tiles[row][col].backgroundtile,
                                                               (tile_width, tile_height))
