@@ -67,6 +67,21 @@ class Game:
 
         self.__fullscreen = True
 
+    def save_level(self):
+        save_file = Path(__file__).parent / "user_progress.txt"
+        with open(save_file, 'w') as file:
+            file.write(str(self.__level))
+
+    def load_level(self):
+        # edit this and user_progress.txt to save future info like torches lit and moves etc
+        save_file = Path(__file__).parent / "user_progress.txt"
+        save_file.touch(exist_ok=True)  # checks if exists if not creates file
+        if save_file.stat().st_size != 0:
+            # if file is has saved progress
+            with open(save_file, 'r') as file:
+                self.__level = int(file.read())
+
+
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
                                self.__resolution)
@@ -275,7 +290,8 @@ class Game:
             match self.__move_direction:
                 case 'up':
                     if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][
+                            player_position[0]].type != "w":
                             self.__player.moveUp()
                             self.__check_key(self.__player.position())
                             self.__player.moveUp()
@@ -285,7 +301,8 @@ class Game:
                     self.__player.dash = False
                 case 'down':
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][
+                            player_position[0]].type != "w":
                             self.__player.moveDown()
                             self.__check_key(self.__player.position())
                             self.__player.moveDown()
@@ -295,7 +312,8 @@ class Game:
                     self.__player.dash = False
                 case 'left':
                     if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][
+                            player_position[0] - 2].type != "w":
                             self.__player.moveLeft()
                             self.__check_key(self.__player.position())
                             self.__player.moveLeft()
@@ -305,7 +323,8 @@ class Game:
                     self.__player.dash = False
                 case 'right':
                     if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][
+                            player_position[0] + 2].type != "w":
                             self.__player.moveRight()
                             self.__check_key(self.__player.position())
                             self.__player.moveRight()
@@ -422,7 +441,7 @@ class Game:
                     # update player location internally
                 if dashed:
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type == "t" and \
-                            self.__board.tiles[player_position[1] + 1][player_position[0] ].lit:
+                            self.__board.tiles[player_position[1] + 1][player_position[0]].lit:
                         self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
                         self.__board.torch_check()
 
@@ -445,7 +464,8 @@ class Game:
             step_size = 2 * self.__resolution * self.__resolution
             move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
-                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
+                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                      self.__player.position())
             elif self.__guard_returning[x]:
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                       self.__guard_position_before_tracking[x])
@@ -674,7 +694,7 @@ class Game:
                 case "left":
                     dx = [-1, -1, -1, -2, -2, -2]
                     dy = [-1, 0, 1, -1, 0, 1]
-            for i in range(0,6):
+            for i in range(0, 6):
                 try:
                     if guard_y + dy[i] == player_position[1] and guard_x + dx[i] == player_position[0]:
                         self.__alert_mode_on()
@@ -686,7 +706,8 @@ class Game:
         for x in range(len(self.__guards)):
             move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
-                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
+                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                      self.__player.position())
                 self.__turn_counter[x] = self.__turn_counter[x] - 1
             elif self.__guard_returning[x]:
                 self.__turn_counter[x] = self.__turn_counter[x] - 1
@@ -720,6 +741,7 @@ class Game:
         self.__move_counter = 0
         self.__torch_counter = 0
         self.__move_flag = False
+        self.load_level()
         while self.__running:
             clock.tick(60)
             # print(clock.get_fps())
@@ -808,4 +830,5 @@ class Game:
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
                     self.__move_guards()
             self.__screen.update()
+        self.save_level()
         pygame.quit()
