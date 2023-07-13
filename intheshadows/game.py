@@ -2,6 +2,7 @@ import queue
 from pathlib import Path
 import pygame
 import os
+import igraph as ig
 import time
 from intheshadows.print import display_help, run_menu, run_options, display_inventory
 from intheshadows.events import game_over, win
@@ -435,7 +436,7 @@ class Game:
             step_size = 2 * self.__resolution * self.__resolution
             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
-                move_direction = self.__temp_bfs(self.__guards[x])
+                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
@@ -584,6 +585,45 @@ class Game:
                     return False
         return True
 
+    def __shortest_path(self, start, end):
+        width = len(self.__board.tiles[0])
+        height = len(self.__board.tiles)
+        start_num = (start[1] * width) + start[0]
+        end_num = (end[1] * width) + end[0]
+        g = ig.Graph()
+        count = 0
+        for i in self.__board.tiles:
+            for j in i:
+                count += 1
+        g.add_vertices(count)
+        for i, mains in enumerate(self.__board.tiles):
+            for j, nexts in enumerate(mains):
+                if nexts.type != 'w':
+                    if j != 0:
+                        if self.__board.tiles[i][j - 1].type != 'w':
+                            g.add_edge(j + (i * width), (j - 1) + (i * width))
+                    if j != (width - 1):
+                        if self.__board.tiles[i][j + 1].type != 'w':
+                            g.add_edge(j + (i * width), (j + 1) + (i * width))
+                    if i != 0:
+                        if self.__board.tiles[i - 1][j].type != 'w':
+                            g.add_edge(j + (i * width), j + ((i - 1) * width))
+                    if i != (height - 1):
+                        if self.__board.tiles[i + 1][j].type != 'w':
+                            g.add_edge(j + (i * width), j + ((i + 1) * width))
+        g = g.simplify()
+        shortest = g.get_shortest_paths(start_num, end_num)
+        dist = shortest[0][1] - shortest[0][0]
+        if dist == 1:
+            return 'R'
+        elif dist == -1:
+            return 'L'
+        elif dist == width:
+            return 'D'
+        elif dist == -1 * width:
+            return 'U'
+        return 'H'
+
     def __temp_bfs(self, guard):
         player_x, player_y = self.__player.position()
         visited = [[False for _ in range(27)] for _ in range(27)]
@@ -645,7 +685,7 @@ class Game:
         for x in range(len(self.__guards)):
             move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
-                move_direction = self.__temp_bfs(self.__guards[x])
+                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
             match move_direction:
                 case 'R':
                     if self.__check_guard_path(self.__guards[x], 'R'):
@@ -747,7 +787,7 @@ class Game:
                             move_direction = self.__guard_routes[x][1][
                                 (self.__turn_counter % len(self.__guard_routes[x][1]))]
                             if self.__guard_tracking:
-                                move_direction = self.__temp_bfs(self.__guards[x])
+                                self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
                             match move_direction:
                                 case 'R':
                                     self.__guards[x].direction = 'right'

@@ -1,2 +1,4 @@
+igraph==0.10.5
+numpy==1.25.0
 pygame==2.4.0
-numpy
+texttable==1.6.7
