@@ -74,6 +74,7 @@ class Game:
         self.__guard_positions.clear()
         self.__guard_returning = []
         self.__turn_counter = []
+        self.__guard_tracking = False
         for x in range(len(self.__guard_routes)):
             self.__guards.append(
                 Guard(self.__screen.foreground_surface, self.__resolution, self.__guard_routes[x][0][0],
