@@ -443,7 +443,6 @@ class Game:
             move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
-                self.__turn_counter[x] = self.__turn_counter[x] - 1
             elif self.__guard_returning[x]:
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                       self.__guard_position_before_tracking[x])
@@ -599,7 +598,7 @@ class Game:
                     return False
         return True
 
-    def __shortest_path(self, start, end):
+    def __shortest_path_wip(self, start, end):
         width = len(self.__board.tiles[0])
         height = len(self.__board.tiles)
         start_num = (start[1] * width) + start[0]
@@ -638,15 +637,16 @@ class Game:
             return 'U'
         return 'H'
 
-    def __temp_bfs(self, guard):
-        player_x, player_y = self.__player.position()
+    def __shortest_path(self, start, target):
+        player_x, player_y = target
+        guard_x, guard_y = start
         visited = [[False for _ in range(27)] for _ in range(27)]
         dx = [0, 0, -1, 1]
         dy = [-1, 1, 0, 0]
         d = ['U', 'D', 'L', 'R']
         q = queue.Queue()
-        visited[guard.y][guard.x] = True
-        q.put((guard.x, guard.y, 'X'))
+        visited[guard_y][guard_x] = True
+        q.put((guard_x, guard_y, 'X'))
         while not q.empty():
             curr_x, curr_y, first_direction = q.get()
             # print(f"{curr_x} {curr_y} {player_x} {player_y} {first_direction}")
@@ -711,6 +711,7 @@ class Game:
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
                 self.__turn_counter[x] = self.__turn_counter[x] - 1
             elif self.__guard_returning[x]:
+                self.__turn_counter[x] = self.__turn_counter[x] - 1
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                       self.__guard_position_before_tracking[x])
             match move_direction:
@@ -730,6 +731,9 @@ class Game:
                                                  self.__guards[x].currSprites()[0])
             self.__board.torch_check()
             self.__turn_counter[x] = self.__turn_counter[x] + 1
+            if self.__guard_returning[x]:
+                if (self.__guards[x].x, self.__guards[x].y) == self.__guard_position_before_tracking[x]:
+                    self.__guard_returning[x] = False
 
     # Main execution loop
     def run(self):
