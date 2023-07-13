@@ -128,11 +128,6 @@ class Game:
                 self.__state = 'options'
             elif self.__rects['quit_text_rect'].collidepoint(mouse_pos):
                 self.__running = False
-        elif self.__state == 'load':
-            self.__state = 'game'
-            self.__board.unload()
-            self.__player_spawn, self.__guard_routes = self.__load_game()
-            self.__set_player_and_guards()
         elif self.__state == 'options':
             if self.__rects['easy_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "EASY"
@@ -245,11 +240,14 @@ class Game:
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
         elif self.__state == 'load':
             for ev in pygame.event.get():
-                if ev.type == pygame.K_r:
-                    self.__level = 1
-                    self.save_level()
-                elif ev.type == pygame.KEYDOWN:
-                    self.__escape_state()
+                if ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
+                    if ev.key == pygame.K_r:
+                        self.__level = 1
+                        self.save_level()
+                    self.__state = 'game'
+                    self.__board.unload()
+                    self.__player_spawn, self.__guard_routes = self.__load_game()
+                    self.__set_player_and_guards()
         elif self.__state == 'help':
             for ev in pygame.event.get():
                 match ev.type:
