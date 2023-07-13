@@ -38,6 +38,8 @@ class Game:
         # Set Initial State
         self.__state = 'menu'
 
+        self.__vertices = []
+
         self.__rects = {}
 
         # Initialize Fonts
@@ -65,18 +67,37 @@ class Game:
 
         self.__fullscreen = True
 
+    def save_level(self):
+        save_file = Path(__file__).parent / "user_progress.txt"
+        with open(save_file, 'w') as file:
+            file.write(str(self.__level))
+
+    def load_level(self):
+        # edit this and user_progress.txt to save future info like torches lit and moves etc
+        save_file = Path(__file__).parent / "user_progress.txt"
+        save_file.touch(exist_ok=True)  # checks if exists if not creates file
+        if save_file.stat().st_size != 0:
+            # if file is has saved progress
+            with open(save_file, 'r') as file:
+                self.__level = int(file.read())
+
+
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
                                self.__resolution)
         self.__guards = []
         self.__guard_positions.clear()
+        self.__guard_returning = []
+        self.__turn_counter = []
+        self.__guard_tracking = False
         for x in range(len(self.__guard_routes)):
             self.__guards.append(
                 Guard(self.__screen.foreground_surface, self.__resolution, self.__guard_routes[x][0][0],
                       self.__guard_routes[x][0][1], self.__guard_routes[x][1],
                       self.__difficulty))
             self.__guard_positions.append(())
-        self.__turn_counter = 0
+            self.__guard_returning.append(False)
+            self.__turn_counter.append(0)
 
     # Changes states when escape is pressed
     def __escape_state(self):
@@ -157,7 +178,10 @@ class Game:
                             case pygame.K_m:
                                 self.__music.toggle()
                             case pygame.K_k:
-                                self.__guard_tracking = not self.__guard_tracking
+                                if self.__guard_tracking:
+                                    self.__alert_mode_off()
+                                else:
+                                    self.__alert_mode_on()
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                             case pygame.K_w | pygame.K_UP:
@@ -266,7 +290,8 @@ class Game:
             match self.__move_direction:
                 case 'up':
                     if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][
+                            player_position[0]].type != "w":
                             self.__player.moveUp()
                             self.__check_key(self.__player.position())
                             self.__player.moveUp()
@@ -276,7 +301,8 @@ class Game:
                     self.__player.dash = False
                 case 'down':
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][
+                            player_position[0]].type != "w":
                             self.__player.moveDown()
                             self.__check_key(self.__player.position())
                             self.__player.moveDown()
@@ -286,7 +312,8 @@ class Game:
                     self.__player.dash = False
                 case 'left':
                     if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][
+                            player_position[0] - 2].type != "w":
                             self.__player.moveLeft()
                             self.__check_key(self.__player.position())
                             self.__player.moveLeft()
@@ -296,7 +323,8 @@ class Game:
                     self.__player.dash = False
                 case 'right':
                     if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][
+                            player_position[0] + 2].type != "w":
                             self.__player.moveRight()
                             self.__check_key(self.__player.position())
                             self.__player.moveRight()
@@ -413,7 +441,7 @@ class Game:
                     # update player location internally
                 if dashed:
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type == "t" and \
-                            self.__board.tiles[player_position[1] + 1][player_position[0] ].lit:
+                            self.__board.tiles[player_position[1] + 1][player_position[0]].lit:
                         self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
                         self.__board.torch_check()
 
@@ -434,9 +462,13 @@ class Game:
         for x in range(len(self.__guards)):
             sprites = self.__guards[x].currSprites()
             step_size = 2 * self.__resolution * self.__resolution
-            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
+            move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
-                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
+                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                      self.__player.position())
+            elif self.__guard_returning[x]:
+                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                      self.__guard_position_before_tracking[x])
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
@@ -490,6 +522,30 @@ class Game:
     def __load_game(self):
         self.__music.play_music('game')
         player_spawn, guards = self.__board.load_level(self.__level)
+        self.__vertices = ig.Graph()
+        count = 0
+        for i in self.__board.tiles:
+            for j in i:
+                count += 1
+        self.__vertices.add_vertices(count)
+        width = len(self.__board.tiles[0])
+        height = len(self.__board.tiles)
+        for i, mains in enumerate(self.__board.tiles):
+            for j, nexts in enumerate(mains):
+                if nexts.type != 'w':
+                    if j != 0:
+                        if self.__board.tiles[i][j - 1].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), (j - 1) + (i * width))
+                    if j != (width - 1):
+                        if self.__board.tiles[i][j + 1].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), (j + 1) + (i * width))
+                    if i != 0:
+                        if self.__board.tiles[i - 1][j].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), j + ((i - 1) * width))
+                    if i != (height - 1):
+                        if self.__board.tiles[i + 1][j].type != 'w':
+                            self.__vertices.add_edge(j + (i * width), j + ((i + 1) * width))
+        self.__vertices = self.__vertices.simplify()
         return player_spawn, guards
 
     def __check_game_over(self, player_position):
@@ -555,11 +611,15 @@ class Game:
                 self.__music.play_music("win")
                 self.__player_spawn, guards = self.__board.load_level()
                 self.__set_player_and_guards()
+                if self.__guard_tracking:
+                    self.__alert_mode_on()
             else:
                 self.__level += 1
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
                 self.__set_player_and_guards()
+                if self.__guard_tracking:
+                    self.__alert_mode_off()
 
     def __check_guard_path(self, guard, direction):
         match direction:
@@ -590,29 +650,7 @@ class Game:
         height = len(self.__board.tiles)
         start_num = (start[1] * width) + start[0]
         end_num = (end[1] * width) + end[0]
-        g = ig.Graph()
-        count = 0
-        for i in self.__board.tiles:
-            for j in i:
-                count += 1
-        g.add_vertices(count)
-        for i, mains in enumerate(self.__board.tiles):
-            for j, nexts in enumerate(mains):
-                if nexts.type != 'w':
-                    if j != 0:
-                        if self.__board.tiles[i][j - 1].type != 'w':
-                            g.add_edge(j + (i * width), (j - 1) + (i * width))
-                    if j != (width - 1):
-                        if self.__board.tiles[i][j + 1].type != 'w':
-                            g.add_edge(j + (i * width), (j + 1) + (i * width))
-                    if i != 0:
-                        if self.__board.tiles[i - 1][j].type != 'w':
-                            g.add_edge(j + (i * width), j + ((i - 1) * width))
-                    if i != (height - 1):
-                        if self.__board.tiles[i + 1][j].type != 'w':
-                            g.add_edge(j + (i * width), j + ((i + 1) * width))
-        g = g.simplify()
-        shortest = g.get_shortest_paths(start_num, end_num)
+        shortest = self.__vertices.get_shortest_paths(start_num, end_num)
         dist = shortest[0][1] - shortest[0][0]
         if dist == 1:
             return 'R'
@@ -624,36 +662,19 @@ class Game:
             return 'U'
         return 'H'
 
-    def __temp_bfs(self, guard):
-        player_x, player_y = self.__player.position()
-        visited = [[False for _ in range(27)] for _ in range(27)]
-        dx = [0, 0, -1, 1]
-        dy = [-1, 1, 0, 0]
-        d = ['U', 'D', 'L', 'R']
-        q = queue.Queue()
-        visited[guard.y][guard.x] = True
-        q.put((guard.x, guard.y, 'X'))
-        while not q.empty():
-            curr_x, curr_y, first_direction = q.get()
-            # print(f"{curr_x} {curr_y} {player_x} {player_y} {first_direction}")
-            if curr_x == player_x and curr_y == player_y:
-                return first_direction
-            for i in range(4):
-                new_x = curr_x + dx[i]
-                new_y = curr_y + dy[i]
-                if 0 <= new_x < 27 and 0 <= new_y < 27 and self.__board.tiles[new_y][new_x].type != 'w' and \
-                        visited[new_y][new_x] is False:
-                    visited[new_y][new_x] = True
-                    if first_direction == 'X':
-                        q.put((new_x, new_y, d[i]))
-                    else:
-                        q.put((new_x, new_y, first_direction))
-        return d[0]
-
     def __alert_mode_on(self):
         self.__guard_tracking = True
         self.__music.play_music('alert')
+        self.__guard_position_before_tracking = []
+        for i in range(0, len(self.__guards)):
+            self.__guard_position_before_tracking.append((self.__guards[i].x, self.__guards[i].y))
 
+    def __alert_mode_off(self):
+        self.__guard_tracking = False
+        self.__music.play_music('game')
+        self.__guard_returning = []
+        for i in range(0, len(self.__guards)):
+            self.__guard_returning.append(True)
 
     def __check_guard_vision(self):
         player_position = self.__player.position()
@@ -673,7 +694,7 @@ class Game:
                 case "left":
                     dx = [-1, -1, -1, -2, -2, -2]
                     dy = [-1, 0, 1, -1, 0, 1]
-            for i in range(0,6):
+            for i in range(0, 6):
                 try:
                     if guard_y + dy[i] == player_position[1] and guard_x + dx[i] == player_position[0]:
                         self.__alert_mode_on()
@@ -683,9 +704,15 @@ class Game:
 
     def __update_guards(self):
         for x in range(len(self.__guards)):
-            move_direction = self.__guard_routes[x][1][(self.__turn_counter % len(self.__guard_routes[x][1]))]
+            move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
-                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
+                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                      self.__player.position())
+                self.__turn_counter[x] = self.__turn_counter[x] - 1
+            elif self.__guard_returning[x]:
+                self.__turn_counter[x] = self.__turn_counter[x] - 1
+                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                      self.__guard_position_before_tracking[x])
             match move_direction:
                 case 'R':
                     if self.__check_guard_path(self.__guards[x], 'R'):
@@ -702,7 +729,10 @@ class Game:
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
                                                  self.__guards[x].currSprites()[0])
             self.__board.torch_check()
-        self.__turn_counter = self.__turn_counter + 1
+            self.__turn_counter[x] = self.__turn_counter[x] + 1
+            if self.__guard_returning[x]:
+                if (self.__guards[x].x, self.__guards[x].y) == self.__guard_position_before_tracking[x]:
+                    self.__guard_returning[x] = False
 
     # Main execution loop
     def run(self):
@@ -711,6 +741,7 @@ class Game:
         self.__move_counter = 0
         self.__torch_counter = 0
         self.__move_flag = False
+        self.load_level()
         while self.__running:
             clock.tick(60)
             # print(clock.get_fps())
@@ -785,9 +816,12 @@ class Game:
                         self.__move_flag = "guard"
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][
-                                (self.__turn_counter % len(self.__guard_routes[x][1]))]
+                                (self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
                             if self.__guard_tracking:
                                 self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
+                            elif self.__guard_returning[x]:
+                                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                                      self.__guard_position_before_tracking[x])
                             match move_direction:
                                 case 'R':
                                     self.__guards[x].direction = 'right'
@@ -796,4 +830,5 @@ class Game:
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
                     self.__move_guards()
             self.__screen.update()
+        self.save_level()
         pygame.quit()

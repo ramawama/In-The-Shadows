@@ -80,10 +80,10 @@ class Board:
 
     def replace_tile_with_original(self, x, y):
         if self.__tiles[x][y].lit:
-            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image)
+            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image, self.__orig_tiles[x][y].floor_type)
             self.__tiles[x][y].light()
         else:
-            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image)
+            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image, self.__orig_tiles[x][y].floor_type)
             if self.__tiles[x][y].type == 't':
                 self.__tiles[x][y].light()
         self.torch_check()
