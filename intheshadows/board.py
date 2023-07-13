@@ -64,10 +64,6 @@ class Board:
                                 temp_Tile = Tile(char, False, x, y)
                                 row_array.append(temp_Tile)
                                 row_char_array.append(Tile(char, False, x, y, temp_Tile.image, temp_Tile.floor_type))
-                            # if char == "g":
-                            # print("guard at: x:", x, " y: ", y)
-                            # if char == "p":
-                            # print("spawn at at: x:", x, " y: ", y)m
                             x += 1
                         self.__tiles.append(row_array)
                         self.__orig_tiles.append(row_char_array)
@@ -99,7 +95,6 @@ class Board:
             self.__tiles[x][y].light()
         else:
             self.__tiles[x][y] = Tile("g", self.__tiles[x][y].lit, y, x, image, temp_background)
-        #self.__tiles[x][y].backgroundtile = temp_background
         self.torch_check()
 
     def check_for_key(self):
@@ -145,7 +140,7 @@ class Board:
                 scaled_tile = pygame.transform.scale(self.__tiles[row][col].image, (tile_width, tile_height))
                 if self.__tiles[row][col].type != "o":
                     if self.__tiles[row][col].lit:
-                        scaled_floor = pygame.transform.scale(self.orig_tiles[row][col].backgroundtile, (tile_width, tile_height))
+                        scaled_floor = pygame.transform.scale(self.__tiles[row][col].backgroundtile, (tile_width, tile_height))
                     else:
                         scaled_floor = pygame.transform.scale(self.__tiles[row][col].backgroundtile,
                                                               (tile_width, tile_height))
