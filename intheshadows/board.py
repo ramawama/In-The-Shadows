@@ -80,10 +80,10 @@ class Board:
 
     def replace_tile_with_original(self, x, y):
         if self.__tiles[x][y].lit:
-            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image)
+            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image, self.__orig_tiles[x][y].floor_type)
             self.__tiles[x][y].light()
         else:
-            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image)
+            self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image, self.__orig_tiles[x][y].floor_type)
             if self.__tiles[x][y].type == 't':
                 self.__tiles[x][y].light()
         self.torch_check()
@@ -187,7 +187,7 @@ class Board:
         if not key:
             instructions = text_font.render('COLLECT THE KEY AND AVOID CAPTURE!', True, white)
         else:
-            if self.__level == 2:
+            if self.__level == 3:
                 instructions = text_font.render('KEY COLLECTED! COLLECT THE TREASURE', True, white)
             else:
                 instructions = text_font.render('KEY COLLECTED! ESCAPE TO THE NEXT LEVEL', True, white)
