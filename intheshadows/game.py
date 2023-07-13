@@ -161,6 +161,19 @@ class Game:
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
+            keys = pygame.key.get_pressed()
+            if True in keys:
+                if keys[pygame.K_w] or keys[pygame.K_UP]:
+                    pygame.event.post(pygame.event.Event(pygame.KEYDOWN, unicode="w", key=pygame.K_w, mod=pygame.KMOD_NONE))
+                elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                    pygame.event.post(pygame.event.Event(pygame.KEYDOWN, unicode="a", key=pygame.K_a, mod=pygame.KMOD_NONE))
+                elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                    pygame.event.post(
+                        pygame.event.Event(pygame.KEYDOWN, unicode="s", key=pygame.K_s, mod=pygame.KMOD_NONE))
+                elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                    pygame.event.post(
+                        pygame.event.Event(pygame.KEYDOWN, unicode="d", key=pygame.K_d, mod=pygame.KMOD_NONE))
+
             for ev in pygame.event.get():
                 match ev.type:
                     case pygame.QUIT:
