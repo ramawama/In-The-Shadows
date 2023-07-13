@@ -4,6 +4,7 @@ from pathlib import Path
 
 class Player:
     def __init__(self, screen, x, y, resolution):
+        self.__extinguish = False
         self.__resolution = resolution
         self.__alive = True
         self.__screen = screen
@@ -53,6 +54,14 @@ class Player:
     @dash.setter
     def dash(self, dash):
         self.__dash = dash
+
+    @property
+    def extinguish(self):
+        return self.__extinguish
+
+    @extinguish.setter
+    def extinguish(self, extinguish):
+        self.__extinguish = extinguish
 
     @key.setter
     def key(self, key):

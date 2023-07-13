@@ -171,6 +171,8 @@ class Game:
                         match ev.key:
                             case pygame.K_SPACE:
                                 self.__player.dash = True
+                            case pygame.K_1:
+                                self.__player.extinguish = True
                             case pygame.K_h:  # help screen in game
                                 self.__state = 'help'
                             case pygame.K_i:
@@ -284,14 +286,28 @@ class Game:
 
     def __move_player(self):
         dashed = False  # if player dashed, torch will be lit, conditional at end of function
+        extinguished = False
         player_position = self.__player.position()
         if self.__move_counter == 31 // self.__resolution:
             self.__state = 'move_guard'
             match self.__move_direction:
                 case 'up':
-                    if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][
-                            player_position[0]].type != "w":
+                    if self.__player.extinguish:
+                        extinguished = True
+                        tempY = player_position[0] - 1
+                        while tempY > 0:
+                            if self.__board.tiles[tempY][player_position[0]].type == "w":
+                                break
+                            if self.__board.tiles[tempY][player_position[0]].type == "t":
+                                self.__board.tiles[tempY][player_position[0]].unlight()
+                                break
+                            if self.__board.tiles[tempY][player_position[0]].type == "g":
+                                self.__alert_mode_on()
+                                break
+                            tempY -= 1
+                        self.__player.extinguish = False
+                    elif self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type != "w":
                             self.__player.moveUp()
                             self.__check_key(self.__player.position())
                             self.__player.moveUp()
@@ -300,9 +316,22 @@ class Game:
                             self.__player.moveUp()
                     self.__player.dash = False
                 case 'down':
-                    if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][
-                            player_position[0]].type != "w":
+                    if self.__player.extinguish:
+                        extinguished = True
+                        tempY = player_position[0] + 1
+                        while tempY < 15:
+                            if self.__board.tiles[tempY][player_position[0]].type == "w":
+                                break
+                            if self.__board.tiles[tempY][player_position[0]].type == "t":
+                                self.__board.tiles[tempY][player_position[0]].unlight()
+                                break
+                            if self.__board.tiles[tempY][player_position[0]].type == "g":
+                                self.__alert_mode_on()
+                                break
+                            tempY += 1
+                        self.__player.extinguish = False
+                    elif self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type != "w":
                             self.__player.moveDown()
                             self.__check_key(self.__player.position())
                             self.__player.moveDown()
@@ -311,9 +340,22 @@ class Game:
                             self.__player.moveDown()
                     self.__player.dash = False
                 case 'left':
-                    if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1]][
-                            player_position[0] - 2].type != "w":
+                    if self.__player.extinguish:
+                        extinguished = True
+                        tempX = player_position[1] - 1
+                        while tempX > 0:
+                            if self.__board.tiles[player_position[1]][tempX].type == "w":
+                                break
+                            if self.__board.tiles[player_position[1]][tempX].type == "t":
+                                self.__board.tiles[player_position[1]][tempX].unlight()
+                                break
+                            if self.__board.tiles[player_position[1]][tempX].type == "g":
+                                self.__alert_mode_on()
+                                break
+                            tempX -= 1
+                        self.__player.extinguish = False
+                    elif self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type != "w":
                             self.__player.moveLeft()
                             self.__check_key(self.__player.position())
                             self.__player.moveLeft()
@@ -322,9 +364,22 @@ class Game:
                             self.__player.moveLeft()
                     self.__player.dash = False
                 case 'right':
-                    if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1]][
-                            player_position[0] + 2].type != "w":
+                    if self.__player.extinguish:
+                        extinguished = True
+                        tempX = player_position[1] + 1
+                        while tempX < 28:
+                            if self.__board.tiles[player_position[1]][tempX].type == "w":
+                                break
+                            if self.__board.tiles[player_position[1]][tempX].type == "t":
+                                self.__board.tiles[player_position[1]][tempX].unlight()
+                                break
+                            if self.__board.tiles[player_position[1]][tempX].type == "g":
+                                self.__alert_mode_on()
+                                break
+                            tempX += 1
+                        self.__player.extinguish = False
+                    elif self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type != "w":
                             self.__player.moveRight()
                             self.__check_key(self.__player.position())
                             self.__player.moveRight()
@@ -341,7 +396,7 @@ class Game:
         anim_spd = 4 // self.__resolution
         match self.__move_direction:
             case "right":
-                if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w" and not extinguished:
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
@@ -367,7 +422,7 @@ class Game:
                         self.__board.torch_check()
 
             case "left":
-                if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w" and not extinguished:
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
@@ -393,7 +448,7 @@ class Game:
                         self.__board.torch_check()
 
             case "up":
-                if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w" and not extinguished:
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
@@ -420,7 +475,7 @@ class Game:
                         self.__board.torch_check()
 
             case "down":
-                if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w" and not extinguished:
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
