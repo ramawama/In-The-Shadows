@@ -71,6 +71,7 @@ class Game:
         save_file = Path(__file__).parent / "user_progress.txt"
         with open(save_file, 'w') as file:
             file.write(str(self.__level))
+
     def load_level(self):
         # edit this and user_progress.txt to save future info like torches lit and moves etc
         save_file = Path(__file__).parent / "user_progress.txt"
@@ -78,8 +79,7 @@ class Game:
         if save_file.stat().st_size != 0:
             # if file is has saved progress
             with open(save_file, 'r') as file:
-                file.readline().strip()
-                self.__level = int(file.readline(1))
+                self.__level = int(file.read())
 
 
     def __set_player_and_guards(self):
