@@ -240,10 +240,11 @@ class Game:
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
         elif self.__state == 'load':
             for ev in pygame.event.get():
-                if ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
+                if ev.type == pygame.KEYDOWN:
                     if ev.key == pygame.K_r:
                         self.__level = 1
                         self.save_level()
+                if ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
                     self.__state = 'game'
                     self.__board.unload()
                     self.__player_spawn, self.__guard_routes = self.__load_game()
