@@ -624,7 +624,7 @@ class Game:
                     return False
         return True
 
-    def __shortest_path_wip(self, start, end):
+    def __shortest_path(self, start, end):
         width = len(self.__board.tiles[0])
         height = len(self.__board.tiles)
         start_num = (start[1] * width) + start[0]
@@ -640,33 +640,6 @@ class Game:
         elif dist == -1 * width:
             return 'U'
         return 'H'
-
-    def __shortest_path(self, start, target):
-        player_x, player_y = target
-        guard_x, guard_y = start
-        visited = [[False for _ in range(27)] for _ in range(27)]
-        dx = [0, 0, -1, 1]
-        dy = [-1, 1, 0, 0]
-        d = ['U', 'D', 'L', 'R']
-        q = queue.Queue()
-        visited[guard_y][guard_x] = True
-        q.put((guard_x, guard_y, 'X'))
-        while not q.empty():
-            curr_x, curr_y, first_direction = q.get()
-            # print(f"{curr_x} {curr_y} {player_x} {player_y} {first_direction}")
-            if curr_x == player_x and curr_y == player_y:
-                return first_direction
-            for i in range(4):
-                new_x = curr_x + dx[i]
-                new_y = curr_y + dy[i]
-                if 0 <= new_x < 27 and 0 <= new_y < 27 and self.__board.tiles[new_y][new_x].type != 'w' and \
-                        visited[new_y][new_x] is False:
-                    visited[new_y][new_x] = True
-                    if first_direction == 'X':
-                        q.put((new_x, new_y, d[i]))
-                    else:
-                        q.put((new_x, new_y, first_direction))
-        return d[0]
 
     def __alert_mode_on(self):
         self.__guard_tracking = True
