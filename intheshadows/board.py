@@ -187,7 +187,7 @@ class Board:
         if not key:
             instructions = text_font.render('COLLECT THE KEY AND AVOID CAPTURE!', True, white)
         else:
-            if self.__level == 2:
+            if self.__level == 3:
                 instructions = text_font.render('KEY COLLECTED! COLLECT THE TREASURE', True, white)
             else:
                 instructions = text_font.render('KEY COLLECTED! ESCAPE TO THE NEXT LEVEL', True, white)
