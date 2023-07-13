@@ -12,5 +12,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
     # cProfile.run('main()', sort='cumtime')
