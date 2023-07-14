@@ -159,33 +159,34 @@ def run_options(width, height, rects, screen, anim_torches, difficulty):
 
 def loading_screen(width, height, resolution, screen, level):
     screen.foreground_surface.fill((0, 0, 0))
+    pre_game_screen = pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Pre_game_screen.png"), (width, height))
     title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.14))
     font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.09))
 
-    (title_width, title_height) = (width // 2, height // 8)
-    title = title_font.render("LOADING...", True, (255, 255, 255))
-    title_rect = title.get_rect()
-    title_rect.center = (title_width, title_height)
-
-    (level_width, level_height) = (width - 192 * resolution, title_height + 64 * resolution)
-    curr_level = font.render("Current Level: " + str(level), True, (255, 255, 255))
+    # (title_width, title_height) = (width // 2, height // 8)
+    # title = title_font.render("LOADING...", True, (255, 255, 255))
+    # title_rect = title.get_rect()
+    # title_rect.center = (title_width, title_height)
+    #
+    # (level_width, level_height) = (width - 192 * resolution, title_height + 64 * resolution)
+    curr_level = font.render(str(level), True, (255, 255, 255))
     curr_level_rect = curr_level.get_rect()
-    curr_level_rect.center = (level_width, level_height)
+    curr_level_rect.center = (10 * width // 11, 1.2 * height // 8)
 
-    (restart_width, restart_height) = (width - 192 * resolution, level_height + 64 * resolution)
-    restart = font.render("Click R to Restart", True, (255, 255, 255))
-    restart_rect = restart.get_rect()
-    restart_rect.center = (restart_width, restart_height)
-
-    (exit_width, exit_height) = (width // 2, height - height // 8)
-    exit = font.render("PRESS OR CLICK TO CONTINUE", True, (255, 255, 255))
-    exit_rect = exit.get_rect()
-    exit_rect.center = (exit_width, exit_height)
-
-    (howto_width, howto_height) = (title_width // 2 - 32 * resolution, title_height + 64 * resolution)
-    howto = font.render("HOW TO PLAY:", True, (255, 255, 255))
-    howto_rect = howto.get_rect()
-    howto_rect.center = (howto_width, howto_height)
+    # (restart_width, restart_height) = (width - 192 * resolution, level_height + 64 * resolution)
+    # restart = font.render("Click R to Restart", True, (255, 255, 255))
+    # restart_rect = restart.get_rect()
+    # restart_rect.center = (restart_width, restart_height)
+    #
+    # (exit_width, exit_height) = (width // 2, height - height // 8)
+    # exit = font.render("PRESS OR CLICK TO CONTINUE", True, (255, 255, 255))
+    # exit_rect = exit.get_rect()
+    # exit_rect.center = (exit_width, exit_height)
+    #
+    # (howto_width, howto_height) = (title_width // 2 - 32 * resolution, title_height + 64 * resolution)
+    # howto = font.render("HOW TO PLAY:", True, (255, 255, 255))
+    # howto_rect = howto.get_rect()
+    # howto_rect.center = (howto_width, howto_height)
 
     # (move_width, move_height) = (title_width // 4, howto_height + 48 * resolution)
     # move_text = font.render('MOVE:', True, (255, 255, 255))
@@ -207,11 +208,12 @@ def loading_screen(width, height, resolution, screen, level):
     # quit_rect = quit_text.get_rect()
     # quit_rect.center = (quit_width, quit_height)
 
-    screen.foreground_surface.blit(title, title_rect)
-    screen.foreground_surface.blit(howto, howto_rect)
+    screen.foreground_surface.blit(pre_game_screen, (0, 0))
+    # screen.foreground_surface.blit(title, title_rect)
+    # screen.foreground_surface.blit(howto, howto_rect)
     screen.foreground_surface.blit(curr_level, curr_level_rect)
-    screen.foreground_surface.blit(restart, restart_rect)
-    screen.foreground_surface.blit(exit, exit_rect)
+    # screen.foreground_surface.blit(restart, restart_rect)
+    # screen.foreground_surface.blit(exit, exit_rect)
     # screen.foreground_surface.blit(move_text, move_rect)
     # screen.foreground_surface.blit(scaled_arrow, (movement_width, movement_height))
     # screen.foreground_surface.blit(music_text, music_rect)
