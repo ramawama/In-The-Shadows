@@ -67,6 +67,10 @@ class Game:
 
         self.__fullscreen = True
 
+        self.__water_flask = pygame.transform.scale(
+            pygame.image.load(Path(__file__).parent / "assets/Graphics/Level Elements/water_flask.png").convert_alpha(),
+            (self.__resolution * 32, self.__resolution * 32))
+
     def save_level(self):
         save_file = Path(__file__).parent / "user_progress.txt"
         with open(save_file, 'w') as file:
@@ -182,6 +186,8 @@ class Game:
                         match ev.key:
                             case pygame.K_SPACE:
                                 self.__player.dash = True
+                            case pygame.K_1:
+                                self.__player.extinguish = True
                             case pygame.K_h:  # help screen in game
                                 self.__state = 'help'
                             case pygame.K_i:
@@ -306,12 +312,30 @@ class Game:
 
     def __move_player(self):
         dashed = False  # if player dashed, torch will be lit, conditional at end of function
+        extinguished = False
         player_position = self.__player.position()
         if self.__move_counter == 31 // self.__resolution:
             self.__state = 'move_guard'
             match self.__move_direction:
                 case 'up':
-                    if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                    if self.__player.extinguish:
+                        extinguished = True
+                        tempY = player_position[1] - 1
+                        while tempY > 0:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
+                            self.__screen.update()
+                            time.sleep(0.01)
+                            if self.__board.tiles[tempY][player_position[0]].type == "w":
+                                break
+                            if self.__board.tiles[tempY][player_position[0]].type == "t":
+                                self.__board.tiles[tempY][player_position[0]].unlight()
+                                break
+                            if self.__board.tiles[tempY][player_position[0]].type == "g":
+                                self.__alert_mode_on()
+                                break
+                            tempY -= 1
+                        self.__player.extinguish = False
+                    elif self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type != "w":
                             self.__player.moveUp()
                             self.__check_key(self.__player.position())
@@ -321,7 +345,24 @@ class Game:
                             self.__player.moveUp()
                     self.__player.dash = False
                 case 'down':
-                    if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                    if self.__player.extinguish:
+                        extinguished = True
+                        tempY = player_position[1] + 1
+                        while tempY < 15:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
+                            self.__screen.update()
+                            time.sleep(0.01)
+                            if self.__board.tiles[tempY][player_position[0]].type == "w":
+                                break
+                            if self.__board.tiles[tempY][player_position[0]].type == "t":
+                                self.__board.tiles[tempY][player_position[0]].unlight()
+                                break
+                            if self.__board.tiles[tempY][player_position[0]].type == "g":
+                                self.__alert_mode_on()
+                                break
+                            tempY += 1
+                        self.__player.extinguish = False
+                    elif self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type != "w":
                             self.__player.moveDown()
                             self.__check_key(self.__player.position())
@@ -331,7 +372,24 @@ class Game:
                             self.__player.moveDown()
                     self.__player.dash = False
                 case 'left':
-                    if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                    if self.__player.extinguish:
+                        extinguished = True
+                        tempX = player_position[0] - 1
+                        while tempX > 0:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                            self.__screen.update()
+                            time.sleep(0.01)
+                            if self.__board.tiles[player_position[1]][tempX].type == "w":
+                                break
+                            if self.__board.tiles[player_position[1]][tempX].type == "t":
+                                self.__board.tiles[player_position[1]][tempX].unlight()
+                                break
+                            if self.__board.tiles[player_position[1]][tempX].type == "g":
+                                self.__alert_mode_on()
+                                break
+                            tempX -= 1
+                        self.__player.extinguish = False
+                    elif self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type != "w":
                             self.__player.moveLeft()
                             self.__check_key(self.__player.position())
@@ -341,7 +399,24 @@ class Game:
                             self.__player.moveLeft()
                     self.__player.dash = False
                 case 'right':
-                    if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                    if self.__player.extinguish:
+                        extinguished = True
+                        tempX = player_position[0] + 1
+                        while tempX < 28:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                            self.__screen.update()
+                            time.sleep(0.01)
+                            if self.__board.tiles[player_position[1]][tempX].type == "w":
+                                break
+                            if self.__board.tiles[player_position[1]][tempX].type == "t":
+                                self.__board.tiles[player_position[1]][tempX].unlight()
+                                break
+                            if self.__board.tiles[player_position[1]][tempX].type == "g":
+                                self.__alert_mode_on()
+                                break
+                            tempX += 1
+                        self.__player.extinguish = False
+                    elif self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type != "w":
                             self.__player.moveRight()
                             self.__check_key(self.__player.position())
@@ -355,6 +430,8 @@ class Game:
         self.__player.direction = self.__move_direction
         self.__player.update_sprites()
         sprites = self.__player.currSprites()
+        if self.__player.extinguish:
+            return
         step_size = 1 * self.__resolution * self.__resolution
         if self.__player.dash:
             step_size = 2 * self.__resolution * self.__resolution
