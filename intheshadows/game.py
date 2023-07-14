@@ -188,6 +188,8 @@ class Game:
                                 self.__player.dash = True
                             case pygame.K_1:
                                 self.__player.extinguish = True
+                            case pygame.K_2:
+                                self.__player.smoke = True
                             case pygame.K_h:  # help screen in game
                                 self.__state = 'help'
                             case pygame.K_i:
@@ -309,6 +311,15 @@ class Game:
                                 self.__escape_state()
                     case pygame.MOUSEBUTTONDOWN:
                         self.__mouse_click(pygame.mouse.get_pos())
+
+    def __guard_near_player(self):
+        player_box = [(self.__player.position()[0] - 1, self.__player.position()[1] - 1), (self.__player.position()[0], self.__player.position()[1] - 1), (self.__player.position()[0] + 1, self.__player.position()[1] - 1),
+                      (self.__player.position()[0] - 1, self.__player.position()[1]), (self.__player.position()[0], self.__player.position()[1]), (self.__player.position()[0] + 1, self.__player.position()[1]),
+                      (self.__player.position()[0] - 1, self.__player.position()[1] + 1), (self.__player.position()[0], self.__player.position()[1] + 1), (self.__player.position()[0] + 1, self.__player.position()[1] + 1)]
+        for guard in self.__guards:
+            if guard.position() in player_box:
+                return True
+        return False
 
     def __move_player(self):
         dashed = False  # if player dashed, torch will be lit, conditional at end of function
@@ -541,7 +552,9 @@ class Game:
                             self.__board.tiles[player_position[1] + 1][player_position[0]].lit:
                         self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
                         self.__board.torch_check()
-
+        if self.__player.smoke and self.__guard_near_player():
+            self.__alert_mode_off()
+            self.__player.smoke = False
         player_position = self.__player.position()
         if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
                 self.__board.tiles[player_position[1]][player_position[0]].lit:
