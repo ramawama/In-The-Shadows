@@ -187,6 +187,8 @@ class Game:
                             case pygame.K_SPACE:
                                 if self.__player.dash_cooldown == 0:
                                     self.__player.dash = True
+                                else:
+                                    self.__player.dash = False
                             case pygame.K_1:
                                 self.__player.extinguish = True
                             case pygame.K_2:
@@ -205,6 +207,8 @@ class Game:
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
                             case pygame.K_w | pygame.K_UP:
+                                if not self.__player.dash and self.__player.dash_cooldown > 0:
+                                    self.__player.dash_cooldown -= 1
                                 if self.__allow_movement is False:
                                     continue
                                 self.__allow_movement = False
@@ -219,6 +223,8 @@ class Game:
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_a | pygame.K_LEFT:
+                                if not self.__player.dash and self.__player.dash_cooldown > 0:
+                                    self.__player.dash_cooldown -= 1
                                 if self.__allow_movement is False:
                                     continue
                                 self.__allow_movement = False
@@ -233,6 +239,8 @@ class Game:
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_s | pygame.K_DOWN:
+                                if not self.__player.dash and self.__player.dash_cooldown > 0:
+                                    self.__player.dash_cooldown -= 1
                                 if self.__allow_movement is False:
                                     continue
                                 self.__allow_movement = False
@@ -247,6 +255,9 @@ class Game:
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
                             case pygame.K_d | pygame.K_RIGHT:
+                                if self.__player.dash_cooldown > 0:
+                                    self.__player.dash_cooldown -= 1
+                                    print("help")
                                 if self.__allow_movement is False:
                                     continue
                                 self.__allow_movement = False
@@ -323,9 +334,6 @@ class Game:
         return False
 
     def __move_player(self):
-        print(self.__player.dash)
-        if not self.__player.dash and self.__player.dash_cooldown > 0:
-            self.__player.dash_cooldown -= 1
         dashed = False  # if player dashed, torch will be lit, conditional at end of function
         extinguished = False
         player_position = self.__player.position()
@@ -442,6 +450,8 @@ class Game:
                             dashed = True
                             self.__player.dash_counter = 3
                         else:
+                            if self.__player.dash_cooldown > 0:
+                                self.__player.dash_cooldown -= 1
                             self.__player.moveRight()
                     self.__player.dash = False  # reset dash conditional so next turn isnt if user was by a wall etc
         # changes sprites depending on if moving left, right, up, or down
