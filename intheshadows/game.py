@@ -67,6 +67,10 @@ class Game:
 
         self.__fullscreen = True
 
+        self.__water_flask = pygame.transform.scale(
+            pygame.image.load(Path(__file__).parent / "assets/Graphics/Level Elements/water_flask.png").convert_alpha(),
+            (self.__resolution * 32, self.__resolution * 32))
+
     def save_level(self):
         save_file = Path(__file__).parent / "user_progress.txt"
         with open(save_file, 'w') as file:
@@ -294,8 +298,11 @@ class Game:
                 case 'up':
                     if self.__player.extinguish:
                         extinguished = True
-                        tempY = player_position[0] - 1
+                        tempY = player_position[1] - 1
                         while tempY > 0:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
+                            self.__screen.update()
+                            time.sleep(0.01)
                             if self.__board.tiles[tempY][player_position[0]].type == "w":
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
@@ -318,8 +325,11 @@ class Game:
                 case 'down':
                     if self.__player.extinguish:
                         extinguished = True
-                        tempY = player_position[0] + 1
+                        tempY = player_position[1] + 1
                         while tempY < 15:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
+                            self.__screen.update()
+                            time.sleep(0.01)
                             if self.__board.tiles[tempY][player_position[0]].type == "w":
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
@@ -342,8 +352,11 @@ class Game:
                 case 'left':
                     if self.__player.extinguish:
                         extinguished = True
-                        tempX = player_position[1] - 1
+                        tempX = player_position[0] - 1
                         while tempX > 0:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                            self.__screen.update()
+                            time.sleep(0.01)
                             if self.__board.tiles[player_position[1]][tempX].type == "w":
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
@@ -366,8 +379,11 @@ class Game:
                 case 'right':
                     if self.__player.extinguish:
                         extinguished = True
-                        tempX = player_position[1] + 1
+                        tempX = player_position[0] + 1
                         while tempX < 28:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                            self.__screen.update()
+                            time.sleep(0.01)
                             if self.__board.tiles[player_position[1]][tempX].type == "w":
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
