@@ -5,6 +5,7 @@ from pathlib import Path
 class Player:
     def __init__(self, screen, x, y, resolution):
         self.__extinguish = False
+        self.__smoke = False
         self.__resolution = resolution
         self.__alive = True
         self.__screen = screen
@@ -58,12 +59,12 @@ class Player:
         return self.__key
 
     @property
-    def dash(self):
-        return self.__dash
+    def smoke(self):
+        return self.__smoke
 
-    @dash.setter
-    def dash(self, dash):
-        self.__dash = dash
+    @smoke.setter
+    def smoke(self, smoke):
+        self.__smoke = smoke
 
     @property
     def extinguish(self):
