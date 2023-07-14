@@ -84,6 +84,8 @@ class Game:
             # if file is has saved progress
             with open(save_file, 'r') as file:
                 return int(file.read())
+        else:
+            return 1
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
