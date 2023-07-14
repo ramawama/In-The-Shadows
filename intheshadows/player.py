@@ -28,7 +28,7 @@ class Player:
         self.__curr_sprites = self.__right
         self.__dash_sprites = [self.__curr_sprites[0], self.__curr_sprites[1], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[3]]
         self.__direction = "right"
-        self.__dash = False
+        self.__dash_cooldown = 0
         self.__x = x
         self.__y = y
         self.__items = []
@@ -45,6 +45,14 @@ class Player:
     @dash.setter
     def dash(self, dash):
         self.__dash = dash
+
+    @property
+    def dash_cooldown(self):
+        return self.__dash_cooldown
+
+    @dash_cooldown.setter
+    def dash_cooldown(self, dash_cooldown):
+        self.__dash_cooldown = dash_cooldown
 
     @property
     def direction(self):

@@ -185,7 +185,8 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_SPACE:
-                                self.__player.dash = True
+                                if self.__player.dash_cooldown == 0:
+                                    self.__player.dash = True
                             case pygame.K_1:
                                 self.__player.extinguish = True
                             case pygame.K_2:
@@ -322,6 +323,9 @@ class Game:
         return False
 
     def __move_player(self):
+        print(self.__player.dash)
+        if not self.__player.dash and self.__player.dash_cooldown > 0:
+            self.__player.dash_cooldown -= 1
         dashed = False  # if player dashed, torch will be lit, conditional at end of function
         extinguished = False
         player_position = self.__player.position()
@@ -352,9 +356,9 @@ class Game:
                             self.__check_key(self.__player.position())
                             self.__player.moveUp()
                             dashed = True
+                            self.__player.dash_counter = 3
                         else:
                             self.__player.moveUp()
-                    self.__player.dash = False
                 case 'down':
                     if self.__player.extinguish:
                         extinguished = True
@@ -379,9 +383,9 @@ class Game:
                             self.__check_key(self.__player.position())
                             self.__player.moveDown()
                             dashed = True
+                            self.__player.dash_counter = 3
                         else:
                             self.__player.moveDown()
-                    self.__player.dash = False
                 case 'left':
                     if self.__player.extinguish:
                         extinguished = True
@@ -406,9 +410,9 @@ class Game:
                             self.__check_key(self.__player.position())
                             self.__player.moveLeft()
                             dashed = True
+                            self.__player.dash_counter = 3
                         else:
                             self.__player.moveLeft()
-                    self.__player.dash = False
                 case 'right':
                     if self.__player.extinguish:
                         extinguished = True
@@ -433,10 +437,11 @@ class Game:
                             self.__check_key(self.__player.position())
                             self.__player.moveRight()
                             dashed = True
+                            self.__player.dash_counter = 3
                         else:
                             self.__player.moveRight()
-                    self.__player.dash = False
 
+        self.__player.dash = False #reset dash conditional so next turn isnt if user was by a wall etc
         # changes sprites depending on if moving left, right, up, or down
         self.__player.direction = self.__move_direction
         self.__player.update_sprites()
@@ -444,7 +449,7 @@ class Game:
         if self.__player.extinguish:
             return
         step_size = 1 * self.__resolution * self.__resolution
-        if self.__player.dash:
+        if dashed:
             step_size = 2 * self.__resolution * self.__resolution
         anim_spd = 4 // self.__resolution
         match self.__move_direction:
@@ -897,7 +902,7 @@ class Game:
                 case 'help':
                     display_help(self.__width, self.__height, self.__resolution, self.__screen)
                 case 'inventory':
-                    display_inventory(self.__width, self.__height, self.__resolution, self.__screen, None)
+                    display_inventory(self.__width, self.__height, self.__resolution, self.__screen, self.__player)
                     '''
                     TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
                     also have it track what items are used etc
