@@ -44,7 +44,7 @@ def display_help(width, height, resolution, screen):
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
 
-def display_inventory(width, height, resolution, screen, inventory):
+def display_inventory(width, height, resolution, screen, player):
     background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/dungeon_old.jpg")
     background = pygame.transform.scale(background, (width // 2, height // 2))
     title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.09))
@@ -55,8 +55,13 @@ def display_inventory(width, height, resolution, screen, inventory):
     text_rect = text.get_rect()
     text_rect.center = (title_width, title_height)
 
-    (dash_width, dash_height) = (title_width - 128 * resolution, title_height + 48 * resolution)
-    dash_text = font.render('SPACE TO DASH:', True, (255, 255, 255))
+    if player.dash_cooldown == 0:
+        dash_text = font.render('SPACE TO DASH', True, (255, 255, 255))
+        (dash_width, dash_height) = (title_width - 128 * resolution, title_height + 48 * resolution)
+    else:
+        dash_text = font.render('DASH COOLDOWN: ' + str(player.dash_cooldown), True, (255, 255, 255))
+        (dash_width, dash_height) = (title_width - 96 * resolution, title_height + 48 * resolution)
+
     dash_rect = dash_text.get_rect()
     dash_rect.center = (dash_width, dash_height)
 
