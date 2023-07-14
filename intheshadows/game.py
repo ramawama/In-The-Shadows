@@ -392,11 +392,13 @@ class Game:
         self.__player.direction = self.__move_direction
         self.__player.update_sprites()
         sprites = self.__player.currSprites()
+        if self.__player.extinguish:
+            return
         step_size = 1 * self.__resolution * self.__resolution
         anim_spd = 4 // self.__resolution
         match self.__move_direction:
             case "right":
-                if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w" and not extinguished:
+                if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
@@ -422,7 +424,7 @@ class Game:
                         self.__board.torch_check()
 
             case "left":
-                if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w" and not extinguished:
+                if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
@@ -448,7 +450,7 @@ class Game:
                         self.__board.torch_check()
 
             case "up":
-                if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w" and not extinguished:
+                if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
@@ -475,7 +477,7 @@ class Game:
                         self.__board.torch_check()
 
             case "down":
-                if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w" and not extinguished:
+                if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
