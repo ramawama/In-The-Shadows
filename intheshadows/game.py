@@ -359,6 +359,7 @@ class Game:
                             self.__player.dash_counter = 3
                         else:
                             self.__player.moveUp()
+                    self.__player.dash = False  # reset dash conditional so next turn isnt if user was by a wall etc
                 case 'down':
                     if self.__player.extinguish:
                         extinguished = True
@@ -386,6 +387,7 @@ class Game:
                             self.__player.dash_counter = 3
                         else:
                             self.__player.moveDown()
+                    self.__player.dash = False  # reset dash conditional so next turn isnt if user was by a wall etc
                 case 'left':
                     if self.__player.extinguish:
                         extinguished = True
@@ -413,6 +415,7 @@ class Game:
                             self.__player.dash_counter = 3
                         else:
                             self.__player.moveLeft()
+                    self.__player.dash = False  # reset dash conditional so next turn isnt if user was by a wall etc
                 case 'right':
                     if self.__player.extinguish:
                         extinguished = True
@@ -440,8 +443,7 @@ class Game:
                             self.__player.dash_counter = 3
                         else:
                             self.__player.moveRight()
-
-        self.__player.dash = False #reset dash conditional so next turn isnt if user was by a wall etc
+                    self.__player.dash = False  # reset dash conditional so next turn isnt if user was by a wall etc
         # changes sprites depending on if moving left, right, up, or down
         self.__player.direction = self.__move_direction
         self.__player.update_sprites()
@@ -449,7 +451,7 @@ class Game:
         if self.__player.extinguish:
             return
         step_size = 1 * self.__resolution * self.__resolution
-        if dashed:
+        if self.__player.dash:
             step_size = 2 * self.__resolution * self.__resolution
         anim_spd = 4 // self.__resolution
         match self.__move_direction:
