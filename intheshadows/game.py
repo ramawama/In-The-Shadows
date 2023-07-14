@@ -68,7 +68,7 @@ class Game:
         self.__fullscreen = True
 
         self.__water_flask = pygame.transform.scale(
-            pygame.image.load(Path(__file__).parent / "assets/Graphics/Level Elements/water_flask.png").convert_alpha(),
+            pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png").convert_alpha(),
             (self.__resolution * 32, self.__resolution * 32))
 
     def save_level(self):
