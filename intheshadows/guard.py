@@ -18,13 +18,21 @@ class Guard:
             case _:
                 self.__difficulty = 1
         self.__right = [pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}.png"), (self.__resolution * 32, self.__resolution * 32)),
-                        pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_walk.png"), (self.__resolution * 32, self.__resolution * 32))]
+                        pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_walk_1.png"), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_walk_2.png"), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_walk_3.png"), (self.__resolution * 32, self.__resolution * 32))]
         self.__left = [pygame.transform.flip(self.__right[0], True, False),
-                       pygame.transform.flip(self.__right[1], True, False)]
-        self.__up = [pygame.transform.flip(self.__right[0], True, False),
-                       pygame.transform.flip(self.__right[1], True, False)]
-        self.__down = [pygame.transform.flip(self.__right[0], True, False),
-                       pygame.transform.flip(self.__right[1], True, False)]
+                       pygame.transform.flip(self.__right[1], True, False),
+                       pygame.transform.flip(self.__right[2], True, False),
+                       pygame.transform.flip(self.__right[3], True, False)]
+        self.__up = [pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_up.png"), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_up_walk_1.png"), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_up_walk_2.png"), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_up_walk_3.png"), (self.__resolution * 32, self.__resolution * 32))]
+        self.__down = [pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_down.png"), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_down_walk_1.png"), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_down_walk_2.png"), (self.__resolution * 32, self.__resolution * 32)),
+                        pygame.transform.scale(pygame.image.load(Path(__file__).parent / f"assets/graphics/Guard/Guard_{difficulty}_down_walk_3.png"), (self.__resolution * 32, self.__resolution * 32))]
         self.__curr_sprites = self.__right
         self.__direction = "right"
         self.__x = int(x)
@@ -72,10 +80,6 @@ class Guard:
         self.__x += 1
 
     def currSprites(self):
-        if self.__direction == "right":
-            self.__curr_sprites = self.__right
-        else:
-            self.__curr_sprites = self.__left
         return self.__curr_sprites
 
     def position(self):
@@ -96,3 +100,13 @@ class Guard:
     @y.setter
     def y(self, y):
         self.__y = y
+
+    def update_sprites(self):
+        if self.__direction == "right":
+            self.__curr_sprites = self.__right
+        elif self.__direction == "left":
+            self.__curr_sprites = self.__left
+        elif self.__direction == "up":
+            self.__curr_sprites = self.__up
+        elif self.__direction == "down":
+            self.__curr_sprites = self.__down

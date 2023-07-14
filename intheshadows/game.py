@@ -4,7 +4,7 @@ import pygame
 import os
 import igraph as ig
 import time
-from intheshadows.print import display_help, run_menu, run_options, display_inventory
+from intheshadows.print import display_help, run_menu, run_options, display_inventory, loading_screen
 from intheshadows.events import game_over, win
 from intheshadows.guard import Guard
 from intheshadows.tile import Tile
@@ -23,7 +23,7 @@ class Game:
         self.__white = (255, 255, 255)
         (self.__width, self.__height) = (64 * 28, 64 * 16)
 
-        self.__level = 1
+        self.__level = self.load_level()
         self.__torch_counter = 0
         self.__move_counter = 0
         self.__move_direction = 'right'
@@ -83,8 +83,7 @@ class Game:
         if save_file.stat().st_size != 0:
             # if file is has saved progress
             with open(save_file, 'r') as file:
-                self.__level = int(file.read())
-
+                return int(file.read())
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
@@ -106,6 +105,8 @@ class Game:
     # Changes states when escape is pressed
     def __escape_state(self):
         match self.__state:
+            case 'load':
+                self.__state = 'game'
             case 'options':
                 self.__state = 'menu'
             case 'game':
@@ -126,10 +127,7 @@ class Game:
     def __mouse_click(self, mouse_pos):
         if self.__state == 'menu':
             if self.__rects['start_text_rect'].collidepoint(mouse_pos):
-                self.__state = 'game'
-                self.__board.unload()
-                self.__player_spawn, self.__guard_routes = self.__load_game()
-                self.__set_player_and_guards()
+                self.__state = 'load'
             elif self.__rects['options_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'options'
             elif self.__rects['quit_text_rect'].collidepoint(mouse_pos):
@@ -167,6 +165,19 @@ class Game:
     # Handles quitting, key presses, and mouse clicks, including in game
     def __handle_events(self):
         if self.__state == 'game':
+            keys = pygame.key.get_pressed()
+            if True in keys:
+                if keys[pygame.K_w] or keys[pygame.K_UP]:
+                    pygame.event.post(pygame.event.Event(pygame.KEYDOWN, unicode="w", key=pygame.K_w, mod=pygame.KMOD_NONE))
+                elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                    pygame.event.post(pygame.event.Event(pygame.KEYDOWN, unicode="a", key=pygame.K_a, mod=pygame.KMOD_NONE))
+                elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                    pygame.event.post(
+                        pygame.event.Event(pygame.KEYDOWN, unicode="s", key=pygame.K_s, mod=pygame.KMOD_NONE))
+                elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                    pygame.event.post(
+                        pygame.event.Event(pygame.KEYDOWN, unicode="d", key=pygame.K_d, mod=pygame.KMOD_NONE))
+
             for ev in pygame.event.get():
                 match ev.type:
                     case pygame.QUIT:
@@ -246,6 +257,17 @@ class Game:
                                     self.__guard_positions[x] = (
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
+        elif self.__state == 'load':
+            for ev in pygame.event.get():
+                if ev.type == pygame.KEYDOWN:
+                    if ev.key == pygame.K_r:
+                        self.__level = 1
+                        self.save_level()
+                if ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
+                    self.__state = 'game'
+                    self.__board.unload()
+                    self.__player_spawn, self.__guard_routes = self.__load_game()
+                    self.__set_player_and_guards()
         elif self.__state == 'help':
             for ev in pygame.event.get():
                 match ev.type:
@@ -411,6 +433,8 @@ class Game:
         if self.__player.extinguish:
             return
         step_size = 1 * self.__resolution * self.__resolution
+        if self.__player.dash:
+            step_size = 2 * self.__resolution * self.__resolution
         anim_spd = 4 // self.__resolution
         match self.__move_direction:
             case "right":
@@ -526,15 +550,12 @@ class Game:
 
     # not done
     def __move_guards(self):
-        if self.__move_counter == 15 // self.__resolution:
+        if self.__move_counter == 31 // self.__resolution:
             self.__state = 'game'
-        if self.__anim_counter >= 2:
-            self.__anim_counter = 0
         self.__board.draw_level()
         self.__player.draw()
         for x in range(len(self.__guards)):
-            sprites = self.__guards[x].currSprites()
-            step_size = 2 * self.__resolution * self.__resolution
+            step_size = 1 * self.__resolution * self.__resolution
             move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
@@ -545,6 +566,7 @@ class Game:
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
+            self.__guards[x].update_sprites()
             match move_direction:
                 case 'R':
                     # draw background
@@ -584,7 +606,7 @@ class Game:
             self.__anim_counter += 1
 
         # for resetting animation
-        if self.__anim_counter >= 2:
+        if self.__anim_counter >= 4:
             self.__anim_counter = 0
         self.__screen.update()
 
@@ -814,7 +836,6 @@ class Game:
         self.__move_counter = 0
         self.__torch_counter = 0
         self.__move_flag = False
-        self.load_level()
         while self.__running:
             clock.tick(60)
             # print(clock.get_fps())
@@ -830,6 +851,9 @@ class Game:
 
             self.__handle_events()
             match self.__state:
+                case 'load':
+                    pygame.mouse.set_visible(False)
+                    loading_screen(self.__width, self.__height, self.__resolution, self.__screen, self.__level)
                 case 'menu':
                     pygame.mouse.set_visible(True)
                     self.__music.play_music('menu')
@@ -900,6 +924,10 @@ class Game:
                                     self.__guards[x].direction = 'right'
                                 case 'L':
                                     self.__guards[x].direction = 'left'
+                                case 'U':
+                                    self.__guards[x].direction = 'up'
+                                case 'D':
+                                    self.__guards[x].direction = 'down'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
                     self.__move_guards()
             self.__screen.update()
