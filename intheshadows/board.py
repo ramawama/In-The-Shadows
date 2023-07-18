@@ -145,7 +145,7 @@ class Board:
                         scaled_floor = pygame.transform.scale(self.__tiles[row][col].backgroundtile,
                                                               (tile_width, tile_height))
                     self.__screen.background_surface.blit(scaled_floor, (tile_x, tile_y))
-                self.__screen.foreground_surface.blit(scaled_tile, (tile_x, tile_y))
+                self.__screen.background_surface.blit(scaled_tile, (tile_x, tile_y))
 
     # Returns array of tiles
     @property
