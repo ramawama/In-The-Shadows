@@ -17,7 +17,7 @@ from intheshadows.player import Player
 class Game:
     def __init__(self):
         # Create global variables for height, width, and black and white colors
-        self.__move_flag = None
+        self.__move_flag = False
         self.__anim_counter = None
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
@@ -581,8 +581,21 @@ class Game:
             step_size = 1 * self.__resolution * self.__resolution
             move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
             if self.__guard_tracking:
-                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                      self.__player.position())
+                match self.__move_direction:
+                    case 'left':
+                        player_pos = (self.__player.position()[0] - 1, self.__player.position()[1])
+                    case 'up':
+                        player_pos = (self.__player.position()[0], self.__player.position()[1] - 1)
+                    case 'down':
+                        player_pos = (self.__player.position()[0], self.__player.position()[1] + 1)
+                    case 'right':
+                        player_pos = (self.__player.position()[0] + 1, self.__player.position()[1])
+                try:
+                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                      player_pos)
+                except Exception as e:
+                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                          self.__player.position())
             elif self.__guard_returning[x]:
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                       self.__guard_position_before_tracking[x])
@@ -845,7 +858,7 @@ class Game:
                     if self.__check_guard_path(self.__guards[x], 'D'):
                         self.__guards[x].moveDown()
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
-                                                 self.__guards[x].currSprites()[0])
+                                                 self.__board.tiles[self.__guards[x].y][self.__guards[x].x].image)
             self.__board.torch_check()
             self.__turn_counter[x] = self.__turn_counter[x] + 1
             if self.__guard_returning[x]:
@@ -858,7 +871,6 @@ class Game:
         clock = pygame.time.Clock()
         self.__move_counter = 0
         self.__torch_counter = 0
-        self.__move_flag = False
         while self.__running:
             clock.tick(60)
             # print(clock.get_fps())
@@ -888,49 +900,17 @@ class Game:
                                 self.__anim_torches, self.__difficulty)
                 case 'game':
                     pygame.mouse.set_visible(False)
-                    if self.__move_flag == "guard":
-                        self.__update_guards()
-                        if self.__guard_turn_counter < self.__guard_difficulty and not self.__check_game_over(
-                                self.__player.position()):
-                            # self.__state = 'move_guard'
-                            self.__move_flag = "player"
-                            continue
-                        if self.__guard_tracking is False:
-                            self.__check_guard_vision()
-                    self.__allow_movement = True
-                    self.__guard_turn_counter = 0
-                    self.__move_flag = "none"
-                    try:
-                        self.__run_game()
-                    except Exception as E:
-                        print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
-                case 'help':
-                    display_help(self.__width, self.__height, self.__resolution, self.__screen)
-                case 'inventory':
-                    display_inventory(self.__width, self.__height, self.__resolution, self.__screen, self.__player)
-                    '''
-                    TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
-                    also have it track what items are used etc
-                    '''
-                case 'game_over':
-                    pass
-                case 'move':
-                    if self.__move_flag == "none":
-                        self.__move_flag = "player"
-                    self.__move_player()
-                    if self.__move_flag == "player":
+                    # Update the Player and Guard Locations
+                    if self.__move_flag is True:
                         if self.__check_game_over(self.__player.position()):
                             self.__music.play_music("game_over")
                             self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
                                                                    self.__board)
-
                             self.__player_spawn, self.__guard_routes = self.__get_spawns()
                             self.__set_player_and_guards()
                             continue
                         if self.__guard_tracking is False:
                             self.__check_guard_vision()
-                        self.__guard_turn_counter = self.__guard_turn_counter + 1
-                        self.__move_flag = "guard"
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][
                                 (self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
@@ -949,6 +929,29 @@ class Game:
                                 case 'D':
                                     self.__guards[x].direction = 'down'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
+                        self.__update_guards()
+                        if self.__guard_tracking is False:
+                            self.__check_guard_vision()
+                    self.__allow_movement = True
+                    self.__move_flag = False
+                    try:
+                        self.__run_game()
+                    except Exception as E:
+                        print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
+                case 'help':
+                    display_help(self.__width, self.__height, self.__resolution, self.__screen)
+                case 'inventory':
+                    display_inventory(self.__width, self.__height, self.__resolution, self.__screen, self.__player)
+                    '''
+                    TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
+                    also have it track what items are used etc
+                    '''
+                case 'game_over':
+                    pass
+                case 'move':
+                    if self.__move_flag is False:
+                        self.__move_flag = True
+                    self.__move_player()
                     self.__move_guards()
             self.__screen.update()
         self.save_level()

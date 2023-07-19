@@ -18,8 +18,8 @@ class Tile:
             match tile_type:
                 case "t":
                     self.light()
-                case "g":
-                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Guard/Guard_EASY.png").convert_alpha()
+                #case "g":
+                    #self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Guard/Guard_EASY.png").convert_alpha()
                 case "p":
                     self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue.png").convert_alpha()
                 case "w":
