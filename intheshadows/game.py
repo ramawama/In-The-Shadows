@@ -4,7 +4,7 @@ import pygame
 import os
 import igraph as ig
 import time
-from intheshadows.print import display_help, run_menu, run_options, display_inventory, loading_screen
+from intheshadows.print import display_help, run_menu, run_options, display_info, loading_screen
 from intheshadows.events import game_over, win
 from intheshadows.guard import Guard
 from intheshadows.tile import Tile
@@ -110,7 +110,7 @@ class Game:
     def __escape_state(self):
         match self.__state:
             case 'load':
-                self.__state = 'game'
+                self.__state = 'menu'
             case 'options':
                 self.__state = 'menu'
             case 'game':
@@ -280,6 +280,9 @@ class Game:
                     if ev.key == pygame.K_r:
                         self.__level = 1
                         self.save_level()
+                    if ev.key == pygame.K_ESCAPE:
+                        self.__escape_state()
+                        return
                 if ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
                     self.__state = 'game'
                     self.__board.unload()
@@ -904,7 +907,7 @@ class Game:
             match self.__state:
                 case 'load':
                     pygame.mouse.set_visible(False)
-                    loading_screen(self.__width, self.__height, self.__resolution, self.__screen, self.__level)
+                    loading_screen(self.__width, self.__height, self.__screen, self.__level, 69, 420, 8008)
                 case 'menu':
                     pygame.mouse.set_visible(True)
                     self.__music.play_music('menu')
@@ -936,7 +939,7 @@ class Game:
                 case 'help':
                     display_help(self.__width, self.__height, self.__resolution, self.__screen)
                 case 'inventory':
-                    display_inventory(self.__width, self.__height, self.__resolution, self.__screen, self.__player)
+                    display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0, 999, 999)
                     '''
                     TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
                     also have it track what items are used etc
