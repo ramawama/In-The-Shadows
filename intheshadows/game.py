@@ -71,6 +71,8 @@ class Game:
             pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png").convert_alpha(),
             (self.__resolution * 32, self.__resolution * 32))
 
+        self.loaded = False
+
     def save_level(self):
         save_file = Path(__file__).parent / "user_progress.txt"
         with open(save_file, 'w') as file:
@@ -127,14 +129,14 @@ class Game:
 
     # Changes state based on button click
     def __mouse_click(self, mouse_pos):
-        if self.__state == 'menu':
+        if self.__state == 'menu' and self.loaded:
             if self.__rects['start_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'load'
             elif self.__rects['options_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'options'
             elif self.__rects['quit_text_rect'].collidepoint(mouse_pos):
                 self.__running = False
-        elif self.__state == 'options':
+        elif self.__state == 'options' and self.loaded:
             if self.__rects['easy_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "EASY"
                 self.__guard_difficulty = 1
@@ -908,6 +910,7 @@ class Game:
                     self.__music.play_music('menu')
                     run_menu(self.__width, self.__height, self.__rects, self.__screen,
                              self.__anim_torches)
+                    self.loaded = True
                 case 'options':
                     pygame.mouse.set_visible(True)
                     run_options(self.__width, self.__height, self.__rects, self.__screen,
