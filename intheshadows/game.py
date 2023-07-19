@@ -939,7 +939,7 @@ class Game:
                 case 'help':
                     display_help(self.__width, self.__height, self.__resolution, self.__screen)
                 case 'inventory':
-                    display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0)
+                    display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0, 999, 999)
                     '''
                     TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
                     also have it track what items are used etc

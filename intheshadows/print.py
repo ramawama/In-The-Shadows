@@ -44,7 +44,7 @@ def display_help(width, height, resolution, screen):
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
 
-def display_info(width, height, screen, level, num_torches, num_items, turns_passed):
+def display_info(width, height, screen, level, num_torches, num_items, turns_passed, num_bottles, num_bombs):
     background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Info_screen.png")
     background = pygame.transform.scale(background, (width // 2, height // 2))
     font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height // 2 * 0.05))
@@ -65,11 +65,21 @@ def display_info(width, height, screen, level, num_torches, num_items, turns_pas
     num_turns_rect = num_turns.get_rect()
     num_turns_rect.x, num_turns_rect.y = (9.65 * width // 11 // 2, 2.51 * height // 8 // 2)
 
+    num_water_bottles = font.render(str(num_bottles), True, (255, 255, 255))
+    num_water_bottles_rect = num_water_bottles.get_rect()
+    num_water_bottles_rect.x, num_water_bottles_rect.y = (8.75 * width // 11 // 2, 4.68 * height // 8 // 2)
+
+    num_smoke_bombs = font.render(str(num_bombs), True, (255, 255, 255))
+    num_smoke_bombs_rect = num_smoke_bombs.get_rect()
+    num_smoke_bombs_rect.x, num_smoke_bombs_rect.y = (8.75 * width // 11 // 2, 5.68 * height // 8 // 2)
+
     screen.help_surface.blit(background, (0, 0))
     screen.help_surface.blit(curr_level, curr_level_rect)
     screen.help_surface.blit(torches_unlit, torches_unlit_rect)
     screen.help_surface.blit(items_used, items_used_rect)
     screen.help_surface.blit(num_turns, num_turns_rect)
+    screen.help_surface.blit(num_water_bottles, num_water_bottles_rect)
+    screen.help_surface.blit(num_smoke_bombs, num_smoke_bombs_rect)
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
 
