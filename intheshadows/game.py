@@ -110,7 +110,7 @@ class Game:
     def __escape_state(self):
         match self.__state:
             case 'load':
-                self.__state = 'game'
+                self.__state = 'menu'
             case 'options':
                 self.__state = 'menu'
             case 'game':
@@ -280,6 +280,9 @@ class Game:
                     if ev.key == pygame.K_r:
                         self.__level = 1
                         self.save_level()
+                    if ev.key == pygame.K_ESCAPE:
+                        self.__escape_state()
+                        return
                 if ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
                     self.__state = 'game'
                     self.__board.unload()
@@ -904,7 +907,7 @@ class Game:
             match self.__state:
                 case 'load':
                     pygame.mouse.set_visible(False)
-                    loading_screen(self.__width, self.__height, self.__resolution, self.__screen, self.__level)
+                    loading_screen(self.__width, self.__height, self.__screen, self.__level, 69, 420, 8008)
                 case 'menu':
                     pygame.mouse.set_visible(True)
                     self.__music.play_music('menu')
