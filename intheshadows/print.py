@@ -7,8 +7,8 @@ def display_help(width, height, resolution, screen):
     # temp background
     background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/woodBackground_old.png")
     background = pygame.transform.scale(background, (width // 2, height // 2))
-    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.09))
-    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.06))
+    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.09))
+    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.06))
 
     (title_width, title_height) = (width // 4, height // 16)
     text = title_font.render("HOW TO PLAY", True, (255, 255, 255))
@@ -47,8 +47,8 @@ def display_help(width, height, resolution, screen):
 def display_inventory(width, height, resolution, screen, player):
     background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/dungeon_old.jpg")
     background = pygame.transform.scale(background, (width // 2, height // 2))
-    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.09))
-    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.06))
+    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.09))
+    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.06))
 
     (title_width, title_height) = (width // 4, height // 16)
     text = title_font.render("INVENTORY", True, (255, 255, 255))
@@ -165,8 +165,8 @@ def run_options(width, height, rects, screen, anim_torches, difficulty):
 def loading_screen(width, height, resolution, screen, level):
     screen.foreground_surface.fill((0, 0, 0))
     pre_game_screen = pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Pre_game_screen.png"), (width, height))
-    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.14))
-    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.09))
+    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.06))
+    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.06))
 
     # (title_width, title_height) = (width // 2, height // 8)
     # title = title_font.render("LOADING...", True, (255, 255, 255))

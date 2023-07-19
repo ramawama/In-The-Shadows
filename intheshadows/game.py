@@ -736,7 +736,7 @@ class Game:
     # Runs the actual game
     def __run_game(self):
         self.__board.draw_level()
-        self.__board.display_hud(self.__player.key)
+        self.__board.display_hud(self.__player)
         self.__player.draw()
         self.__draw_guards()
         if self.__check_game_over(self.__player.position()):
