@@ -44,30 +44,32 @@ def display_help(width, height, resolution, screen):
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
 
-def display_inventory(width, height, resolution, screen, player):
+def display_inventory(width, height, screen, level, num_torches, num_items, turns_passed):
     background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Info_screen.png")
     background = pygame.transform.scale(background, (width // 2, height // 2))
-    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.09))
-    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.06))
+    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height // 2 * 0.05))
 
-    # (title_width, title_height) = (width // 4, height // 16)
-    # text = title_font.render("INVENTORY", True, (255, 255, 255))
-    # text_rect = text.get_rect()
-    # text_rect.center = (title_width, title_height)
-    #
-    # if player.dash_cooldown == 0:
-    #     dash_text = font.render('SPACE TO DASH', True, (255, 255, 255))
-    #     (dash_width, dash_height) = (title_width - 128 * resolution, title_height + 48 * resolution)
-    # else:
-    #     dash_text = font.render('DASH COOLDOWN: ' + str(player.dash_cooldown), True, (255, 255, 255))
-    #     (dash_width, dash_height) = (title_width - 96 * resolution, title_height + 48 * resolution)
-    #
-    # dash_rect = dash_text.get_rect()
-    # dash_rect.center = (dash_width, dash_height)
-    #
+    curr_level = font.render(str(level), True, (255, 255, 255))
+    curr_level_rect = curr_level.get_rect()
+    curr_level_rect.x, curr_level_rect.y = (9.9 * width // 11 // 2, 0.91 * height // 8 // 2)
+
+    torches_unlit = font.render(str(num_torches), True, (255, 255, 255))
+    torches_unlit_rect = torches_unlit.get_rect()
+    torches_unlit_rect.x, torches_unlit_rect.y = (9.9 * width // 11 // 2, 1.44 * height // 8 // 2)
+
+    items_used = font.render(str(num_items), True, (255, 255, 255))
+    items_used_rect = items_used.get_rect()
+    items_used_rect.x, items_used_rect.y = (9.18 * width // 11 // 2, 1.98 * height // 8 // 2)
+
+    num_turns = font.render(str(turns_passed), True, (255, 255, 255))
+    num_turns_rect = num_turns.get_rect()
+    num_turns_rect.x, num_turns_rect.y = (9.65 * width // 11 // 2, 2.51 * height // 8 // 2)
+
     screen.help_surface.blit(background, (0, 0))
-    # screen.help_surface.blit(text, text_rect)
-    # screen.help_surface.blit(dash_text, dash_rect)
+    screen.help_surface.blit(curr_level, curr_level_rect)
+    screen.help_surface.blit(torches_unlit, torches_unlit_rect)
+    screen.help_surface.blit(items_used, items_used_rect)
+    screen.help_surface.blit(num_turns, num_turns_rect)
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
 
@@ -164,7 +166,8 @@ def run_options(width, height, rects, screen, anim_torches, difficulty):
 
 def loading_screen(width, height, screen, level, num_torches, num_items, turns_passed):
     screen.foreground_surface.fill((0, 0, 0))
-    pre_game_screen = pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Pre_game_screen.png"), (width, height))
+    pre_game_screen = pygame.transform.scale(
+        pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Pre_game_screen.png"), (width, height))
     font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.045))
 
     curr_level = font.render(str(level), True, (255, 255, 255))
@@ -188,8 +191,3 @@ def loading_screen(width, height, screen, level, num_torches, num_items, turns_p
     screen.foreground_surface.blit(torches_unlit, torches_unlit_rect)
     screen.foreground_surface.blit(items_used, items_used_rect)
     screen.foreground_surface.blit(num_turns, num_turns_rect)
-
-
-
-
-
