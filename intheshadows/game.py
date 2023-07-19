@@ -71,6 +71,8 @@ class Game:
             pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png").convert_alpha(),
             (self.__resolution * 32, self.__resolution * 32))
 
+        self.loaded = False
+
     def save_level(self):
         save_file = Path(__file__).parent / "user_progress.txt"
         with open(save_file, 'w') as file:
@@ -127,14 +129,14 @@ class Game:
 
     # Changes state based on button click
     def __mouse_click(self, mouse_pos):
-        if self.__state == 'menu':
+        if self.__state == 'menu' and self.loaded:
             if self.__rects['start_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'load'
             elif self.__rects['options_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'options'
             elif self.__rects['quit_text_rect'].collidepoint(mouse_pos):
                 self.__running = False
-        elif self.__state == 'options':
+        elif self.__state == 'options' and self.loaded:
             if self.__rects['easy_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "EASY"
                 self.__guard_difficulty = 1
@@ -196,6 +198,13 @@ class Game:
                                 self.__player.extinguish = True
                             case pygame.K_2:
                                 self.__player.smoke = True
+                                if self.__player.smoke and not self.__guard_near_player():
+                                    self.__draw_smoke()
+                                    self.__player.smoke = False
+                                if self.__player.smoke and self.__guard_near_player():
+                                    self.__draw_smoke()
+                                    self.__alert_mode_off()
+                                    self.__player.smoke = False
                             case pygame.K_h:  # help screen in game
                                 self.__state = 'help'
                             case pygame.K_i:
@@ -326,6 +335,21 @@ class Game:
             if guard.position() in player_box:
                 return True
         return False
+
+    def __draw_smoke(self):
+        smoke_image = big_torch = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke.png")
+        player_box = [(self.__player.position()[0] - 1, self.__player.position()[1] - 1),
+                      (self.__player.position()[0], self.__player.position()[1] - 1),
+                      (self.__player.position()[0] + 1, self.__player.position()[1] - 1),
+                      (self.__player.position()[0] - 1, self.__player.position()[1]),
+                      (self.__player.position()[0], self.__player.position()[1]),
+                      (self.__player.position()[0] + 1, self.__player.position()[1]),
+                      (self.__player.position()[0] - 1, self.__player.position()[1] + 1),
+                      (self.__player.position()[0], self.__player.position()[1] + 1),
+                      (self.__player.position()[0] + 1, self.__player.position()[1] + 1)]
+        for coord in player_box:
+            self.__screen.foreground_surface.blit(smoke_image, (coord[0] * 32 * self.__resolution, coord[1] * 32 * self.__resolution))
+        self.__screen.update()
 
     def __move_player(self):
         dashed = False  # if player dashed, torch will be lit, conditional at end of function
@@ -569,9 +593,6 @@ class Game:
                             self.__board.tiles[player_position[1] + 1][player_position[0]].lit:
                         self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
                         self.__board.torch_check()
-        if self.__player.smoke and self.__guard_near_player():
-            self.__alert_mode_off()
-            self.__player.smoke = False
         player_position = self.__player.position()
         if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
                 self.__board.tiles[player_position[1]][player_position[0]].lit:
@@ -889,6 +910,7 @@ class Game:
                     self.__music.play_music('menu')
                     run_menu(self.__width, self.__height, self.__rects, self.__screen,
                              self.__anim_torches)
+                    self.loaded = True
                 case 'options':
                     pygame.mouse.set_visible(True)
                     run_options(self.__width, self.__height, self.__rects, self.__screen,
