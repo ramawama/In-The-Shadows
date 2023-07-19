@@ -357,18 +357,32 @@ class Game:
     def __move_player(self):
         dashed = False  # if player dashed, torch will be lit, conditional at end of function
         extinguished = False
+        water_flask_speed = 0.15
         player_position = self.__player.position()
+
+        # changes sprites depending on if moving left, right, up, or down
+        self.__player.direction = self.__move_direction
+        self.__player.update_sprites()
+
         if self.__move_counter == 31 // self.__resolution:
             self.__state = 'move_guard'
+
+            replace_tile = self.__board.tiles[player_position[1]][player_position[0]].image
+            replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
+                                                  (32 * self.__resolution, 32 * self.__resolution))
+            self.__screen.foreground_surface.blit(replace_tile, (
+                (player_position[0] * 32 * self.__resolution), (player_position[1] * 32 * self.__resolution)))
+            self.__player.draw()
             match self.__move_direction:
                 case 'up':
                     if self.__player.extinguish:
                         extinguished = True
                         tempY = player_position[1] - 1
-                        while tempY > 0:
+                        while tempY >= 0:
                             self.__screen.foreground_surface.blit(self.__water_flask, (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
                             self.__screen.update()
-                            time.sleep(0.01)
+                            self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
+                            time.sleep(water_flask_speed)
                             if self.__board.tiles[tempY][player_position[0]].type == "w":
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
@@ -377,6 +391,12 @@ class Game:
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            replace_tile = self.__board.tiles[tempY][player_position[0]].image
+                            replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
+                                                                  (32 * self.__resolution, 32 * self.__resolution))
+                            self.__screen.foreground_surface.blit(replace_tile, (
+                            (player_position[0] * 32 * self.__resolution), (tempY * 32 * self.__resolution)))
+                            self.__screen.update()
                             tempY -= 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
@@ -395,10 +415,11 @@ class Game:
                     if self.__player.extinguish:
                         extinguished = True
                         tempY = player_position[1] + 1
-                        while tempY < 15:
+                        while tempY <= 15:
                             self.__screen.foreground_surface.blit(self.__water_flask, (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
                             self.__screen.update()
-                            time.sleep(0.01)
+                            self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
+                            time.sleep(water_flask_speed)
                             if self.__board.tiles[tempY][player_position[0]].type == "w":
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
@@ -407,6 +428,12 @@ class Game:
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            replace_tile = self.__board.tiles[tempY][player_position[0]].image
+                            replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
+                                                                  (32 * self.__resolution, 32 * self.__resolution))
+                            self.__screen.foreground_surface.blit(replace_tile, (
+                                (player_position[0] * 32 * self.__resolution), (tempY * 32 * self.__resolution)))
+                            self.__screen.update()
                             tempY += 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
@@ -425,10 +452,12 @@ class Game:
                     if self.__player.extinguish:
                         extinguished = True
                         tempX = player_position[0] - 1
-                        while tempX > 0:
-                            self.__screen.foreground_surface.blit(self.__water_flask, (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                        while tempX >= 0:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (
+                                tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
                             self.__screen.update()
-                            time.sleep(0.01)
+                            self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
+                            time.sleep(water_flask_speed)
                             if self.__board.tiles[player_position[1]][tempX].type == "w":
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
@@ -437,6 +466,12 @@ class Game:
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            replace_tile = self.__board.tiles[player_position[1]][tempX].image
+                            replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
+                                                                  (32 * self.__resolution, 32 * self.__resolution))
+                            self.__screen.foreground_surface.blit(replace_tile, (
+                                tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                            self.__screen.update()
                             tempX -= 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
@@ -455,10 +490,12 @@ class Game:
                     if self.__player.extinguish:
                         extinguished = True
                         tempX = player_position[0] + 1
-                        while tempX < 28:
-                            self.__screen.foreground_surface.blit(self.__water_flask, (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                        while tempX <= 28:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (
+                            tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
                             self.__screen.update()
-                            time.sleep(0.01)
+                            self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
+                            time.sleep(water_flask_speed)
                             if self.__board.tiles[player_position[1]][tempX].type == "w":
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
@@ -467,6 +504,12 @@ class Game:
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            replace_tile = self.__board.tiles[player_position[1]][tempX].image
+                            replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
+                                                                  (32 * self.__resolution, 32 * self.__resolution))
+                            self.__screen.foreground_surface.blit(replace_tile, (
+                                tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                            self.__screen.update()
                             tempX += 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
@@ -481,9 +524,6 @@ class Game:
                     if self.__player.dash_cooldown > 0:
                         self.__player.dash_cooldown -= 1
                     self.__player.dash = False  # reset dash conditional so next turn isnt if user was by a wall etc
-        # changes sprites depending on if moving left, right, up, or down
-        self.__player.direction = self.__move_direction
-        self.__player.update_sprites()
         sprites = self.__player.currSprites()
         if self.__player.extinguish:
             return
