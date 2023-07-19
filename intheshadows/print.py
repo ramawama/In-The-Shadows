@@ -44,7 +44,7 @@ def display_help(width, height, resolution, screen):
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
 
-def display_inventory(width, height, screen, level, num_torches, num_items, turns_passed):
+def display_info(width, height, screen, level, num_torches, num_items, turns_passed):
     background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Info_screen.png")
     background = pygame.transform.scale(background, (width // 2, height // 2))
     font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height // 2 * 0.05))
