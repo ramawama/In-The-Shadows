@@ -51,7 +51,7 @@ class Board:
                                 temp_Tile = Tile("o", False, x, y)
                                 row_array.append(temp_Tile)
                                 row_char_array.append(Tile("o", False, x, y, temp_Tile.image, temp_Tile.floor_type))
-                            elif char in ['e', 'c']:
+                            elif char in ['e', '!']:
                                 self.__exit_tile = x, y
                                 temp_Tile = Tile(char, False, x, y)
                                 row_array.append(temp_Tile)

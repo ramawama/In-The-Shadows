@@ -743,7 +743,7 @@ class Game:
         return False
 
     def __check_next_level(self, player_position):
-        if self.__board.tiles[player_position[1]][player_position[0]].type in ['e', 'c']:
+        if self.__board.tiles[player_position[1]][player_position[0]].type in ['e', '!']:
             return not self.__board.check_for_key()
         return False
 
@@ -754,6 +754,7 @@ class Game:
             self.__board.torch_check()
             self.__board.unlock()
             self.__player.key = True
+            self.__screen.update()
             return True
         return False
 
