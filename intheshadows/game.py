@@ -198,13 +198,9 @@ class Game:
                                 self.__player.extinguish = True
                             case pygame.K_2:
                                 self.__player.smoke = True
-                                if self.__player.smoke and not self.__guard_near_player():
-                                    self.__draw_smoke()
-                                    self.__player.smoke = False
-                                if self.__player.smoke and self.__guard_near_player():
-                                    self.__draw_smoke()
+                                # smoke_location = self.calc_smoke_location()
+                                if self.__guard_near_player():
                                     self.__alert_mode_off()
-                                    self.__player.smoke = False
                             case pygame.K_h:  # help screen in game
                                 self.__state = 'help'
                             case pygame.K_i:
@@ -339,8 +335,8 @@ class Game:
                 return True
         return False
 
-    def __draw_smoke(self):
-        smoke_image = big_torch = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke.png")
+
+    def calc_smoke_location(self):
         player_box = [(self.__player.position()[0] - 1, self.__player.position()[1] - 1),
                       (self.__player.position()[0], self.__player.position()[1] - 1),
                       (self.__player.position()[0] + 1, self.__player.position()[1] - 1),
@@ -350,9 +346,18 @@ class Game:
                       (self.__player.position()[0] - 1, self.__player.position()[1] + 1),
                       (self.__player.position()[0], self.__player.position()[1] + 1),
                       (self.__player.position()[0] + 1, self.__player.position()[1] + 1)]
+        return player_box
+    def __draw_smoke(self, player_box):
+        smoke_image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke.png")
+        smoke_image = pygame.transform.scale(smoke_image.convert_alpha(), (32 * self.__resolution, 32 * self.__resolution))
         for coord in player_box:
             self.__screen.foreground_surface.blit(smoke_image, (coord[0] * 32 * self.__resolution, coord[1] * 32 * self.__resolution))
         self.__screen.update()
+
+    def check_smoke(self):
+        if self.__player.smoke:
+            smoke_location = self.calc_smoke_location()
+            self.__draw_smoke(smoke_location)
 
     def __move_player(self):
         dashed = False  # if player dashed, torch will be lit, conditional at end of function
@@ -783,6 +788,7 @@ class Game:
         self.__board.display_hud(self.__player)
         self.__player.draw()
         self.__draw_guards()
+        self.check_smoke()
         if self.__check_game_over(self.__player.position()):
             self.__music.play_music("game_over")
             self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
@@ -797,7 +803,7 @@ class Game:
             if self.__level == 3:
                 self.__board.unload()
                 self.__level, self.__state = win(self.__width, self.__height, self.__screen, self.__black,
-                                                 (255, 255, 255))
+                                                 0, 0, 0)
                 self.__music.play_music("win")
                 self.__player_spawn, guards = self.__board.load_level()
                 self.__set_player_and_guards()
