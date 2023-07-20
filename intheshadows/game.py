@@ -19,6 +19,7 @@ class Game:
         # Create global variables for height, width, and black and white colors
         self.__move_flag = False
         self.__anim_counter = None
+        self.__player_cant_move = False
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
         (self.__width, self.__height) = (64 * 28, 64 * 16)
@@ -485,6 +486,8 @@ class Game:
 
                     # self.__screen.update()
                     # update player location internally
+                else:
+                    self.__player_cant_move = True
                 if dashed:
                     if self.__board.tiles[player_position[1]][player_position[0] + 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] + 1].lit:
@@ -509,6 +512,8 @@ class Game:
 
                     # self.__screen.update()
                     # update player location internally
+                else:
+                    self.__player_cant_move = True
                 if dashed:
                     if self.__board.tiles[player_position[1]][player_position[0] - 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] - 1].lit:
@@ -534,6 +539,8 @@ class Game:
                     # self.__screen.update()
                     # update player location internally
 
+                else:
+                    self.__player_cant_move = True
                 if dashed:
                     if self.__board.tiles[player_position[1] - 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] - 1][player_position[0]].lit:
@@ -558,6 +565,8 @@ class Game:
 
                     # self.__screen.update()
                     # update player location internally
+                else:
+                    self.__player_cant_move = True
                 if dashed:
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] + 1][player_position[0]].lit:
@@ -574,6 +583,9 @@ class Game:
 
     # not done
     def __move_guards(self):
+        if self.__player_cant_move:
+            self.__screen.clear()
+            self.__player.draw()
         if self.__move_counter == 31 // self.__resolution:
             self.__state = 'game'
         # self.__player.draw()
@@ -758,7 +770,7 @@ class Game:
             case 'R':
                 if guard.x + 1 > 27:
                     return False
-                if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p']:
+                if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p', 'g']:
                     return False
             case 'L':
                 if guard.x - 1 < 1:
@@ -782,7 +794,10 @@ class Game:
         height = len(self.__board.tiles)
         start_num = (start[1] * width) + start[0]
         end_num = (end[1] * width) + end[0]
-        shortest = self.__vertices.get_shortest_paths(start_num, end_num)
+        try:
+            shortest = self.__vertices.get_shortest_paths(start_num, end_num)
+        except:
+            pass
         dist = shortest[0][1] - shortest[0][0]
         if dist == 1:
             return 'R'
@@ -808,8 +823,7 @@ class Game:
         for i in range(0, len(self.__guards)):
             self.__guard_returning.append(True)
 
-    def __check_guard_vision(self):
-        player_position = self.__player.position()
+    def __check_guard_vision(self, player_position):
         for x in range(len(self.__guards)):
             guard_x = self.__guards[x].x
             guard_y = self.__guards[x].y
@@ -903,6 +917,7 @@ class Game:
                     pygame.mouse.set_visible(False)
                     # Update the Player and Guard Locations
                     if self.__move_flag is True:
+                        self.__player_cant_move = False
                         if self.__check_game_over(self.__player.position()):
                             self.__music.play_music("game_over")
                             self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
@@ -911,7 +926,7 @@ class Game:
                             self.__set_player_and_guards()
                             continue
                         if self.__guard_tracking is False:
-                            self.__check_guard_vision()
+                            self.__check_guard_vision(self.__player.position())
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][
                                 (self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
@@ -932,7 +947,7 @@ class Game:
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
                         self.__update_guards()
                         if self.__guard_tracking is False:
-                            self.__check_guard_vision()
+                            self.__check_guard_vision(self.__player.position())
                     self.__allow_movement = True
                     self.__move_flag = False
                     try:
@@ -950,9 +965,23 @@ class Game:
                 case 'game_over':
                     pass
                 case 'move':
-                    if self.__move_flag is False:
-                        self.__move_flag = True
+
                     self.__move_player()
+                    if self.__move_flag is False:
+                        match self.__move_direction:
+                            case 'left':
+                                player_pos = (self.__player.position()[0] - 1, self.__player.position()[1])
+                            case 'up':
+                                player_pos = (self.__player.position()[0], self.__player.position()[1] - 1)
+                            case 'down':
+                                player_pos = (self.__player.position()[0], self.__player.position()[1] + 1)
+                            case 'right':
+                                player_pos = (self.__player.position()[0] + 1, self.__player.position()[1])
+                        try:
+                            self.__check_guard_vision(player_pos)
+                        except:
+                            pass
+                        self.__move_flag = True
                     self.__move_guards()
             self.__screen.update()
         self.save_level()
