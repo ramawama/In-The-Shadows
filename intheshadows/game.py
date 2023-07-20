@@ -602,6 +602,7 @@ class Game:
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
+            self.__guards[x].direction = move_direction
             self.__guards[x].update_sprites()
             match move_direction:
                 case 'R':
