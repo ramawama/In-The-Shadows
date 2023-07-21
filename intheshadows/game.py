@@ -18,6 +18,8 @@ class Game:
     def __init__(self):
         # Create global variables for height, width, and black and white colors
         self.__move_flag = False
+        self.__dashing = False
+        self.__step_dist = 1
         self.__anim_counter = None
         self.__player_cant_move = False
         self.__black = (0, 0, 0)
@@ -95,6 +97,8 @@ class Game:
         self.__guard_positions.clear()
         self.__guard_returning = []
         self.__turn_counter = []
+        self.__guard_predetermine_holder = []
+        self.__guard_position_before_tracking = []
         self.__guard_tracking = False
         for x in range(len(self.__guard_routes)):
             self.__guards.append(
@@ -103,7 +107,10 @@ class Game:
                       self.__difficulty))
             self.__guard_positions.append(())
             self.__guard_returning.append(False)
+            self.__guard_predetermine_holder.append(())
             self.__turn_counter.append(0)
+            self.__guard_position_before_tracking.append((int(self.__guard_routes[x][0][0]),
+                      int(self.__guard_routes[x][0][1])))
 
     # Changes states when escape is pressed
     def __escape_state(self):
@@ -592,16 +599,17 @@ class Game:
         for x in range(len(self.__guards)):
             step_size = 1 * self.__resolution * self.__resolution
             move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
+            player_step = 1
             if self.__guard_tracking:
                 match self.__move_direction:
                     case 'left':
-                        player_pos = (self.__player.position()[0] - 1, self.__player.position()[1])
+                        player_pos = (self.__player.position()[0] - self.__step_dist, self.__player.position()[1])
                     case 'up':
-                        player_pos = (self.__player.position()[0], self.__player.position()[1] - 1)
+                        player_pos = (self.__player.position()[0], self.__player.position()[1] - self.__step_dist)
                     case 'down':
-                        player_pos = (self.__player.position()[0], self.__player.position()[1] + 1)
+                        player_pos = (self.__player.position()[0], self.__player.position()[1] + self.__step_dist)
                     case 'right':
-                        player_pos = (self.__player.position()[0] + 1, self.__player.position()[1])
+                        player_pos = (self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
                 try:
                     move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                       player_pos)
@@ -775,17 +783,17 @@ class Game:
             case 'L':
                 if guard.x - 1 < 1:
                     return False
-                if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p']:
+                if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p', 'g']:
                     return False
             case 'U':
                 if guard.y - 1 < 1:
                     return False
-                if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p']:
+                if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p', 'g']:
                     return False
             case 'D':
                 if guard.y + 1 > 27:
                     return False
-                if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p']:
+                if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p', 'g']:
                     return False
         return True
 
@@ -812,9 +820,8 @@ class Game:
     def __alert_mode_on(self):
         self.__guard_tracking = True
         self.__music.play_music('alert')
-        self.__guard_position_before_tracking = []
         for i in range(0, len(self.__guards)):
-            self.__guard_position_before_tracking.append((self.__guards[i].x, self.__guards[i].y))
+            self.__turn_counter[i] = 0
 
     def __alert_mode_off(self):
         self.__guard_tracking = False
@@ -848,6 +855,42 @@ class Game:
                 except:
                     pass
 
+    def __predetermine_guard_positions(self):
+        for x in range(len(self.__guards)):
+            move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
+            player_step = 1
+            if self.__guard_tracking:
+                match self.__move_direction:
+                    case 'left':
+                        player_pos = (self.__player.position()[0] - 1, self.__player.position()[1])
+                    case 'up':
+                        player_pos = (self.__player.position()[0], self.__player.position()[1] - 1)
+                    case 'down':
+                        player_pos = (self.__player.position()[0], self.__player.position()[1] + 1)
+                    case 'right':
+                        player_pos = (self.__player.position()[0] + 1, self.__player.position()[1])
+                try:
+                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                          player_pos)
+                except Exception as e:
+                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                          self.__player.position())
+            elif self.__guard_returning[x]:
+                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                      self.__guard_position_before_tracking[x])
+            match move_direction:
+                case 'R':
+                    if self.__check_guard_path(self.__guards[x], 'R'):
+                        pass
+                case 'L':
+                    if self.__check_guard_path(self.__guards[x], 'L'):
+                        pass
+                case 'U':
+                    if self.__check_guard_path(self.__guards[x], 'U'):
+                        pass
+                case 'D':
+                    if self.__check_guard_path(self.__guards[x], 'D'):
+                        pass
     def __update_guards(self):
         for x in range(len(self.__guards)):
             move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
@@ -915,6 +958,8 @@ class Game:
                                 self.__anim_torches, self.__difficulty)
                 case 'game':
                     pygame.mouse.set_visible(False)
+                    self.__dashing = False
+                    self.__step_dist = 1
                     # Update the Player and Guard Locations
                     if self.__move_flag is True:
                         self.__player_cant_move = False
@@ -965,18 +1010,21 @@ class Game:
                 case 'game_over':
                     pass
                 case 'move':
-
+                    if self.__player.dash:
+                        self.__dashing = True
                     self.__move_player()
                     if self.__move_flag is False:
+                        if self.__dashing:
+                            self.__step_dist = 2
                         match self.__move_direction:
                             case 'left':
-                                player_pos = (self.__player.position()[0] - 1, self.__player.position()[1])
+                                player_pos = (self.__player.position()[0] - self.__step_dist, self.__player.position()[1])
                             case 'up':
-                                player_pos = (self.__player.position()[0], self.__player.position()[1] - 1)
+                                player_pos = (self.__player.position()[0], self.__player.position()[1] - self.__step_dist)
                             case 'down':
-                                player_pos = (self.__player.position()[0], self.__player.position()[1] + 1)
+                                player_pos = (self.__player.position()[0], self.__player.position()[1] + self.__step_dist)
                             case 'right':
-                                player_pos = (self.__player.position()[0] + 1, self.__player.position()[1])
+                                player_pos = (self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
                         try:
                             self.__check_guard_vision(player_pos)
                         except:
