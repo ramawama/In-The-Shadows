@@ -254,6 +254,7 @@ class Game:
                                 if self.__player.num_water > 0:
                                     self.__player.extinguish = True
                                     self.__player.num_water -= 1
+                                    self.__items_used += 1
                             case pygame.K_2:
                                 if self.__player.num_smoke > 0:
                                     self.__player.smoke = True
@@ -262,6 +263,7 @@ class Game:
                                     if self.__guard_tracking:
                                         self.__alert_mode_off()
                                     self.__player.num_smoke -= 1
+                                    self.__items_used += 1
                             case pygame.K_i:
                                 self.__state = 'inventory'
                             case pygame.K_m:
