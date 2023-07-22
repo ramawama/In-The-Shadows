@@ -888,6 +888,58 @@ class Game:
                         break
                 except:
                     pass
+            match self.__guards[x].direction:
+                case "up":
+                    dx = [-1, 0, 1]
+                    guard_y = guard_y - 1
+                    while guard_y >= 0:
+                        for i in range(0, 3):
+                            try:
+                                if self.__board.tiles[guard_y][guard_x + dx[i]].lit and guard_y == player_position[1] and guard_x + dx[i] == player_position[0]:
+                                    self.__alert_mode_on()
+                                    break
+                            except:
+                                pass
+                        guard_y = guard_y - 1
+                case "down":
+                    dx = [-1, 0, 1]
+                    guard_y = guard_y + 1
+                    while guard_y <= 28:
+                        for i in range(0, 3):
+                            try:
+                                if self.__board.tiles[guard_y][guard_x + dx[i]].lit and guard_y == player_position[
+                                    1] and guard_x + dx[i] == player_position[0]:
+                                    self.__alert_mode_on()
+                                    break
+                            except:
+                                pass
+                        guard_y = guard_y + 1
+                case "right":
+                    dy = [-1, 0, 1]
+                    guard_x = guard_x + 1
+                    while guard_x <= 28:
+                        for i in range(0, 3):
+                            try:
+                                if self.__board.tiles[guard_y + dy[i]][guard_x].lit and guard_y + dy[i] == player_position[
+                                    1] and guard_x == player_position[0]:
+                                    self.__alert_mode_on()
+                                    break
+                            except:
+                                pass
+                        guard_x = guard_x + 1
+                case "left":
+                    dy = [-1, 0, 1]
+                    guard_x = guard_x - 1
+                    while guard_x >= 0:
+                        for i in range(0, 3):
+                            try:
+                                if self.__board.tiles[guard_y + dy[i]][guard_x].lit and guard_y + dy[i] == \
+                                        player_position[1] and guard_x == player_position[0]:
+                                    self.__alert_mode_on()
+                                    break
+                            except:
+                                pass
+                        guard_x = guard_x - 1
 
     def __update_guards(self):
         for x in range(len(self.__guards)):
