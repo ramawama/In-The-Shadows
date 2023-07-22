@@ -51,6 +51,10 @@ class Tile:
                 case "!":
                     self._image = pygame.image.load(
                         Path(__file__).parent / "assets/graphics/Level Elements/treasure_locked.png").convert_alpha()
+                case "b":
+                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Chest.png").convert_alpha()
+                case "s":
+                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Chest.png").convert_alpha()
                 case "o":
                     if random_selector == 0 and randomize:
                         match rand_int:
