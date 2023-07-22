@@ -911,53 +911,63 @@ class Game:
                         break
                 except:
                     pass
+            block_views = []
             match self.__guards[x].direction:
                 case "up":
-                    dx = [-1, 0, 1]
-                    guard_y = guard_y - 1
+                    dx = [-2, -1, 0, 1, 2]
+                    guard_y = guard_y - 3
                     while guard_y >= 0:
-                        for i in range(0, 3):
+                        for i in range(0, 5):
                             try:
-                                if self.__board.tiles[guard_y][guard_x + dx[i]].lit and guard_y == player_position[1] and guard_x + dx[i] == player_position[0]:
+                                if self.__board.tiles[guard_y][guard_x + dx[i]].type == 'w':
+                                    blocked_views.append(i)
+                                if self.__board.tiles[guard_y][guard_x + dx[i]].lit and guard_y == player_position[1] \
+                                        and guard_x + dx[i] == player_position[0]  and i not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
                                 pass
                         guard_y = guard_y - 1
                 case "down":
-                    dx = [-1, 0, 1]
-                    guard_y = guard_y + 1
+                    dx = [-2, -1, 0, 1, 2]
+                    guard_y = guard_y + 3
                     while guard_y <= 28:
-                        for i in range(0, 3):
+                        for i in range(0, 5):
                             try:
+                                if self.__board.tiles[guard_y][guard_x + dx[i]].type == 'w':
+                                    blocked_views.append(i)
                                 if self.__board.tiles[guard_y][guard_x + dx[i]].lit and guard_y == player_position[
-                                    1] and guard_x + dx[i] == player_position[0]:
+                                    1] and guard_x + dx[i] == player_position[0] and i not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
                                 pass
-                        guard_y = guard_y + 1
+                        guard_y = guard_y + 3
                 case "right":
-                    dy = [-1, 0, 1]
+                    dy = [-2, -1, 0, 1, 2]
                     guard_x = guard_x + 1
                     while guard_x <= 28:
-                        for i in range(0, 3):
+                        for i in range(0, 5):
                             try:
+                                if self.__board.tiles[guard_y + dy[i]][guard_x].type == 'w':
+                                    blocked_views.append(i)
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].lit and guard_y + dy[i] == player_position[
-                                    1] and guard_x == player_position[0]:
+                                    1] and guard_x == player_position[0]  and i not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
                                 pass
-                        guard_x = guard_x + 1
+                        guard_x = guard_x + 3
                 case "left":
-                    dy = [-1, 0, 1]
-                    guard_x = guard_x - 1
+                    dy = [-2, -1, 0, 1, 2]
+                    guard_x = guard_x - 3
                     while guard_x >= 0:
-                        for i in range(0, 3):
+                        for i in range(0, 5):
                             try:
+                                if self.__board.tiles[guard_y + dy[i]][guard_x].type == 'w':
+                                    blocked_views.append(i)
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].lit and guard_y + dy[i] == \
-                                        player_position[1] and guard_x == player_position[0]:
+                                        player_position[1] and guard_x == player_position[0]  and i not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
