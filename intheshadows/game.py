@@ -429,7 +429,6 @@ class Game:
                       (self.__player.position()[0], self.__player.position()[1] + 1),
                       (self.__player.position()[0] + 1, self.__player.position()[1] + 1)]
         for box in player_box:
-            print(self.__board.tiles[box[1]][box[0]].type)
             if self.__board.tiles[box[1]][box[0]].type != 'w':
                 result.append(box)
         return result
@@ -1016,6 +1015,9 @@ class Game:
         for x in range(len(self.__guards)):
             guard_x = self.__guards[x].x
             guard_y = self.__guards[x].y
+            if self.__smoke_turn_counter > 0 and self.__smoke_location is not None:
+                if (guard_x, guard_y) in self.__smoke_location:
+                    continue
             match self.__guards[x].direction:
                 case "up":
                     dx = [-1, 0, 1, -1, 0, 1]
