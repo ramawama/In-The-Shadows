@@ -831,7 +831,7 @@ class Game:
             if self.__level == 3:
                 self.__board.unload()
                 self.__level, self.__state = win(self.__width, self.__height, self.__screen, self.__black,
-                                                 0, 0, 0)
+                                                 self.__torch_extinguished, self.__items_used, self.__turns_passed)
                 self.__music.play_music("win")
                 self.__player_spawn, guards = self.__board.load_level()
                 self.__set_player_and_guards()
