@@ -4,7 +4,7 @@ import random
 
 
 class Tile:
-    def __init__(self, tile_type="o", behind_torch=False, x=0, y=0, image=None, floor_type=""):
+    def __init__(self, tile_type="o", behind_torch=False, x=0, y=0, image=None, floor_type="", randomize=True):
         self._tile_type = tile_type
         self._pos = [x, y]
         self._lit = False
@@ -48,7 +48,7 @@ class Tile:
                 case "c":
                     self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Chest_locked.png").convert_alpha()
                 case "o":
-                    if random_selector == 0:
+                    if random_selector == 0 and randomize:
                         match rand_int:
                             case 2:
                                 self._floor_type = "_cracked"
