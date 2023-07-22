@@ -1023,8 +1023,6 @@ class Game:
                         self.__run_game()
                     except Exception as E:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
-                case 'help':
-                    display_help(self.__width, self.__height, self.__resolution, self.__screen)
                 case 'inventory':
                     display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0, 999, 999)
                     '''
