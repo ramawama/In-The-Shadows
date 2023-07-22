@@ -403,6 +403,7 @@ class Game:
                             player_position[0]].type != "w":
                             self.__player.moveUp()
                             self.__check_key(self.__player.position())
+                            self.__check_item(self.__player.position())
                             self.__player.moveUp()
                             dashed = True
                             self.__player.dash_counter = 4
@@ -442,6 +443,7 @@ class Game:
                             player_position[0]].type != "w":
                             self.__player.moveDown()
                             self.__check_key(self.__player.position())
+                            self.__check_item(self.__player.position())
                             self.__player.moveDown()
                             dashed = True
                             self.__player.dash_counter = 4
@@ -481,6 +483,7 @@ class Game:
                             player_position[0] - 2].type != "w":
                             self.__player.moveLeft()
                             self.__check_key(self.__player.position())
+                            self.__check_item(self.__player.position())
                             self.__player.moveLeft()
                             dashed = True
                             self.__player.dash_counter = 4
@@ -520,6 +523,7 @@ class Game:
                             player_position[0] + 2].type != "w":
                             self.__player.moveRight()
                             self.__check_key(self.__player.position())
+                            self.__check_item(self.__player.position())
                             self.__player.moveRight()
                             dashed = True
                             self.__player.dash_counter = 4
@@ -774,6 +778,19 @@ class Game:
             return True
         return False
 
+    def __check_item(self, player_position):
+        if self.__board.tiles[player_position[1]][player_position[0]].type in ["b", "s"]:
+            if self.__board.tiles[player_position[1]][player_position[0]].type == "b":
+                self.__player.num_water += 1
+            else:
+                self.__player.num_smoke += 1
+            self.__board.tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
+            self.__board.orig_tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
+            self.__board.torch_check()
+            self.__screen.update()
+            return True
+        return False
+
     def __draw_guards(self):
         for x in range(len(self.__guards)):
             self.__guards[x].draw()
@@ -809,6 +826,7 @@ class Game:
             self.__guard_tracking = False
 
         self.__check_key(self.__player.position())  # change to if statement if you want to do hud stuff
+        self.__check_item(self.__player.position())
 
         if self.__check_next_level(self.__player.position()):
             if self.__level == 3:
