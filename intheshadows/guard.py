@@ -57,7 +57,17 @@ class Guard:
 
     @direction.setter
     def direction(self, direction):
-        self.__direction = direction
+        match direction:
+            case 'U':
+                self.__direction = 'up'
+            case 'D':
+                self.__direction = 'down'
+            case 'R':
+                self.__direction = 'right'
+            case 'L':
+                self.__direction = 'left'
+            case _:
+                self.__direction = direction
 
     def moveUp(self):
         self.__direction = "up"

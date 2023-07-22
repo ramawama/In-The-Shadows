@@ -18,8 +18,8 @@ class Tile:
             match tile_type:
                 case "t":
                     self.light()
-                case "g":
-                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Guard/Guard_EASY.png").convert_alpha()
+                #case "g":
+                    #self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Guard/Guard_EASY.png").convert_alpha()
                 case "p":
                     self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue.png").convert_alpha()
                 case "w":
@@ -46,11 +46,7 @@ class Tile:
                 case "k":
                     self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Key.png").convert_alpha()
                 case "c":
-                    self._image = pygame.image.load(
-                        Path(__file__).parent / "assets/graphics/Level Elements/Chest_locked.png").convert_alpha()
-                case "!":
-                    self._image = pygame.image.load(
-                        Path(__file__).parent / "assets/graphics/Level Elements/treasure_locked.png").convert_alpha()
+                    self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Chest_locked.png").convert_alpha()
                 case "o":
                     if random_selector == 0 and randomize:
                         match rand_int:
@@ -119,5 +115,5 @@ class Tile:
     def unlock(self):
         if self.type == "e":
             self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Exit.png").convert_alpha()
-        elif self.type == '!':
-            self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/treasure.png").convert_alpha()
+        elif self.type == 'c':
+            self._image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/Chest.png").convert_alpha()
