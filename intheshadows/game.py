@@ -107,6 +107,9 @@ class Game:
                     counter += 1
         else:
             self.__level = 1
+            self.__torch_extinguished = 0
+            self.__items_used = 0
+            self.__turns_passed = 0
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
@@ -243,6 +246,7 @@ class Game:
                                     self.__guard_positions[x] = (
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
+                                self.__turns_passed += 1
                             case pygame.K_a | pygame.K_LEFT:
                                 if self.__allow_movement is False:
                                     continue
@@ -257,6 +261,7 @@ class Game:
                                     self.__guard_positions[x] = (
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
+                                self.__turns_passed += 1
                             case pygame.K_s | pygame.K_DOWN:
                                 if self.__allow_movement is False:
                                     continue
@@ -271,6 +276,7 @@ class Game:
                                     self.__guard_positions[x] = (
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
+                                self.__turns_passed += 1
                             case pygame.K_d | pygame.K_RIGHT:
                                 if self.__allow_movement is False:
                                     continue
@@ -285,20 +291,22 @@ class Game:
                                     self.__guard_positions[x] = (
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
+                                self.__turns_passed += 1
         elif self.__state == 'load':
             for ev in pygame.event.get():
-                if ev.type == pygame.KEYDOWN:
+                if ev.type == pygame.QUIT:
+                    self.__running = False
+                elif ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
                     if ev.key == pygame.K_r:
                         self.__level = 1
                         self.save_level()
-                    if ev.key == pygame.K_ESCAPE:
+                    elif ev.key == pygame.K_ESCAPE:
                         self.__escape_state()
-                        return
-                if ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
-                    self.__state = 'game'
-                    self.__board.unload()
-                    self.__player_spawn, self.__guard_routes = self.__load_game()
-                    self.__set_player_and_guards()
+                    else:
+                        self.__state = 'game'
+                        self.__board.unload()
+                        self.__player_spawn, self.__guard_routes = self.__load_game()
+                        self.__set_player_and_guards()
         elif self.__state == 'inventory':
             for ev in pygame.event.get():
                 match ev.type:
@@ -394,6 +402,7 @@ class Game:
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
                                 self.__board.tiles[tempY][player_position[0]].unlight()
+                                self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
@@ -431,6 +440,7 @@ class Game:
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
                                 self.__board.tiles[tempY][player_position[0]].unlight()
+                                self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
@@ -469,6 +479,7 @@ class Game:
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
                                 self.__board.tiles[player_position[1]][tempX].unlight()
+                                self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
@@ -507,6 +518,7 @@ class Game:
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
                                 self.__board.tiles[player_position[1]][tempX].unlight()
+                                self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
@@ -565,6 +577,7 @@ class Game:
                     if self.__board.tiles[player_position[1]][player_position[0] + 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] + 1].lit:
                         self.__board.tiles[player_position[1]][player_position[0] + 1].unlight()
+                        self.__torch_extinguished += 1
                         self.__board.torch_check()
 
             case "left":
@@ -593,6 +606,7 @@ class Game:
                     if self.__board.tiles[player_position[1]][player_position[0] - 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] - 1].lit:
                         self.__board.tiles[player_position[1]][player_position[0] - 1].unlight()
+                        self.__torch_extinguished += 1
                         self.__board.torch_check()
 
             case "up":
@@ -622,6 +636,7 @@ class Game:
                     if self.__board.tiles[player_position[1] - 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] - 1][player_position[0]].lit:
                         self.__board.tiles[player_position[1] - 1][player_position[0]].unlight()
+                        self.__torch_extinguished += 1
                         self.__board.torch_check()
 
             case "down":
@@ -650,11 +665,14 @@ class Game:
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] + 1][player_position[0]].lit:
                         self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
+                        self.__torch_extinguished += 1
                         self.__board.torch_check()
+
         player_position = self.__player.position()
         if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
                 self.__board.tiles[player_position[1]][player_position[0]].lit:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
+            self.__torch_extinguished += 1
             self.__board.torch_check()
 
     # not done
@@ -994,7 +1012,7 @@ class Game:
                     except Exception as E:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
                 case 'inventory':
-                    display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0, 999, 999)
+                    display_info(self.__width, self.__height, self.__screen, self.__level, self.__torch_extinguished, self.__items_used, self.__turns_passed, 999, 999)
                     '''
                     TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
                     also have it track what items are used etc
