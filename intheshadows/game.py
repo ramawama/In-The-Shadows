@@ -4,7 +4,7 @@ import pygame
 import os
 import igraph as ig
 import time
-from intheshadows.print import display_help, run_menu, run_options, display_inventory, loading_screen
+from intheshadows.print import display_help, run_menu, run_options, display_info, loading_screen
 from intheshadows.events import game_over, win
 from intheshadows.guard import Guard
 from intheshadows.tile import Tile
@@ -74,6 +74,8 @@ class Game:
             pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png").convert_alpha(),
             (self.__resolution * 32, self.__resolution * 32))
 
+        self.loaded = False
+
     def save_level(self):
         save_file = Path(__file__).parent / "user_progress.txt"
         with open(save_file, 'w') as file:
@@ -116,7 +118,7 @@ class Game:
     def __escape_state(self):
         match self.__state:
             case 'load':
-                self.__state = 'game'
+                self.__state = 'menu'
             case 'options':
                 self.__state = 'menu'
             case 'game':
@@ -135,14 +137,14 @@ class Game:
 
     # Changes state based on button click
     def __mouse_click(self, mouse_pos):
-        if self.__state == 'menu':
+        if self.__state == 'menu' and self.loaded:
             if self.__rects['start_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'load'
             elif self.__rects['options_text_rect'].collidepoint(mouse_pos):
                 self.__state = 'options'
             elif self.__rects['quit_text_rect'].collidepoint(mouse_pos):
                 self.__running = False
-        elif self.__state == 'options':
+        elif self.__state == 'options' and self.loaded:
             if self.__rects['easy_difficulty_rect'].collidepoint(mouse_pos):
                 self.__difficulty = "EASY"
                 self.__guard_difficulty = 1
@@ -204,6 +206,9 @@ class Game:
                                 self.__player.extinguish = True
                             case pygame.K_2:
                                 self.__player.smoke = True
+                                # smoke_location = self.calc_smoke_location()
+                                if self.__guard_near_player():
+                                    self.__alert_mode_off()
                             case pygame.K_h:  # help screen in game
                                 self.__state = 'help'
                             case pygame.K_i:
@@ -279,6 +284,9 @@ class Game:
                     if ev.key == pygame.K_r:
                         self.__level = 1
                         self.save_level()
+                    if ev.key == pygame.K_ESCAPE:
+                        self.__escape_state()
+                        return
                 if ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
                     self.__state = 'game'
                     self.__board.unload()
@@ -335,21 +343,58 @@ class Game:
                 return True
         return False
 
+
+    def calc_smoke_location(self):
+        player_box = [(self.__player.position()[0] - 1, self.__player.position()[1] - 1),
+                      (self.__player.position()[0], self.__player.position()[1] - 1),
+                      (self.__player.position()[0] + 1, self.__player.position()[1] - 1),
+                      (self.__player.position()[0] - 1, self.__player.position()[1]),
+                      (self.__player.position()[0], self.__player.position()[1]),
+                      (self.__player.position()[0] + 1, self.__player.position()[1]),
+                      (self.__player.position()[0] - 1, self.__player.position()[1] + 1),
+                      (self.__player.position()[0], self.__player.position()[1] + 1),
+                      (self.__player.position()[0] + 1, self.__player.position()[1] + 1)]
+        return player_box
+    def __draw_smoke(self, player_box):
+        smoke_image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke.png")
+        smoke_image = pygame.transform.scale(smoke_image.convert_alpha(), (32 * self.__resolution, 32 * self.__resolution))
+        for coord in player_box:
+            self.__screen.foreground_surface.blit(smoke_image, (coord[0] * 32 * self.__resolution, coord[1] * 32 * self.__resolution))
+        self.__screen.update()
+
+    def check_smoke(self):
+        if self.__player.smoke:
+            smoke_location = self.calc_smoke_location()
+            self.__draw_smoke(smoke_location)
+
     def __move_player(self):
         dashed = False  # if player dashed, torch will be lit, conditional at end of function
         extinguished = False
+        water_flask_speed = 0.15
         player_position = self.__player.position()
+
+        # changes sprites depending on if moving left, right, up, or down
+        self.__player.direction = self.__move_direction
+        self.__player.update_sprites()
+
         if self.__move_counter == 31 // self.__resolution:
-            # self.__state = 'move_guard'
+            self.__state = 'game'
+            replace_tile = self.__board.tiles[player_position[1]][player_position[0]].image
+            replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
+                                                  (32 * self.__resolution, 32 * self.__resolution))
+            self.__screen.foreground_surface.blit(replace_tile, (
+                (player_position[0] * 32 * self.__resolution), (player_position[1] * 32 * self.__resolution)))
+            self.__player.draw()
             match self.__move_direction:
                 case 'up':
                     if self.__player.extinguish:
                         extinguished = True
                         tempY = player_position[1] - 1
-                        while tempY > 0:
+                        while tempY >= 0:
                             self.__screen.foreground_surface.blit(self.__water_flask, (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
                             self.__screen.update()
-                            time.sleep(0.01)
+                            self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
+                            time.sleep(water_flask_speed)
                             if self.__board.tiles[tempY][player_position[0]].type == "w":
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
@@ -358,6 +403,12 @@ class Game:
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            replace_tile = self.__board.tiles[tempY][player_position[0]].image
+                            replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
+                                                                  (32 * self.__resolution, 32 * self.__resolution))
+                            self.__screen.foreground_surface.blit(replace_tile, (
+                            (player_position[0] * 32 * self.__resolution), (tempY * 32 * self.__resolution)))
+                            self.__screen.update()
                             tempY -= 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
@@ -376,10 +427,11 @@ class Game:
                     if self.__player.extinguish:
                         extinguished = True
                         tempY = player_position[1] + 1
-                        while tempY < 15:
+                        while tempY <= 15:
                             self.__screen.foreground_surface.blit(self.__water_flask, (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
                             self.__screen.update()
-                            time.sleep(0.01)
+                            self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
+                            time.sleep(water_flask_speed)
                             if self.__board.tiles[tempY][player_position[0]].type == "w":
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
@@ -388,6 +440,12 @@ class Game:
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            replace_tile = self.__board.tiles[tempY][player_position[0]].image
+                            replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
+                                                                  (32 * self.__resolution, 32 * self.__resolution))
+                            self.__screen.foreground_surface.blit(replace_tile, (
+                                (player_position[0] * 32 * self.__resolution), (tempY * 32 * self.__resolution)))
+                            self.__screen.update()
                             tempY += 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
@@ -406,10 +464,12 @@ class Game:
                     if self.__player.extinguish:
                         extinguished = True
                         tempX = player_position[0] - 1
-                        while tempX > 0:
-                            self.__screen.foreground_surface.blit(self.__water_flask, (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                        while tempX >= 0:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (
+                                tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
                             self.__screen.update()
-                            time.sleep(0.01)
+                            self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
+                            time.sleep(water_flask_speed)
                             if self.__board.tiles[player_position[1]][tempX].type == "w":
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
@@ -418,6 +478,12 @@ class Game:
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            replace_tile = self.__board.tiles[player_position[1]][tempX].image
+                            replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
+                                                                  (32 * self.__resolution, 32 * self.__resolution))
+                            self.__screen.foreground_surface.blit(replace_tile, (
+                                tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                            self.__screen.update()
                             tempX -= 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
@@ -436,10 +502,12 @@ class Game:
                     if self.__player.extinguish:
                         extinguished = True
                         tempX = player_position[0] + 1
-                        while tempX < 28:
-                            self.__screen.foreground_surface.blit(self.__water_flask, (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                        while tempX <= 28:
+                            self.__screen.foreground_surface.blit(self.__water_flask, (
+                            tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
                             self.__screen.update()
-                            time.sleep(0.01)
+                            self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
+                            time.sleep(water_flask_speed)
                             if self.__board.tiles[player_position[1]][tempX].type == "w":
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
@@ -448,6 +516,12 @@ class Game:
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            replace_tile = self.__board.tiles[player_position[1]][tempX].image
+                            replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
+                                                                  (32 * self.__resolution, 32 * self.__resolution))
+                            self.__screen.foreground_surface.blit(replace_tile, (
+                                tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                            self.__screen.update()
                             tempX += 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
@@ -462,9 +536,6 @@ class Game:
                     if self.__player.dash_cooldown > 0:
                         self.__player.dash_cooldown -= 1
                     self.__player.dash = False  # reset dash conditional so next turn isnt if user was by a wall etc
-        # changes sprites depending on if moving left, right, up, or down
-        self.__player.direction = self.__move_direction
-        self.__player.update_sprites()
         sprites = self.__player.currSprites()
         if self.__player.extinguish:
             return
@@ -475,13 +546,15 @@ class Game:
         match self.__move_direction:
             case "right":
                 if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type == "w":
+                        step_size = self.__resolution * self.__resolution
                     # draw background
                     #self.__board.draw_level()
                     self.__screen.clear()
                     # draw animation frame
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0],
                                                                                          self.__position[1]))
-                    # self.__screen.update()
+
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0] + step_size, self.__position[1])
                     # if not (self.__move_counter % anim_spd):
@@ -503,6 +576,8 @@ class Game:
 
             case "left":
                 if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type == "w":
+                        step_size = self.__resolution * self.__resolution
                     # draw animation frame
                     self.__screen.clear()
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
@@ -510,14 +585,14 @@ class Game:
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0] - step_size, self.__position[1])
-                    # if not (self.__move_counter % anim_spd):
-                    #     # self.__anim_counter += 1
+                    if not (self.__move_counter % anim_spd):
+                        self.__anim_counter += 1
 
                     # for resetting animation
-                    # if self.__anim_counter >= len(sprites):
-                    #     self.__anim_counter = 0
+                    if self.__anim_counter >= len(sprites):
+                        self.__anim_counter = 0
 
-                    # self.__screen.update()
+                    self.__screen.update()
                     # update player location internally
                 else:
                     self.__player_cant_move = True
@@ -529,6 +604,8 @@ class Game:
 
             case "up":
                 if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type == "w":
+                        step_size = self.__resolution * self.__resolution
                     # draw animation frame
                     self.__screen.clear()
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
@@ -556,6 +633,8 @@ class Game:
 
             case "down":
                 if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type == "w":
+                        step_size = self.__resolution * self.__resolution
                     # draw animation frame
                     self.__screen.clear()
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
@@ -579,9 +658,6 @@ class Game:
                             self.__board.tiles[player_position[1] + 1][player_position[0]].lit:
                         self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
                         self.__board.torch_check()
-        if self.__player.smoke and self.__guard_near_player():
-            self.__alert_mode_off()
-            self.__player.smoke = False
         player_position = self.__player.position()
         if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
                 self.__board.tiles[player_position[1]][player_position[0]].lit:
@@ -706,17 +782,18 @@ class Game:
         return False
 
     def __check_next_level(self, player_position):
-        if self.__board.tiles[player_position[1]][player_position[0]].type in ['e', 'c']:
+        if self.__board.tiles[player_position[1]][player_position[0]].type in ['e', '!']:
             return not self.__board.check_for_key()
         return False
 
     def __check_key(self, player_position):
         if self.__board.tiles[player_position[1]][player_position[0]].type == "k":
             self.__board.tiles[player_position[1]][player_position[0]] = Tile()
-            self.__board.orig_tiles[player_position[1]][player_position[0]] = 'o'
+            self.__board.orig_tiles[player_position[1]][player_position[0]] = Tile()
             self.__board.torch_check()
             self.__board.unlock()
             self.__player.key = True
+            self.__screen.update()
             return True
         return False
 
@@ -742,9 +819,10 @@ class Game:
     # Runs the actual game
     def __run_game(self):
         self.__board.draw_level()
-        self.__board.display_hud(self.__player.key)
+        self.__board.display_hud(self.__player)
         self.__player.draw()
         self.__draw_guards()
+        self.check_smoke()
         if self.__check_game_over(self.__player.position()):
             self.__music.play_music("game_over")
             self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
@@ -759,7 +837,7 @@ class Game:
             if self.__level == 3:
                 self.__board.unload()
                 self.__level, self.__state = win(self.__width, self.__height, self.__screen, self.__black,
-                                                 (255, 255, 255))
+                                                 0, 0, 0)
                 self.__music.play_music("win")
                 self.__player_spawn, guards = self.__board.load_level()
                 self.__set_player_and_guards()
@@ -802,10 +880,7 @@ class Game:
         height = len(self.__board.tiles)
         start_num = (start[1] * width) + start[0]
         end_num = (end[1] * width) + end[0]
-        try:
-            shortest = self.__vertices.get_shortest_paths(start_num, end_num)
-        except:
-            pass
+        shortest = self.__vertices.get_shortest_paths(start_num, end_num)
         dist = shortest[0][1] - shortest[0][0]
         if dist == 1:
             return 'R'
@@ -855,42 +930,6 @@ class Game:
                 except:
                     pass
 
-    def __predetermine_guard_positions(self):
-        for x in range(len(self.__guards)):
-            move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
-            player_step = 1
-            if self.__guard_tracking:
-                match self.__move_direction:
-                    case 'left':
-                        player_pos = (self.__player.position()[0] - 1, self.__player.position()[1])
-                    case 'up':
-                        player_pos = (self.__player.position()[0], self.__player.position()[1] - 1)
-                    case 'down':
-                        player_pos = (self.__player.position()[0], self.__player.position()[1] + 1)
-                    case 'right':
-                        player_pos = (self.__player.position()[0] + 1, self.__player.position()[1])
-                try:
-                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                          player_pos)
-                except Exception as e:
-                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                          self.__player.position())
-            elif self.__guard_returning[x]:
-                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                      self.__guard_position_before_tracking[x])
-            match move_direction:
-                case 'R':
-                    if self.__check_guard_path(self.__guards[x], 'R'):
-                        pass
-                case 'L':
-                    if self.__check_guard_path(self.__guards[x], 'L'):
-                        pass
-                case 'U':
-                    if self.__check_guard_path(self.__guards[x], 'U'):
-                        pass
-                case 'D':
-                    if self.__check_guard_path(self.__guards[x], 'D'):
-                        pass
     def __update_guards(self):
         for x in range(len(self.__guards)):
             move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
@@ -929,6 +968,7 @@ class Game:
         clock = pygame.time.Clock()
         self.__move_counter = 0
         self.__torch_counter = 0
+        self.__move_flag = False
         while self.__running:
             clock.tick(60)
             # print(clock.get_fps())
@@ -946,12 +986,13 @@ class Game:
             match self.__state:
                 case 'load':
                     pygame.mouse.set_visible(False)
-                    loading_screen(self.__width, self.__height, self.__resolution, self.__screen, self.__level)
+                    loading_screen(self.__width, self.__height, self.__screen, self.__level, 69, 420, 8008)
                 case 'menu':
                     pygame.mouse.set_visible(True)
                     self.__music.play_music('menu')
                     run_menu(self.__width, self.__height, self.__rects, self.__screen,
                              self.__anim_torches)
+                    self.loaded = True
                 case 'options':
                     pygame.mouse.set_visible(True)
                     run_options(self.__width, self.__height, self.__rects, self.__screen,
@@ -1002,7 +1043,7 @@ class Game:
                 case 'help':
                     display_help(self.__width, self.__height, self.__resolution, self.__screen)
                 case 'inventory':
-                    display_inventory(self.__width, self.__height, self.__resolution, self.__screen, self.__player)
+                    display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0, 999, 999)
                     '''
                     TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
                     also have it track what items are used etc
@@ -1010,6 +1051,9 @@ class Game:
                 case 'game_over':
                     pass
                 case 'move':
+                    if self.__move_flag is False:
+                        self.__move_flag = "player"
+                    self.__move_player()
                     if self.__player.dash:
                         self.__dashing = True
                     self.__move_player()
@@ -1018,13 +1062,17 @@ class Game:
                             self.__step_dist = 2
                         match self.__move_direction:
                             case 'left':
-                                player_pos = (self.__player.position()[0] - self.__step_dist, self.__player.position()[1])
+                                player_pos = (
+                                self.__player.position()[0] - self.__step_dist, self.__player.position()[1])
                             case 'up':
-                                player_pos = (self.__player.position()[0], self.__player.position()[1] - self.__step_dist)
+                                player_pos = (
+                                self.__player.position()[0], self.__player.position()[1] - self.__step_dist)
                             case 'down':
-                                player_pos = (self.__player.position()[0], self.__player.position()[1] + self.__step_dist)
+                                player_pos = (
+                                self.__player.position()[0], self.__player.position()[1] + self.__step_dist)
                             case 'right':
-                                player_pos = (self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
+                                player_pos = (
+                                self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
                         try:
                             self.__check_guard_vision(player_pos)
                         except:
