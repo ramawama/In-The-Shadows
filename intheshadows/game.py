@@ -539,6 +539,8 @@ class Game:
         match self.__move_direction:
             case "right":
                 if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type == "w":
+                        step_size = self.__resolution * self.__resolution
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
@@ -565,6 +567,8 @@ class Game:
 
             case "left":
                 if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type == "w":
+                        step_size = self.__resolution * self.__resolution
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
@@ -591,6 +595,8 @@ class Game:
 
             case "up":
                 if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type == "w":
+                        step_size = self.__resolution * self.__resolution
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
@@ -618,6 +624,8 @@ class Game:
 
             case "down":
                 if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type == "w":
+                        step_size = self.__resolution * self.__resolution
                     # draw background
                     self.__board.draw_level()
                     self.__draw_guards()
