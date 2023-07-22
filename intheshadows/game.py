@@ -195,12 +195,16 @@ class Game:
                                 else:
                                     self.__player.dash = False
                             case pygame.K_1:
-                                self.__player.extinguish = True
+                                if self.__player.num_water > 0:
+                                    self.__player.extinguish = True
+                                    self.__player.num_water -= 1
                             case pygame.K_2:
-                                self.__player.smoke = True
-                                # smoke_location = self.calc_smoke_location()
-                                if self.__guard_near_player():
-                                    self.__alert_mode_off()
+                                if self.__player.num_smoke > 0:
+                                    self.__player.smoke = True
+                                    # smoke_location = self.calc_smoke_location()
+                                    if self.__guard_near_player():
+                                        self.__alert_mode_off()
+                                    self.__player.num_smoke -= 1
                             case pygame.K_i:
                                 self.__state = 'inventory'
                             case pygame.K_m:
@@ -781,7 +785,7 @@ class Game:
     def __check_item(self, player_position):
         if self.__board.tiles[player_position[1]][player_position[0]].type in ["b", "s"]:
             if self.__board.tiles[player_position[1]][player_position[0]].type == "b":
-                self.__player.num_water += 1
+                self.__player.num_water += 3
             else:
                 self.__player.num_smoke += 1
             self.__board.tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
@@ -1078,11 +1082,7 @@ class Game:
                     except Exception as E:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
                 case 'inventory':
-                    display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0, 999, 999)
-                    '''
-                    TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
-                    also have it track what items are used etc
-                    '''
+                    display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0, self.__player.num_water, self.__player.num_smoke)
                 case 'game_over':
                     pass
                 case 'move':
