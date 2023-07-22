@@ -1082,7 +1082,7 @@ class Game:
                     except Exception as E:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
                 case 'inventory':
-                    display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0, 999, 999)
+                    display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0, self.__player.num_water, self.__player.num_smoke)
                     '''
                     TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
                     also have it track what items are used etc
