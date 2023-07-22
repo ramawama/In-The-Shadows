@@ -23,7 +23,19 @@ class Game:
         self.__white = (255, 255, 255)
         (self.__width, self.__height) = (64 * 28, 64 * 16)
 
-        self.__level = self.load_level()
+        # Initialize Music
+        self.__music = Music()
+        self.__play_music = True
+
+        # Load difficulty
+        self.__difficulty = "EASY"
+        self.__guard_difficulty = 1
+
+        self.__torch_extinguished = 0
+        self.__items_used = 0
+        self.__turns_passed = 0
+        self.__level = 0
+        self.load_level()
         self.__torch_counter = 0
         self.__move_counter = 0
         self.__move_direction = 'right'
@@ -48,15 +60,8 @@ class Game:
         # Create global variable for program status
         self.__running = True
 
-        # Initialize Music
-        self.__music = Music()
-
         # Initialize Board Class
         self.__board = Board(self.__screen, self.__width, self.__height)
-
-        # Load difficulty
-        self.__difficulty = "EASY"
-        self.__guard_difficulty = 1
 
         self.__position = ()
         self.__guard_positions = []
@@ -76,7 +81,21 @@ class Game:
     def save_level(self):
         save_file = Path(__file__).parent / "user_progress.txt"
         with open(save_file, 'w') as file:
-            file.write(str(self.__level))
+            file.write(str(self.__level) + '\n')
+            file.write(str(self.__torch_extinguished) + '\n')
+            file.write(str(self.__items_used) + '\n')
+            file.write(str(self.__turns_passed) + '\n')
+            match self.__difficulty:
+                case "EASY":
+                    file.write('1\n')
+                case "MEDIUM":
+                    file.write('2\n')
+                case "HARD":
+                    file.write('3\n')
+            if self.__play_music:
+                file.write('True')
+            else:
+                file.write('False')
 
     def load_level(self):
         # edit this and user_progress.txt to save future info like torches lit and moves etc
@@ -84,10 +103,42 @@ class Game:
         save_file.touch(exist_ok=True)  # checks if exists if not creates file
         if save_file.stat().st_size != 0:
             # if file is has saved progress
+            counter = 0
             with open(save_file, 'r') as file:
-                return int(file.read())
+                lines = file.readlines()
+                for line in lines:
+                    match counter:
+                        case 0:
+                            self.__level = int(line)
+                        case 1:
+                            self.__torch_extinguished = int(line)
+                        case 2:
+                            self.__items_used = int(line)
+                        case 3:
+                            self.__turns_passed = int(line)
+                        case 4:
+                            if int(line) == 1:
+                                self.__difficulty = "EASY"
+                                self.__guard_difficulty = 1
+                            elif int(line) == 2:
+                                self.__difficulty = "MEDIUM"
+                                self.__guard_difficulty = 2
+                            elif int(line) == 3:
+                                self.__difficulty = "HARD"
+                                self.__guard_difficulty = 3
+                        case 5:
+                            if line == 'True':
+                                self.__play_music = True
+                            else:
+                                self.__music.toggle()
+                                self.__play_music = False
+                    counter += 1
         else:
-            return 1
+            self.__level = 1
+            self.__torch_extinguished = 0
+            self.__items_used = 0
+            self.__turns_passed = 0
+            self.__play_music = True
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
@@ -208,6 +259,10 @@ class Game:
                             case pygame.K_i:
                                 self.__state = 'inventory'
                             case pygame.K_m:
+                                if self.__play_music:
+                                    self.__play_music = False
+                                else:
+                                    self.__play_music = True
                                 self.__music.toggle()
                             case pygame.K_k:
                                 if self.__guard_tracking:
@@ -230,6 +285,7 @@ class Game:
                                     self.__guard_positions[x] = (
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
+                                self.__turns_passed += 1
                             case pygame.K_a | pygame.K_LEFT:
                                 if self.__allow_movement is False:
                                     continue
@@ -244,6 +300,7 @@ class Game:
                                     self.__guard_positions[x] = (
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
+                                self.__turns_passed += 1
                             case pygame.K_s | pygame.K_DOWN:
                                 if self.__allow_movement is False:
                                     continue
@@ -258,6 +315,7 @@ class Game:
                                     self.__guard_positions[x] = (
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
+                                self.__turns_passed += 1
                             case pygame.K_d | pygame.K_RIGHT:
                                 if self.__allow_movement is False:
                                     continue
@@ -272,20 +330,22 @@ class Game:
                                     self.__guard_positions[x] = (
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
+                                self.__turns_passed += 1
         elif self.__state == 'load':
             for ev in pygame.event.get():
-                if ev.type == pygame.KEYDOWN:
+                if ev.type == pygame.QUIT:
+                    self.__running = False
+                elif ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
                     if ev.key == pygame.K_r:
                         self.__level = 1
                         self.save_level()
-                    if ev.key == pygame.K_ESCAPE:
+                    elif ev.key == pygame.K_ESCAPE:
                         self.__escape_state()
-                        return
-                if ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
-                    self.__state = 'game'
-                    self.__board.unload()
-                    self.__player_spawn, self.__guard_routes = self.__load_game()
-                    self.__set_player_and_guards()
+                    else:
+                        self.__state = 'game'
+                        self.__board.unload()
+                        self.__player_spawn, self.__guard_routes = self.__load_game()
+                        self.__set_player_and_guards()
         elif self.__state == 'inventory':
             for ev in pygame.event.get():
                 match ev.type:
@@ -296,6 +356,10 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_m:
+                                if self.__play_music:
+                                    self.__play_music = False
+                                else:
+                                    self.__play_music = True
                                 self.__music.toggle()
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
@@ -309,6 +373,10 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_m:
+                                if self.__play_music:
+                                    self.__play_music = False
+                                else:
+                                    self.__play_music = True
                                 self.__music.toggle()
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
@@ -390,6 +458,7 @@ class Game:
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
                                 self.__board.tiles[tempY][player_position[0]].unlight()
+                                self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
@@ -430,6 +499,7 @@ class Game:
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
                                 self.__board.tiles[tempY][player_position[0]].unlight()
+                                self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
@@ -470,6 +540,7 @@ class Game:
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
                                 self.__board.tiles[player_position[1]][tempX].unlight()
+                                self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
@@ -510,6 +581,7 @@ class Game:
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
                                 self.__board.tiles[player_position[1]][tempX].unlight()
+                                self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
@@ -571,6 +643,7 @@ class Game:
                     if self.__board.tiles[player_position[1]][player_position[0] + 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] + 1].lit:
                         self.__board.tiles[player_position[1]][player_position[0] + 1].unlight()
+                        self.__torch_extinguished += 1
                         self.__board.torch_check()
 
             case "left":
@@ -600,6 +673,7 @@ class Game:
                     if self.__board.tiles[player_position[1]][player_position[0] - 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] - 1].lit:
                         self.__board.tiles[player_position[1]][player_position[0] - 1].unlight()
+                        self.__torch_extinguished += 1
                         self.__board.torch_check()
 
             case "up":
@@ -630,6 +704,7 @@ class Game:
                     if self.__board.tiles[player_position[1] - 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] - 1][player_position[0]].lit:
                         self.__board.tiles[player_position[1] - 1][player_position[0]].unlight()
+                        self.__torch_extinguished += 1
                         self.__board.torch_check()
 
             case "down":
@@ -659,11 +734,14 @@ class Game:
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] + 1][player_position[0]].lit:
                         self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
+                        self.__torch_extinguished += 1
                         self.__board.torch_check()
+
         player_position = self.__player.position()
         if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
                 self.__board.tiles[player_position[1]][player_position[0]].lit:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
+            self.__torch_extinguished += 1
             self.__board.torch_check()
 
     # not done
@@ -836,7 +914,7 @@ class Game:
             if self.__level == 3:
                 self.__board.unload()
                 self.__level, self.__state = win(self.__width, self.__height, self.__screen, self.__black,
-                                                 0, 0, 0)
+                                                 self.__torch_extinguished, self.__items_used, self.__turns_passed)
                 self.__music.play_music("win")
                 self.__player_spawn, guards = self.__board.load_level()
                 self.__set_player_and_guards()
@@ -1052,7 +1130,7 @@ class Game:
             match self.__state:
                 case 'load':
                     pygame.mouse.set_visible(False)
-                    loading_screen(self.__width, self.__height, self.__screen, self.__level, 69, 420, 8008)
+                    loading_screen(self.__width, self.__height, self.__screen, self.__level, self.__torch_extinguished, self.__items_used, self.__turns_passed)
                 case 'menu':
                     pygame.mouse.set_visible(True)
                     self.__music.play_music('menu')
@@ -1082,7 +1160,7 @@ class Game:
                     except Exception as E:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
                 case 'inventory':
-                    display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0, self.__player.num_water, self.__player.num_smoke)
+                    display_info(self.__width, self.__height, self.__screen, self.__level, self.__torch_extinguished, self.__items_used, self.__turns_passed, self.__player.num_water, self.__player.num_smoke)
                 case 'game_over':
                     pass
                 case 'move':
