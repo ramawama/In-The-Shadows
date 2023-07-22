@@ -762,8 +762,8 @@ class Game:
 
     def __check_key(self, player_position):
         if self.__board.tiles[player_position[1]][player_position[0]].type == "k":
-            self.__board.tiles[player_position[1]][player_position[0]] = Tile()
-            self.__board.orig_tiles[player_position[1]][player_position[0]] = Tile()
+            self.__board.tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
+            self.__board.orig_tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.torch_check()
             self.__board.unlock()
             self.__player.key = True
