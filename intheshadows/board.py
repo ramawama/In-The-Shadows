@@ -51,7 +51,7 @@ class Board:
                                 temp_Tile = Tile("o", False, x, y)
                                 row_array.append(temp_Tile)
                                 row_char_array.append(Tile("o", False, x, y, temp_Tile.image, temp_Tile.floor_type))
-                            elif char in ['e', '!']:
+                            elif char in ['e', 'c']:
                                 self.__exit_tile = x, y
                                 temp_Tile = Tile(char, False, x, y)
                                 row_array.append(temp_Tile)
@@ -162,56 +162,41 @@ class Board:
         self.__orig_tiles = []
 
     # pass in more parameters like a list of items a player has to display on the HUD
-    def display_hud(self, player):
+    def display_hud(self, key=False):
         self.__screen.background_surface.fill((0, 0, 0), pygame.Rect(0, self.__screen_height,
                                                                      self.__screen_width, 128))
-        hud_background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/hud_background.png")
-        hud_background = pygame.transform.scale(hud_background, (self.__screen_width, self.__screen_height))
         white = (255, 255, 255)
-        text_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf',
-                                     int(self.__screen_height * 0.025))
-        text_font_bold = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf',
+        text_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF',
                                      int(self.__screen_height * 0.04))
+        help_text = text_font.render('H FOR HELP', True, white)
+        help_rect = help_text.get_rect()
+        (help_width, help_height) = (self.__screen_width // (10 * self.__resolution),
+                                     self.__screen_height + (16 * self.__resolution))
+        help_rect.center = (help_width, help_height)
 
-        if player.dash_cooldown == 0:
-            status_text = text_font.render('SPACE TO DASH', True, (255, 255, 255))
-        elif player.dash_cooldown == 4:
-            status_text = text_font.render('DASH READY!', True, (255, 255, 255))
-        else:
-            status_text = text_font.render('DASH COOLDOWN: ' + str(player.dash_cooldown), True, (255, 255, 255))
-        if player.extinguish:
-            status_text = text_font.render('BOTTLE READY!', True, (255, 255, 255))
-        if player.smoke:
-            status_text = text_font.render('SMOKE EMPLOYED!', True, (255, 255, 255))
+        inventory_text = text_font.render('I FOR INVENTORY:', True, white)
+        inventory_rect = inventory_text.get_rect()
+        (inventory_width, inventory_height) = (help_width + (192 * self.__resolution), help_height)
+        inventory_rect.center = (inventory_width, inventory_height)
 
-        status_rect = status_text.get_rect()
-        (status_width, status_height) = (0.015 * self.__screen_width, 1.016 * self.__screen_height)
-        status_rect.x, status_rect.y = (status_width, status_height)
-
-        curr_level = text_font_bold.render('LEVEL ' + str(self.__level), True, white)
+        curr_level = text_font.render('LEVEL ' + str(self.__level), True, white)
         curr_level_rect = curr_level.get_rect()
-        (curr_level_width, curr_level_height) = (self.__screen_width // 2 - curr_level.get_width() // 2, 0.988 * status_height)
-        curr_level_rect.x, curr_level_rect.y = (curr_level_width, curr_level_height)
+        (curr_level_width, curr_level_height) = (self.__screen_width // 2 - 32, help_height)
+        curr_level_rect.center = (curr_level_width, curr_level_height)
 
-        info_text = text_font.render('INFO (I)', True, white)
-        info_text_rect = info_text.get_rect()
-        (info_text_width, info_text_height) = (curr_level_width - 0.12 * self.__screen_width - info_text_rect.width, status_height)
-        info_text_rect.x, info_text_rect.y = (info_text_width, info_text_height)
-
-        if not player.key:
+        if not key:
             instructions = text_font.render('COLLECT THE KEY AND AVOID CAPTURE!', True, white)
         else:
             if self.__level == 3:
-                instructions = text_font.render('COLLECT THE TREASURE!', True, white)
+                instructions = text_font.render('KEY COLLECTED! COLLECT THE TREASURE', True, white)
             else:
-                instructions = text_font.render('ESCAPE TO THE NEXT LEVEL!', True, white)
+                instructions = text_font.render('KEY COLLECTED! ESCAPE TO THE NEXT LEVEL', True, white)
 
         instructions_rect = instructions.get_rect()
-        (instructions_width, instructions_height) = (self.__screen_width - 0.01 * self.__screen_width - instructions_rect.width, status_height)
-        instructions_rect.x, instructions_rect.y = (instructions_width, instructions_height)
+        (instructions_width, instructions_height) = (curr_level_width + (256 * self.__resolution), help_height)
+        instructions_rect.center = (instructions_width, instructions_height)
 
-        self.__screen.background_surface.blit(hud_background, (0, 0.1 * self.__screen_height))
-        self.__screen.background_surface.blit(status_text, status_rect)
+        self.__screen.background_surface.blit(help_text, help_rect)
+        self.__screen.background_surface.blit(inventory_text, inventory_rect)
         self.__screen.background_surface.blit(curr_level, curr_level_rect)
-        self.__screen.background_surface.blit(info_text, info_text_rect)
         self.__screen.background_surface.blit(instructions, instructions_rect)
