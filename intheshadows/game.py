@@ -23,6 +23,10 @@ class Game:
         self.__white = (255, 255, 255)
         (self.__width, self.__height) = (64 * 28, 64 * 16)
 
+        # Initialize Music
+        self.__music = Music()
+        self.__play_music = True
+
         self.__torch_extinguished = 0
         self.__items_used = 0
         self.__turns_passed = 0
@@ -51,9 +55,6 @@ class Game:
 
         # Create global variable for program status
         self.__running = True
-
-        # Initialize Music
-        self.__music = Music()
 
         # Initialize Board Class
         self.__board = Board(self.__screen, self.__width, self.__height)
@@ -84,6 +85,10 @@ class Game:
             file.write(str(self.__torch_extinguished) + '\n')
             file.write(str(self.__items_used) + '\n')
             file.write(str(self.__turns_passed) + '\n')
+            if self.__play_music:
+                file.write('True')
+            else:
+                file.write('False')
 
     def load_level(self):
         # edit this and user_progress.txt to save future info like torches lit and moves etc
@@ -104,12 +109,19 @@ class Game:
                             self.__items_used = int(line)
                         case 3:
                             self.__turns_passed = int(line)
+                        case 4:
+                            if line == 'True':
+                                self.__play_music = True
+                            else:
+                                self.__music.toggle()
+                                self.__play_music = False
                     counter += 1
         else:
             self.__level = 1
             self.__torch_extinguished = 0
             self.__items_used = 0
             self.__turns_passed = 0
+            self.__play_music = True
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
@@ -224,6 +236,10 @@ class Game:
                             case pygame.K_i:
                                 self.__state = 'inventory'
                             case pygame.K_m:
+                                if self.__play_music:
+                                    self.__play_music = False
+                                else:
+                                    self.__play_music = True
                                 self.__music.toggle()
                             case pygame.K_k:
                                 if self.__guard_tracking:
@@ -317,6 +333,10 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_m:
+                                if self.__play_music:
+                                    self.__play_music = False
+                                else:
+                                    self.__play_music = True
                                 self.__music.toggle()
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
@@ -330,6 +350,10 @@ class Game:
                     case pygame.KEYDOWN:
                         match ev.key:
                             case pygame.K_m:
+                                if self.__play_music:
+                                    self.__play_music = False
+                                else:
+                                    self.__play_music = True
                                 self.__music.toggle()
                             case pygame.K_ESCAPE:
                                 self.__escape_state()
