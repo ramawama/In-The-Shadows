@@ -7,8 +7,8 @@ def display_help(width, height, resolution, screen):
     # temp background
     background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/woodBackground_old.png")
     background = pygame.transform.scale(background, (width // 2, height // 2))
-    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.09))
-    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.06))
+    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.09))
+    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.06))
 
     (title_width, title_height) = (width // 4, height // 16)
     text = title_font.render("HOW TO PLAY", True, (255, 255, 255))
@@ -44,30 +44,42 @@ def display_help(width, height, resolution, screen):
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
 
-def display_inventory(width, height, resolution, screen, player):
-    background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/dungeon_old.jpg")
+def display_info(width, height, screen, level, num_torches, num_items, turns_passed, num_bottles, num_bombs):
+    background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Info_screen.png")
     background = pygame.transform.scale(background, (width // 2, height // 2))
-    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.09))
-    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.06))
+    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height // 2 * 0.05))
 
-    (title_width, title_height) = (width // 4, height // 16)
-    text = title_font.render("INVENTORY", True, (255, 255, 255))
-    text_rect = text.get_rect()
-    text_rect.center = (title_width, title_height)
+    curr_level = font.render(str(level), True, (255, 255, 255))
+    curr_level_rect = curr_level.get_rect()
+    curr_level_rect.x, curr_level_rect.y = (9.9 * width // 11 // 2, 0.91 * height // 8 // 2)
 
-    if player.dash_cooldown == 0:
-        dash_text = font.render('SPACE TO DASH', True, (255, 255, 255))
-        (dash_width, dash_height) = (title_width - 128 * resolution, title_height + 48 * resolution)
-    else:
-        dash_text = font.render('DASH COOLDOWN: ' + str(player.dash_cooldown), True, (255, 255, 255))
-        (dash_width, dash_height) = (title_width - 96 * resolution, title_height + 48 * resolution)
+    torches_unlit = font.render(str(num_torches), True, (255, 255, 255))
+    torches_unlit_rect = torches_unlit.get_rect()
+    torches_unlit_rect.x, torches_unlit_rect.y = (9.9 * width // 11 // 2, 1.44 * height // 8 // 2)
 
-    dash_rect = dash_text.get_rect()
-    dash_rect.center = (dash_width, dash_height)
+    items_used = font.render(str(num_items), True, (255, 255, 255))
+    items_used_rect = items_used.get_rect()
+    items_used_rect.x, items_used_rect.y = (9.18 * width // 11 // 2, 1.98 * height // 8 // 2)
+
+    num_turns = font.render(str(turns_passed), True, (255, 255, 255))
+    num_turns_rect = num_turns.get_rect()
+    num_turns_rect.x, num_turns_rect.y = (9.65 * width // 11 // 2, 2.51 * height // 8 // 2)
+
+    num_water_bottles = font.render(str(num_bottles), True, (255, 255, 255))
+    num_water_bottles_rect = num_water_bottles.get_rect()
+    num_water_bottles_rect.x, num_water_bottles_rect.y = (8.75 * width // 11 // 2, 4.68 * height // 8 // 2)
+
+    num_smoke_bombs = font.render(str(num_bombs), True, (255, 255, 255))
+    num_smoke_bombs_rect = num_smoke_bombs.get_rect()
+    num_smoke_bombs_rect.x, num_smoke_bombs_rect.y = (8.75 * width // 11 // 2, 5.68 * height // 8 // 2)
 
     screen.help_surface.blit(background, (0, 0))
-    screen.help_surface.blit(text, text_rect)
-    screen.help_surface.blit(dash_text, dash_rect)
+    screen.help_surface.blit(curr_level, curr_level_rect)
+    screen.help_surface.blit(torches_unlit, torches_unlit_rect)
+    screen.help_surface.blit(items_used, items_used_rect)
+    screen.help_surface.blit(num_turns, num_turns_rect)
+    screen.help_surface.blit(num_water_bottles, num_water_bottles_rect)
+    screen.help_surface.blit(num_smoke_bombs, num_smoke_bombs_rect)
     screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
 
 
@@ -162,70 +174,30 @@ def run_options(width, height, rects, screen, anim_torches, difficulty):
         screen.background_surface.blit(highlight, (0, 0))
 
 
-def loading_screen(width, height, resolution, screen, level):
+def loading_screen(width, height, screen, level, num_torches, num_items, turns_passed):
     screen.foreground_surface.fill((0, 0, 0))
-    pre_game_screen = pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Pre_game_screen.png"), (width, height))
-    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.14))
-    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Digital.TTF', int(height * 0.09))
+    pre_game_screen = pygame.transform.scale(
+        pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Pre_game_screen.png"), (width, height))
+    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.045))
 
-    # (title_width, title_height) = (width // 2, height // 8)
-    # title = title_font.render("LOADING...", True, (255, 255, 255))
-    # title_rect = title.get_rect()
-    # title_rect.center = (title_width, title_height)
-    #
-    # (level_width, level_height) = (width - 192 * resolution, title_height + 64 * resolution)
     curr_level = font.render(str(level), True, (255, 255, 255))
     curr_level_rect = curr_level.get_rect()
-    curr_level_rect.center = (10 * width // 11, 1.2 * height // 8)
+    curr_level_rect.x, curr_level_rect.y = (9.9 * width // 11, 0.95 * height // 8)
 
-    # (restart_width, restart_height) = (width - 192 * resolution, level_height + 64 * resolution)
-    # restart = font.render("Click R to Restart", True, (255, 255, 255))
-    # restart_rect = restart.get_rect()
-    # restart_rect.center = (restart_width, restart_height)
-    #
-    # (exit_width, exit_height) = (width // 2, height - height // 8)
-    # exit = font.render("PRESS OR CLICK TO CONTINUE", True, (255, 255, 255))
-    # exit_rect = exit.get_rect()
-    # exit_rect.center = (exit_width, exit_height)
-    #
-    # (howto_width, howto_height) = (title_width // 2 - 32 * resolution, title_height + 64 * resolution)
-    # howto = font.render("HOW TO PLAY:", True, (255, 255, 255))
-    # howto_rect = howto.get_rect()
-    # howto_rect.center = (howto_width, howto_height)
+    torches_unlit = font.render(str(num_torches), True, (255, 255, 255))
+    torches_unlit_rect = torches_unlit.get_rect()
+    torches_unlit_rect.x, torches_unlit_rect.y = (9.9 * width // 11, 1.48 * height // 8)
 
-    # (move_width, move_height) = (title_width // 4, howto_height + 48 * resolution)
-    # move_text = font.render('MOVE:', True, (255, 255, 255))
-    # move_rect = move_text.get_rect()
-    # move_rect.center = (move_width, move_height)
-    #
-    # (movement_width, movement_height) = (title_width // 4 + move_width, howto_height + 16 * resolution)
-    # arrow_key = pygame.image.load(
-    #     Path(__file__).parent / "assets/graphics/HUD Elements/arrow_keys.png").convert_alpha()
-    # scaled_arrow = pygame.transform.scale(arrow_key, (width // 10, height // 10))
-    #
-    # (music_width, music_height) = (movement_width + (4 * resolution), move_height + 48 * resolution)
-    # music_text = font.render('TOGGLE MUSIC: M', True, (255, 255, 255))
-    # music_rect = music_text.get_rect()
-    # music_rect.center = (music_width, music_height)
-    #
-    # (quit_width, quit_height) = (music_width - (16 * resolution), music_height + 48 * resolution)
-    # quit_text = font.render('QUIT: ESCAPE', True, (255, 255, 255))
-    # quit_rect = quit_text.get_rect()
-    # quit_rect.center = (quit_width, quit_height)
+    items_used = font.render(str(num_items), True, (255, 255, 255))
+    items_used_rect = items_used.get_rect()
+    items_used_rect.x, items_used_rect.y = (9.18 * width // 11, 2.02 * height // 8)
+
+    num_turns = font.render(str(turns_passed), True, (255, 255, 255))
+    num_turns_rect = num_turns.get_rect()
+    num_turns_rect.x, num_turns_rect.y = (9.65 * width // 11, 2.55 * height // 8)
 
     screen.foreground_surface.blit(pre_game_screen, (0, 0))
-    # screen.foreground_surface.blit(title, title_rect)
-    # screen.foreground_surface.blit(howto, howto_rect)
     screen.foreground_surface.blit(curr_level, curr_level_rect)
-    # screen.foreground_surface.blit(restart, restart_rect)
-    # screen.foreground_surface.blit(exit, exit_rect)
-    # screen.foreground_surface.blit(move_text, move_rect)
-    # screen.foreground_surface.blit(scaled_arrow, (movement_width, movement_height))
-    # screen.foreground_surface.blit(music_text, music_rect)
-    # screen.foreground_surface.blit(quit_text, quit_rect)
-
-
-
-
-
-
+    screen.foreground_surface.blit(torches_unlit, torches_unlit_rect)
+    screen.foreground_surface.blit(items_used, items_used_rect)
+    screen.foreground_surface.blit(num_turns, num_turns_rect)
