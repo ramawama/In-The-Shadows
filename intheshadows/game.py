@@ -4,7 +4,7 @@ import pygame
 import os
 import igraph as ig
 import time
-from intheshadows.print import display_help, run_menu, run_options, display_info, loading_screen
+from intheshadows.print import run_menu, run_options, display_info, loading_screen
 from intheshadows.events import game_over, win
 from intheshadows.guard import Guard
 from intheshadows.tile import Tile
@@ -122,8 +122,6 @@ class Game:
                 self.__state = 'menu'
             case 'win':
                 self.__state = 'menu'
-            case 'help':
-                self.__state = 'game'
             case 'inventory':
                 self.__state = 'game'
 
@@ -201,8 +199,6 @@ class Game:
                                 # smoke_location = self.calc_smoke_location()
                                 if self.__guard_near_player():
                                     self.__alert_mode_off()
-                            case pygame.K_h:  # help screen in game
-                                self.__state = 'help'
                             case pygame.K_i:
                                 self.__state = 'inventory'
                             case pygame.K_m:
@@ -284,19 +280,6 @@ class Game:
                     self.__board.unload()
                     self.__player_spawn, self.__guard_routes = self.__load_game()
                     self.__set_player_and_guards()
-        elif self.__state == 'help':
-            for ev in pygame.event.get():
-                match ev.type:
-                    case pygame.QUIT:
-                        self.__running = False
-                    case pygame.K_ESCAPE:
-                        self.__escape_state()
-                    case pygame.KEYDOWN:
-                        match ev.key:
-                            case pygame.K_m:
-                                self.__music.toggle()
-                            case pygame.K_ESCAPE | pygame.K_h:
-                                self.__state = 'game'
         elif self.__state == 'inventory':
             for ev in pygame.event.get():
                 match ev.type:
@@ -991,8 +974,6 @@ class Game:
                         self.__run_game()
                     except Exception as E:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
-                case 'help':
-                    display_help(self.__width, self.__height, self.__resolution, self.__screen)
                 case 'inventory':
                     display_info(self.__width, self.__height, self.__screen, self.__level, 0, 0, 0, 999, 999)
                     '''

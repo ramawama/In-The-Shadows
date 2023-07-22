@@ -2,48 +2,6 @@ import pygame
 from pathlib import Path
 
 
-def display_help(width, height, resolution, screen):
-    # displays controls and instructions while in game by clicking h
-    # temp background
-    background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/woodBackground_old.png")
-    background = pygame.transform.scale(background, (width // 2, height // 2))
-    title_font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.09))
-    font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height * 0.06))
-
-    (title_width, title_height) = (width // 4, height // 16)
-    text = title_font.render("HOW TO PLAY", True, (255, 255, 255))
-    text_rect = text.get_rect()
-    text_rect.center = (title_width, title_height)
-
-    (move_width, move_height) = (title_width // 4, title_height + 48 * resolution)
-    move_text = font.render('MOVE:', True, (255, 255, 255))
-    move_rect = move_text.get_rect()
-    move_rect.center = (move_width, move_height)
-
-    (movement_width, movement_height) = (title_width // 4 + move_width, title_height + 16 * resolution)
-    arrow_key = pygame.image.load(
-        Path(__file__).parent / "assets/graphics/HUD Elements/arrow_keys.png").convert_alpha()
-    scaled_arrow = pygame.transform.scale(arrow_key, (width // 10, height // 10))
-
-    (music_width, music_height) = (movement_width + (4 * resolution), move_height + 48 * resolution)
-    music_text = font.render('TOGGLE MUSIC: M', True, (255, 255, 255))
-    music_rect = music_text.get_rect()
-    music_rect.center = (music_width, music_height)
-
-    (quit_width, quit_height) = (music_width - (16 * resolution), music_height + 48 * resolution)
-    quit_text = font.render('QUIT: ESCAPE', True, (255, 255, 255))
-    quit_rect = quit_text.get_rect()
-    quit_rect.center = (quit_width, quit_height)
-
-    screen.help_surface.blit(background, (0, 0))
-    screen.help_surface.blit(text, text_rect)
-    screen.help_surface.blit(move_text, move_rect)
-    screen.help_surface.blit(scaled_arrow, (movement_width, movement_height))
-    screen.help_surface.blit(music_text, music_rect)
-    screen.help_surface.blit(quit_text, quit_rect)
-    screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
-
-
 def display_info(width, height, screen, level, num_torches, num_items, turns_passed, num_bottles, num_bombs):
     background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Info_screen.png")
     background = pygame.transform.scale(background, (width // 2, height // 2))
