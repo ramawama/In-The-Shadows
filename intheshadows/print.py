@@ -38,8 +38,6 @@ def display_info(width, height, screen, level, num_torches, num_items, turns_pas
     screen.help_surface.blit(num_turns, num_turns_rect)
     screen.help_surface.blit(num_water_bottles, num_water_bottles_rect)
     screen.help_surface.blit(num_smoke_bombs, num_smoke_bombs_rect)
-    screen.foreground_surface.blit(screen.help_surface, (width // 4, height // 4))
-
 
 def run_menu(width, height, rects, screen, anim_torches):
     # animates torches
