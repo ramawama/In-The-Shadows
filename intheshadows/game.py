@@ -23,7 +23,11 @@ class Game:
         self.__white = (255, 255, 255)
         (self.__width, self.__height) = (64 * 28, 64 * 16)
 
-        self.__level = self.load_level()
+        self.__torch_extinguished = 0
+        self.__items_used = 0
+        self.__turns_passed = 0
+        self.__level = 0
+        self.load_level()
         self.__torch_counter = 0
         self.__move_counter = 0
         self.__move_direction = 'right'
@@ -76,7 +80,10 @@ class Game:
     def save_level(self):
         save_file = Path(__file__).parent / "user_progress.txt"
         with open(save_file, 'w') as file:
-            file.write(str(self.__level))
+            file.write(str(self.__level) + '\n')
+            file.write(str(self.__torch_extinguished) + '\n')
+            file.write(str(self.__items_used) + '\n')
+            file.write(str(self.__turns_passed) + '\n')
 
     def load_level(self):
         # edit this and user_progress.txt to save future info like torches lit and moves etc
@@ -84,10 +91,22 @@ class Game:
         save_file.touch(exist_ok=True)  # checks if exists if not creates file
         if save_file.stat().st_size != 0:
             # if file is has saved progress
+            counter = 0
             with open(save_file, 'r') as file:
-                return int(file.read())
+                lines = file.readlines()
+                for line in lines:
+                    match counter:
+                        case 0:
+                            self.__level = int(line)
+                        case 1:
+                            self.__torch_extinguished = int(line)
+                        case 2:
+                            self.__items_used = int(line)
+                        case 3:
+                            self.__turns_passed = int(line)
+                    counter += 1
         else:
-            return 1
+            self.__level = 1
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
@@ -945,7 +964,7 @@ class Game:
             match self.__state:
                 case 'load':
                     pygame.mouse.set_visible(False)
-                    loading_screen(self.__width, self.__height, self.__screen, self.__level, 69, 420, 8008)
+                    loading_screen(self.__width, self.__height, self.__screen, self.__level, self.__torch_extinguished, self.__items_used, self.__turns_passed)
                 case 'menu':
                     pygame.mouse.set_visible(True)
                     self.__music.play_music('menu')
