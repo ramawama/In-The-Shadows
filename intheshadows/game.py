@@ -170,9 +170,11 @@ class Game:
             keys = pygame.key.get_pressed()
             if True in keys:
                 if keys[pygame.K_w] or keys[pygame.K_UP]:
-                    pygame.event.post(pygame.event.Event(pygame.KEYDOWN, unicode="w", key=pygame.K_w, mod=pygame.KMOD_NONE))
+                    pygame.event.post(
+                        pygame.event.Event(pygame.KEYDOWN, unicode="w", key=pygame.K_w, mod=pygame.KMOD_NONE))
                 elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
-                    pygame.event.post(pygame.event.Event(pygame.KEYDOWN, unicode="a", key=pygame.K_a, mod=pygame.KMOD_NONE))
+                    pygame.event.post(
+                        pygame.event.Event(pygame.KEYDOWN, unicode="a", key=pygame.K_a, mod=pygame.KMOD_NONE))
                 elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
                     pygame.event.post(
                         pygame.event.Event(pygame.KEYDOWN, unicode="s", key=pygame.K_s, mod=pygame.KMOD_NONE))
@@ -310,14 +312,19 @@ class Game:
                         self.__mouse_click(pygame.mouse.get_pos())
 
     def __guard_near_player(self):
-        player_box = [(self.__player.position()[0] - 1, self.__player.position()[1] - 1), (self.__player.position()[0], self.__player.position()[1] - 1), (self.__player.position()[0] + 1, self.__player.position()[1] - 1),
-                      (self.__player.position()[0] - 1, self.__player.position()[1]), (self.__player.position()[0], self.__player.position()[1]), (self.__player.position()[0] + 1, self.__player.position()[1]),
-                      (self.__player.position()[0] - 1, self.__player.position()[1] + 1), (self.__player.position()[0], self.__player.position()[1] + 1), (self.__player.position()[0] + 1, self.__player.position()[1] + 1)]
+        player_box = [(self.__player.position()[0] - 1, self.__player.position()[1] - 1),
+                      (self.__player.position()[0], self.__player.position()[1] - 1),
+                      (self.__player.position()[0] + 1, self.__player.position()[1] - 1),
+                      (self.__player.position()[0] - 1, self.__player.position()[1]),
+                      (self.__player.position()[0], self.__player.position()[1]),
+                      (self.__player.position()[0] + 1, self.__player.position()[1]),
+                      (self.__player.position()[0] - 1, self.__player.position()[1] + 1),
+                      (self.__player.position()[0], self.__player.position()[1] + 1),
+                      (self.__player.position()[0] + 1, self.__player.position()[1] + 1)]
         for guard in self.__guards:
             if guard.position() in player_box:
                 return True
         return False
-
 
     def calc_smoke_location(self):
         player_box = [(self.__player.position()[0] - 1, self.__player.position()[1] - 1),
@@ -330,11 +337,14 @@ class Game:
                       (self.__player.position()[0], self.__player.position()[1] + 1),
                       (self.__player.position()[0] + 1, self.__player.position()[1] + 1)]
         return player_box
+
     def __draw_smoke(self, player_box):
         smoke_image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke.png")
-        smoke_image = pygame.transform.scale(smoke_image.convert_alpha(), (32 * self.__resolution, 32 * self.__resolution))
+        smoke_image = pygame.transform.scale(smoke_image.convert_alpha(),
+                                             (32 * self.__resolution, 32 * self.__resolution))
         for coord in player_box:
-            self.__screen.foreground_surface.blit(smoke_image, (coord[0] * 32 * self.__resolution, coord[1] * 32 * self.__resolution))
+            self.__screen.foreground_surface.blit(smoke_image, (
+            coord[0] * 32 * self.__resolution, coord[1] * 32 * self.__resolution))
         self.__screen.update()
 
     def check_smoke(self):
@@ -367,7 +377,8 @@ class Game:
                         extinguished = True
                         tempY = player_position[1] - 1
                         while tempY >= 0:
-                            self.__screen.foreground_surface.blit(self.__water_flask, (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
+                            self.__screen.foreground_surface.blit(self.__water_flask, (
+                            player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
                             self.__screen.update()
                             self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
                             time.sleep(water_flask_speed)
@@ -383,12 +394,13 @@ class Game:
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
                                                                   (32 * self.__resolution, 32 * self.__resolution))
                             self.__screen.foreground_surface.blit(replace_tile, (
-                            (player_position[0] * 32 * self.__resolution), (tempY * 32 * self.__resolution)))
+                                (player_position[0] * 32 * self.__resolution), (tempY * 32 * self.__resolution)))
                             self.__screen.update()
                             tempY -= 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] - 2][
+                            player_position[0]].type != "w":
                             self.__player.moveUp()
                             self.__check_key(self.__player.position())
                             self.__player.moveUp()
@@ -404,7 +416,8 @@ class Game:
                         extinguished = True
                         tempY = player_position[1] + 1
                         while tempY <= 15:
-                            self.__screen.foreground_surface.blit(self.__water_flask, (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
+                            self.__screen.foreground_surface.blit(self.__water_flask, (
+                            player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
                             self.__screen.update()
                             self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
                             time.sleep(water_flask_speed)
@@ -425,7 +438,8 @@ class Game:
                             tempY += 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1] + 2][
+                            player_position[0]].type != "w":
                             self.__player.moveDown()
                             self.__check_key(self.__player.position())
                             self.__player.moveDown()
@@ -463,7 +477,8 @@ class Game:
                             tempX -= 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][
+                            player_position[0] - 2].type != "w":
                             self.__player.moveLeft()
                             self.__check_key(self.__player.position())
                             self.__player.moveLeft()
@@ -480,7 +495,7 @@ class Game:
                         tempX = player_position[0] + 1
                         while tempX <= 28:
                             self.__screen.foreground_surface.blit(self.__water_flask, (
-                            tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
+                                tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution))
                             self.__screen.update()
                             self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
                             time.sleep(water_flask_speed)
@@ -501,7 +516,8 @@ class Game:
                             tempX += 1
                         self.__player.extinguish = False
                     elif self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
-                        if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type != "w":
+                        if self.__player.dash and self.__board.tiles[player_position[1]][
+                            player_position[0] + 2].type != "w":
                             self.__player.moveRight()
                             self.__check_key(self.__player.position())
                             self.__player.moveRight()
@@ -522,7 +538,8 @@ class Game:
         match self.__move_direction:
             case "right":
                 if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
-                    if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] + 2].type == "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1]][
+                        player_position[0] + 2].type == "w":
                         step_size = self.__resolution * self.__resolution
                     # draw background
                     self.__board.draw_level()
@@ -550,7 +567,8 @@ class Game:
 
             case "left":
                 if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
-                    if self.__player.dash and self.__board.tiles[player_position[1]][player_position[0] - 2].type == "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1]][
+                        player_position[0] - 2].type == "w":
                         step_size = self.__resolution * self.__resolution
                     # draw background
                     self.__board.draw_level()
@@ -578,7 +596,8 @@ class Game:
 
             case "up":
                 if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
-                    if self.__player.dash and self.__board.tiles[player_position[1] - 2][player_position[0]].type == "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1] - 2][
+                        player_position[0]].type == "w":
                         step_size = self.__resolution * self.__resolution
                     # draw background
                     self.__board.draw_level()
@@ -607,7 +626,8 @@ class Game:
 
             case "down":
                 if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
-                    if self.__player.dash and self.__board.tiles[player_position[1] + 2][player_position[0]].type == "w":
+                    if self.__player.dash and self.__board.tiles[player_position[1] + 2][
+                        player_position[0]].type == "w":
                         step_size = self.__resolution * self.__resolution
                     # draw background
                     self.__board.draw_level()
@@ -881,9 +901,12 @@ class Game:
                 case "left":
                     dx = [-1, -1, -1, -2, -2, -2]
                     dy = [-1, 0, 1, -1, 0, 1]
+            blocked_views = []
             for i in range(0, 6):
                 try:
-                    if guard_y + dy[i] == player_position[1] and guard_x + dx[i] == player_position[0]:
+                    if self.__board.tiles[guard_y + dy[i]][guard_x + dx[i]].type == 'w':
+                        blocked_views.append(i)
+                    if guard_y + dy[i] == player_position[1] and guard_x + dx[i] == player_position[0] and i % 3 not in blocked_views:
                         self.__alert_mode_on()
                         break
                 except:
