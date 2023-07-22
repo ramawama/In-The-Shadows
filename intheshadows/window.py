@@ -6,28 +6,35 @@ import pygame
 # Class for the main window and corresponding surfaces (background and foreground)
 class Window:
     def __init__(self, width, height):
+        self.__width = width
+        self.__height = height
         self.__screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN + pygame.SCALED, 60)
         self.__screen.fill((0, 0, 0))
         pygame.display.flip()
         pygame.display.set_caption("In The Shadows")
-        pygame.display.set_icon(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_walk_2.png").convert_alpha())
+        pygame.display.set_icon(
+            pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_walk_2.png").convert_alpha())
 
         # Create surfaces
         self.__background_surface = pygame.Surface((width, height))
         self.__foreground_surface = pygame.Surface((width, height), pygame.SRCALPHA)
+        self.__smoke_surface = pygame.Surface((width, height), pygame.SRCALPHA)
         self.__help_surface = pygame.Surface((width // 2, height // 2), pygame.SRCALPHA)
-
 
     # Refresh all display elements every cycle
     def update(self):
         self.__screen.blit(self.__background_surface, (0, 0))
         self.__screen.blit(self.__foreground_surface, (0, 0))
+        self.__screen.blit(self.__smoke_surface, (0, 0))
+        self.__screen.blit(self.__help_surface, (self.__width // 4, self.__height // 4))
         pygame.display.update()
+
 
     def resize(self, width, height):
         self.__screen = pygame.display.set_mode((width, height), pygame.SCALED + pygame.FULLSCREEN, 60)
         self.__background_surface = pygame.transform.scale(self.__background_surface, (width, height))
         self.__foreground_surface = pygame.transform.scale(self.__foreground_surface, (width, height))
+        self.__smoke_surface = pygame.transform.scale(self.__smoke_surface, (width, height))
         self.__help_surface = pygame.transform.scale(self.__help_surface, (width // 2, height // 2))
 
 
@@ -44,3 +51,7 @@ class Window:
     @property
     def help_surface(self):
         return self.__help_surface
+
+    @property
+    def smoke_surface(self):
+        return self.__smoke_surface

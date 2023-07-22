@@ -41,6 +41,8 @@ class Game:
         self.__move_direction = 'right'
         self.__anim_torches = True
         self.__guard_tracking = False
+        self.__smoke_location = None
+        self.__smoke_turn_counter = 0
 
         self.__resolution = 2  # resolution option for scaling
 
@@ -75,6 +77,9 @@ class Game:
         self.__water_flask = pygame.transform.scale(
             pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png").convert_alpha(),
             (self.__resolution * 32, self.__resolution * 32))
+        self.__smoke_image = pygame.transform.scale(
+            pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke.png").convert_alpha(),
+            (32 * self.__resolution, 32 * self.__resolution))
 
         self.loaded = False
 
@@ -252,8 +257,9 @@ class Game:
                             case pygame.K_2:
                                 if self.__player.num_smoke > 0:
                                     self.__player.smoke = True
-                                    # smoke_location = self.calc_smoke_location()
-                                    if self.__guard_near_player():
+                                    self.__smoke_location = self.calc_smoke_location()
+                                    self.__smoke_turn_counter = 0
+                                    if self.__guard_tracking:
                                         self.__alert_mode_off()
                                     self.__player.num_smoke -= 1
                             case pygame.K_i:
@@ -336,11 +342,17 @@ class Game:
                 if ev.type == pygame.QUIT:
                     self.__running = False
                 elif ev.type == pygame.KEYDOWN or ev.type == pygame.MOUSEBUTTONDOWN:
-                    if ev.key == pygame.K_r:
-                        self.__level = 1
-                        self.save_level()
-                    elif ev.key == pygame.K_ESCAPE:
-                        self.__escape_state()
+                    if ev.type == pygame.KEYDOWN:
+                        if ev.key == pygame.K_r:
+                            self.__level = 1
+                            self.save_level()
+                        elif ev.key == pygame.K_ESCAPE:
+                            self.__escape_state()
+                        else:
+                            self.__state = 'game'
+                            self.__board.unload()
+                            self.__player_spawn, self.__guard_routes = self.__load_game()
+                            self.__set_player_and_guards()
                     else:
                         self.__state = 'game'
                         self.__board.unload()
@@ -362,8 +374,10 @@ class Game:
                                     self.__play_music = True
                                 self.__music.toggle()
                             case pygame.K_ESCAPE:
+                                self.__screen.help_surface.fill((0, 0, 0, 0))
                                 self.__escape_state()
                             case pygame.K_ESCAPE | pygame.K_i:
+                                self.__screen.help_surface.fill((0, 0, 0, 0))
                                 self.__state = 'game'
         else:
             for ev in pygame.event.get():
@@ -399,6 +413,7 @@ class Game:
         return False
 
     def calc_smoke_location(self):
+        result = []
         player_box = [(self.__player.position()[0] - 1, self.__player.position()[1] - 1),
                       (self.__player.position()[0], self.__player.position()[1] - 1),
                       (self.__player.position()[0] + 1, self.__player.position()[1] - 1),
@@ -408,21 +423,29 @@ class Game:
                       (self.__player.position()[0] - 1, self.__player.position()[1] + 1),
                       (self.__player.position()[0], self.__player.position()[1] + 1),
                       (self.__player.position()[0] + 1, self.__player.position()[1] + 1)]
-        return player_box
+        for box in player_box:
+            print(self.__board.tiles[box[1]][box[0]].type)
+            if self.__board.tiles[box[1]][box[0]].type != 'w':
+                result.append(box)
+        return result
 
     def __draw_smoke(self, player_box):
-        smoke_image = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke.png")
-        smoke_image = pygame.transform.scale(smoke_image.convert_alpha(),
-                                             (32 * self.__resolution, 32 * self.__resolution))
         for coord in player_box:
-            self.__screen.foreground_surface.blit(smoke_image, (
-            coord[0] * 32 * self.__resolution, coord[1] * 32 * self.__resolution))
-        self.__screen.update()
+            self.__screen.smoke_surface.blit(self.__smoke_image,
+                                             (coord[0] * 32 * self.__resolution, coord[1] * 32 * self.__resolution))
 
     def check_smoke(self):
-        if self.__player.smoke:
-            smoke_location = self.calc_smoke_location()
-            self.__draw_smoke(smoke_location)
+        if self.__state != 'menu':
+            if self.__player.smoke:
+                self.__draw_smoke(self.__smoke_location)
+            if self.__smoke_turn_counter >= 3:
+                self.__smoke_turn_counter = 0
+                self.__player.smoke = False
+                self.__screen.smoke_surface.fill((0, 0, 0, 0))
+        else:
+            self.__smoke_turn_counter = 0
+            self.__player.smoke = False
+            self.__screen.smoke_surface.fill((0, 0, 0, 0))
 
     def __move_player(self):
         dashed = False  # if player dashed, torch will be lit, conditional at end of function
@@ -436,6 +459,7 @@ class Game:
 
         if self.__move_counter == 31 // self.__resolution:
             self.__state = 'move_guard'
+            self.__smoke_turn_counter += 1
 
             replace_tile = self.__board.tiles[player_position[1]][player_position[0]].image
             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
@@ -898,7 +922,6 @@ class Game:
         self.__board.display_hud(self.__player)
         self.__player.draw()
         self.__draw_guards()
-        self.check_smoke()
         if self.__check_game_over(self.__player.position()):
             self.__music.play_music("game_over")
             self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
@@ -1202,6 +1225,7 @@ class Game:
                                     self.__guards[x].direction = 'down'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
                     self.__move_guards()
+            self.check_smoke()
             self.__screen.update()
         self.save_level()
         pygame.quit()
