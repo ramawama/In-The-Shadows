@@ -27,6 +27,10 @@ class Game:
         self.__music = Music()
         self.__play_music = True
 
+        # Load difficulty
+        self.__difficulty = "EASY"
+        self.__guard_difficulty = 1
+
         self.__torch_extinguished = 0
         self.__items_used = 0
         self.__turns_passed = 0
@@ -59,10 +63,6 @@ class Game:
         # Initialize Board Class
         self.__board = Board(self.__screen, self.__width, self.__height)
 
-        # Load difficulty
-        self.__difficulty = "EASY"
-        self.__guard_difficulty = 1
-
         self.__position = ()
         self.__guard_positions = []
 
@@ -85,6 +85,13 @@ class Game:
             file.write(str(self.__torch_extinguished) + '\n')
             file.write(str(self.__items_used) + '\n')
             file.write(str(self.__turns_passed) + '\n')
+            match self.__difficulty:
+                case "EASY":
+                    file.write('1\n')
+                case "MEDIUM":
+                    file.write('2\n')
+                case "HARD":
+                    file.write('3\n')
             if self.__play_music:
                 file.write('True')
             else:
@@ -110,6 +117,16 @@ class Game:
                         case 3:
                             self.__turns_passed = int(line)
                         case 4:
+                            if int(line) == 1:
+                                self.__difficulty = "EASY"
+                                self.__guard_difficulty = 1
+                            elif int(line) == 2:
+                                self.__difficulty = "MEDIUM"
+                                self.__guard_difficulty = 2
+                            elif int(line) == 3:
+                                self.__difficulty = "HARD"
+                                self.__guard_difficulty = 3
+                        case 5:
                             if line == 'True':
                                 self.__play_music = True
                             else:
