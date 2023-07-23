@@ -17,8 +17,11 @@ from intheshadows.player import Player
 class Game:
     def __init__(self):
         # Create global variables for height, width, and black and white colors
-        self.__move_flag = None
+        self.__move_flag = False
+        self.__dashing = False
+        self.__step_dist = 1
         self.__anim_counter = None
+        self.__player_cant_move = False
         self.__black = (0, 0, 0)
         self.__white = (255, 255, 255)
         (self.__width, self.__height) = (64 * 28, 64 * 16)
@@ -152,6 +155,8 @@ class Game:
         self.__guard_positions.clear()
         self.__guard_returning = []
         self.__turn_counter = []
+        self.__guard_predetermine_holder = []
+        self.__guard_position_before_tracking = []
         self.__guard_tracking = False
         for x in range(len(self.__guard_routes)):
             self.__guards.append(
@@ -160,7 +165,10 @@ class Game:
                       self.__difficulty))
             self.__guard_positions.append(())
             self.__guard_returning.append(False)
+            self.__guard_predetermine_holder.append(())
             self.__turn_counter.append(0)
+            self.__guard_position_before_tracking.append((int(self.__guard_routes[x][0][0]),
+                      int(self.__guard_routes[x][0][1])))
 
     # Changes states when escape is pressed
     def __escape_state(self):
@@ -462,7 +470,7 @@ class Game:
         self.__player.update_sprites()
 
         if self.__move_counter == 31 // self.__resolution:
-            self.__state = 'move_guard'
+            # self.__state = 'move_guard'
             self.__smoke_turn_counter += 1
 
             replace_tile = self.__board.tiles[player_position[1]][player_position[0]].image
@@ -636,6 +644,9 @@ class Game:
                     if self.__player.dash_cooldown > 0:
                         self.__player.dash_cooldown -= 1
                     self.__player.dash = False  # reset dash conditional so next turn isnt if user was by a wall etc
+        # changes sprites depending on if moving left, right, up, or down
+        self.__player.direction = self.__move_direction
+        self.__player.update_sprites()
         sprites = self.__player.currSprites()
         if self.__player.extinguish:
             return
@@ -650,23 +661,25 @@ class Game:
                         player_position[0] + 2].type == "w":
                         step_size = self.__resolution * self.__resolution
                     # draw background
-                    self.__board.draw_level()
-                    self.__draw_guards()
+                    #self.__board.draw_level()
+                    self.__screen.clear()
                     # draw animation frame
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0],
                                                                                          self.__position[1]))
-
+                    # self.__screen.update()
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0] + step_size, self.__position[1])
-                    if not (self.__move_counter % anim_spd):
-                        self.__anim_counter += 1
+                    # if not (self.__move_counter % anim_spd):
+                    #     self.__anim_counter += 1
 
                     # for resetting animation
-                    if self.__anim_counter >= len(sprites):
-                        self.__anim_counter = 0
+                    # if self.__anim_counter >= len(sprites):
+                    #     self.__anim_counter = 0
 
-                    self.__screen.update()
+                    # self.__screen.update()
                     # update player location internally
+                else:
+                    self.__player_cant_move = True
                 if dashed:
                     if self.__board.tiles[player_position[1]][player_position[0] + 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] + 1].lit:
@@ -680,23 +693,26 @@ class Game:
                         player_position[0] - 2].type == "w":
                         step_size = self.__resolution * self.__resolution
                     # draw background
-                    self.__board.draw_level()
-                    self.__draw_guards()
+                    # self.__board.draw_level()
+                    # self.__draw_guards()
                     # draw animation frame
+                    self.__screen.clear()
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
                                                           (self.__position[0], self.__position[1]))
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0] - step_size, self.__position[1])
-                    if not (self.__move_counter % anim_spd):
-                        self.__anim_counter += 1
+                    # if not (self.__move_counter % anim_spd):
+                    #     # self.__anim_counter += 1
 
                     # for resetting animation
-                    if self.__anim_counter >= len(sprites):
-                        self.__anim_counter = 0
+                    # if self.__anim_counter >= len(sprites):
+                    #     self.__anim_counter = 0
 
-                    self.__screen.update()
+                    # self.__screen.update()
                     # update player location internally
+                else:
+                    self.__player_cant_move = True
                 if dashed:
                     if self.__board.tiles[player_position[1]][player_position[0] - 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] - 1].lit:
@@ -710,24 +726,27 @@ class Game:
                         player_position[0]].type == "w":
                         step_size = self.__resolution * self.__resolution
                     # draw background
-                    self.__board.draw_level()
-                    self.__draw_guards()
+                    # self.__board.draw_level()
+                    # self.__draw_guards()
                     # draw animation frame
+                    self.__screen.clear()
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
                                                           (self.__position[0], self.__position[1]))
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0], self.__position[1] - step_size)
-                    if not (self.__move_counter % anim_spd):
-                        self.__anim_counter += 1
+                    # if not (self.__move_counter % anim_spd):
+                    #     self.__anim_counter += 1
 
                     # for resetting animation
-                    if self.__anim_counter >= len(sprites):
-                        self.__anim_counter = 0
+                    # if self.__anim_counter >= len(sprites):
+                    #     self.__anim_counter = 0
 
-                    self.__screen.update()
+                    # self.__screen.update()
                     # update player location internally
 
+                else:
+                    self.__player_cant_move = True
                 if dashed:
                     if self.__board.tiles[player_position[1] - 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] - 1][player_position[0]].lit:
@@ -741,23 +760,26 @@ class Game:
                         player_position[0]].type == "w":
                         step_size = self.__resolution * self.__resolution
                     # draw background
-                    self.__board.draw_level()
-                    self.__draw_guards()
+                    # self.__board.draw_level()
+                    # self.__draw_guards()
                     # draw animation frame
+                    self.__screen.clear()
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
                                                           (self.__position[0], self.__position[1]))
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0], self.__position[1] + step_size)
-                    if not (self.__move_counter % anim_spd):
-                        self.__anim_counter += 1
+                    # if not (self.__move_counter % anim_spd):
+                    #     self.__anim_counter += 1
 
                     # for resetting animation
-                    if self.__anim_counter >= len(sprites):
-                        self.__anim_counter = 0
+                    # if self.__anim_counter >= len(sprites):
+                    #     self.__anim_counter = 0
 
-                    self.__screen.update()
+                    # self.__screen.update()
                     # update player location internally
+                else:
+                    self.__player_cant_move = True
                 if dashed:
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] + 1][player_position[0]].lit:
@@ -774,22 +796,39 @@ class Game:
 
     # not done
     def __move_guards(self):
+        if self.__player_cant_move:
+            self.__screen.clear()
+            self.__player.draw()
         if self.__move_counter == 31 // self.__resolution:
             self.__state = 'game'
-        self.__board.draw_level()
-        self.__player.draw()
+        # self.__player.draw()
         for x in range(len(self.__guards)):
             step_size = 1 * self.__resolution * self.__resolution
             move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
+            player_step = 1
             if self.__guard_tracking:
-                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                      self.__player.position())
+                match self.__move_direction:
+                    case 'left':
+                        player_pos = (self.__player.position()[0] - self.__step_dist, self.__player.position()[1])
+                    case 'up':
+                        player_pos = (self.__player.position()[0], self.__player.position()[1] - self.__step_dist)
+                    case 'down':
+                        player_pos = (self.__player.position()[0], self.__player.position()[1] + self.__step_dist)
+                    case 'right':
+                        player_pos = (self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
+                try:
+                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                      player_pos)
+                except Exception as e:
+                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                          self.__player.position())
             elif self.__guard_returning[x]:
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                       self.__guard_position_before_tracking[x])
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
+            self.__guards[x].direction = move_direction
             self.__guards[x].update_sprites()
             match move_direction:
                 case 'R':
@@ -832,7 +871,7 @@ class Game:
         # for resetting animation
         if self.__anim_counter >= 4:
             self.__anim_counter = 0
-        self.__screen.update()
+        #self.__screen.update()
 
     def __get_spawns(self):
         player_spawn, guards = self.__board.load_level(self.__level)
@@ -984,7 +1023,10 @@ class Game:
         height = len(self.__board.tiles)
         start_num = (start[1] * width) + start[0]
         end_num = (end[1] * width) + end[0]
-        shortest = self.__vertices.get_shortest_paths(start_num, end_num)
+        try:
+            shortest = self.__vertices.get_shortest_paths(start_num, end_num)
+        except:
+            pass
         dist = shortest[0][1] - shortest[0][0]
         if dist == 1:
             return 'R'
@@ -1129,7 +1171,7 @@ class Game:
                     if self.__check_guard_path(self.__guards[x], 'D'):
                         self.__guards[x].moveDown()
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
-                                                 self.__guards[x].currSprites()[0])
+                                                 self.__board.tiles[self.__guards[x].y][self.__guards[x].x].image)
             self.__board.torch_check()
             self.__turn_counter[x] = self.__turn_counter[x] + 1
             if self.__guard_returning[x]:
@@ -1142,7 +1184,6 @@ class Game:
         clock = pygame.time.Clock()
         self.__move_counter = 0
         self.__torch_counter = 0
-        self.__move_flag = False
         while self.__running:
             clock.tick(60)
             # print(clock.get_fps())
@@ -1173,32 +1214,11 @@ class Game:
                                 self.__anim_torches, self.__difficulty)
                 case 'game':
                     pygame.mouse.set_visible(False)
-                    if self.__move_flag == "guard":
-                        self.__update_guards()
-                        if self.__guard_turn_counter < self.__guard_difficulty and not self.__check_game_over(
-                                self.__player.position()):
-                            self.__state = 'move_guard'
-                            self.__move_flag = "player"
-                            continue
-                        if self.__guard_tracking is False:
-                            self.__check_guard_vision()
-                    self.__allow_movement = True
-                    self.__guard_turn_counter = 0
-                    self.__move_flag = "none"
-                    try:
-                        self.__run_game()
-                    except Exception as E:
-                        print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
-                case 'inventory':
-                    display_info(self.__width, self.__height, self.__screen, self.__level, self.__torch_extinguished, self.__items_used, self.__turns_passed, self.__player.num_water, self.__player.num_smoke)
-                case 'game_over':
-                    pass
-                case 'move':
-                    if self.__move_flag == "none":
-                        self.__move_flag = "player"
-                    self.__move_player()
-                case 'move_guard':
-                    if self.__move_flag == "player":
+                    self.__dashing = False
+                    self.__step_dist = 1
+                    # Update the Player and Guard Locations
+                    if self.__move_flag is True:
+                        self.__player_cant_move = False
                         if self.__check_game_over(self.__player.position()):
                             self.__music.play_music("game_over")
                             self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
@@ -1209,10 +1229,6 @@ class Game:
                             continue
                         if self.__guard_tracking is False:
                             self.__check_guard_vision()
-                        self.__guard_turn_counter = self.__guard_turn_counter + 1
-                        self.__move_counter = 0
-                        self.__anim_counter = 0
-                        self.__move_flag = "guard"
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][
                                 (self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
@@ -1231,6 +1247,46 @@ class Game:
                                 case 'D':
                                     self.__guards[x].direction = 'down'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
+                        self.__update_guards()
+                        if self.__guard_tracking is False:
+                            self.__check_guard_vision()
+                    self.__allow_movement = True
+                    self.__move_flag = False
+                    try:
+                        self.__run_game()
+                    except Exception as E:
+                        print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
+                case 'inventory':
+                    display_info(self.__width, self.__height, self.__screen, self.__level, self.__torch_extinguished,
+                                 self.__items_used, self.__turns_passed, self.__player.num_water,
+                                 self.__player.num_smoke)
+                    '''
+                    TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
+                    also have it track what items are used etc
+                    '''
+                case 'game_over':
+                    pass
+                case 'move':
+                    if self.__player.dash:
+                        self.__dashing = True
+                    self.__move_player()
+                    if self.__move_flag is False:
+                        if self.__dashing:
+                            self.__step_dist = 2
+                        match self.__move_direction:
+                            case 'left':
+                                player_pos = (self.__player.position()[0] - self.__step_dist, self.__player.position()[1])
+                            case 'up':
+                                player_pos = (self.__player.position()[0], self.__player.position()[1] - self.__step_dist)
+                            case 'down':
+                                player_pos = (self.__player.position()[0], self.__player.position()[1] + self.__step_dist)
+                            case 'right':
+                                player_pos = (self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
+                        try:
+                            self.__check_guard_vision()
+                        except:
+                            pass
+                        self.__move_flag = True
                     self.__move_guards()
             self.check_smoke()
             self.__screen.update()
