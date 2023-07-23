@@ -29,7 +29,8 @@ class Window:
         self.__screen.blit(self.__help_surface, (self.__width // 4, self.__height // 4))
         pygame.display.update()
 
-
+    def clear(self):
+        self.__foreground_surface.fill((0, 0, 0, 0))
     def resize(self, width, height):
         self.__screen = pygame.display.set_mode((width, height), pygame.SCALED + pygame.FULLSCREEN, 60)
         self.__background_surface = pygame.transform.scale(self.__background_surface, (width, height))
