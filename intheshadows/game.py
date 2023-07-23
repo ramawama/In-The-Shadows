@@ -447,7 +447,7 @@ class Game:
                                              (coord[0] * 32 * self.__resolution, coord[1] * 32 * self.__resolution))
 
     def check_smoke(self):
-        if self.__state != 'menu':
+        if self.__state != 'menu' and self.__state != 'game_over':
             if self.__player.smoke:
                 self.__draw_smoke(self.__smoke_location)
             if self.__smoke_turn_counter >= 3:
@@ -823,8 +823,11 @@ class Game:
                     move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                           self.__player.position())
             elif self.__guard_returning[x]:
-                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                      self.__guard_position_before_tracking[x])
+                try:
+                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                        self.__guard_position_before_tracking[x])
+                except:
+                    continue
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
