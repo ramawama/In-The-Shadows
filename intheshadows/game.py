@@ -447,7 +447,7 @@ class Game:
                                              (coord[0] * 32 * self.__resolution, coord[1] * 32 * self.__resolution))
 
     def check_smoke(self):
-        if self.__state != 'menu' and self.__state != 'game_over':
+        if self.__state != 'menu' and self.__state != 'game_over' and self.__state != 'win':
             if self.__player.smoke:
                 self.__draw_smoke(self.__smoke_location)
             if self.__smoke_turn_counter >= 3:
