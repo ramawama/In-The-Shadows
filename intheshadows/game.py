@@ -232,6 +232,17 @@ class Game:
                     self.__set_player_and_guards()
                     pygame.display.toggle_fullscreen()
                     self.__fullscreen = False
+                    self.__smoke_images = [pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/smoke.png").convert_alpha(),
+                        (32 * self.__resolution, 32 * self.__resolution)), pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/smoke_small.png").convert_alpha(),
+                        (32 * self.__resolution, 32 * self.__resolution))]
+                    self.__water_flask = pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png").convert_alpha(),
+                        (self.__resolution * 32, self.__resolution * 32))
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
                 if not self.__fullscreen:
                     (self.__width, self.__height) = (64 * 28, 64 * 16)
@@ -240,6 +251,17 @@ class Game:
                     self.__board.resize_board(self.__screen, self.__width, self.__height)
                     self.__set_player_and_guards()
                     self.__fullscreen = True
+                    self.__smoke_images = [pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/smoke.png").convert_alpha(),
+                        (32 * self.__resolution, 32 * self.__resolution)), pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/smoke_small.png").convert_alpha(),
+                        (32 * self.__resolution, 32 * self.__resolution))]
+                    self.__water_flask = pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png").convert_alpha(),
+                        (self.__resolution * 32, self.__resolution * 32))
             elif self.__rects['options_back_button'].collidepoint(mouse_pos):
                 self.__state = 'menu'
 
@@ -683,7 +705,6 @@ class Game:
         step_size = 1 * self.__resolution * self.__resolution
         if self.__player.dash:
             step_size = 2 * self.__resolution * self.__resolution
-        anim_spd = 4 // self.__resolution
         match self.__move_direction:
             case "right":
                 if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
