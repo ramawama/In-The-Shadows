@@ -1016,9 +1016,6 @@ class Game:
         self.__check_key(self.__player.position())  # change to if statement if you want to do hud stuff
         self.__check_item(self.__player.position())
 
-        self.__check_things()
-
-    def __check_things(self):
         if self.__check_next_level(self.__player.position()):
             if self.__level == 3:
                 self.__board.unload()
@@ -1030,6 +1027,17 @@ class Game:
                 if self.__guard_tracking:
                     self.__alert_mode_on()
             else:
+                self.__level += 1
+                self.__board.unload()
+                self.__player_spawn, self.__guard_routes = self.__load_game()
+                self.__set_player_and_guards()
+                if self.__guard_tracking:
+                    self.__alert_mode_off()
+
+
+    def __check_things(self):
+        if self.__check_next_level(self.__player.position()):
+            if self.__level != 3:
                 self.__level += 1
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
