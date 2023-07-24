@@ -1217,10 +1217,10 @@ class Game:
                                     break
                             except:
                                 pass
-                        guard_y = guard_y + 3
+                        guard_y = guard_y + 1
                 case "right":
                     dy = [-2, -1, 0, 1, 2]
-                    guard_x = guard_x + 1
+                    guard_x = guard_x + 3
                     while guard_x <= 28:
                         for i in range(0, 5):
                             try:
@@ -1233,7 +1233,7 @@ class Game:
                                     break
                             except:
                                 pass
-                        guard_x = guard_x + 3
+                        guard_x = guard_x + 1
                 case "left":
                     dy = [-2, -1, 0, 1, 2]
                     guard_x = guard_x - 3
