@@ -1,4 +1,3 @@
-import queue
 from pathlib import Path
 import pygame
 import os
@@ -28,7 +27,7 @@ class Game:
 
         # Initialize Music
         self.__music = Music()
-        self.__play_music = True
+        self.__play_music = None
 
         # Load difficulty
         self.__difficulty = "EASY"
@@ -105,9 +104,9 @@ class Game:
                 case "HARD":
                     file.write('3\n')
             if self.__play_music:
-                file.write('True\n')
+                file.write('True' + '\n')
             else:
-                file.write('False\n')
+                file.write('False' + '\n')
             file.write(str(self.__num_water) + '\n')
             file.write(str(self.__num_smoke))
 
@@ -141,9 +140,9 @@ class Game:
                                 self.__difficulty = "HARD"
                                 self.__guard_difficulty = 3
                         case 5:
-                            if line == 'True':
+                            if str(line) == "True\n":
                                 self.__play_music = True
-                            else:
+                            elif str(line) == "False\n":
                                 self.__music.toggle()
                                 self.__play_music = False
                         case 6:  # water
@@ -1336,9 +1335,6 @@ class Game:
                             self.__player_spawn, self.__guard_routes = self.__get_spawns()
                             self.__set_player_and_guards()
                             continue
-                        self.__update_guards()
-                        if self.__guard_tracking is False:
-                            self.__check_guard_vision(self.__player.position())
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][
                                 (self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
@@ -1357,6 +1353,7 @@ class Game:
                                 case 'D':
                                     self.__guards[x].direction = 'down'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
+                        self.__update_guards()
                         if self.__guard_tracking is False:
                             self.__check_guard_vision(self.__player.position())
                     self.__allow_movement = True
