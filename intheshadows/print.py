@@ -1,17 +1,14 @@
 import pygame
 from pathlib import Path
 
+
 def display_item(width, height, screen, water, smoke):
-    # background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/hud_background.png")
-    # background = pygame.transform.scale(background, (width // 2, height // 2))
-    # font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height // 2 * 0.05))
-    # screen.help_surface.blit(background, (0, 0))
     if water:
-        background = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png")
+        background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/flask_popup.png")
         background = pygame.transform.scale(background, (width // 2, height // 2))
         screen.help_surface.blit(background, (0, 0))
     elif smoke:
-        background = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke_bomb.png")
+        background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/smoke_popup.png")
         background = pygame.transform.scale(background, (width // 2, height // 2))
         screen.help_surface.blit(background, (0, 0))
 
