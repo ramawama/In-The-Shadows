@@ -698,6 +698,9 @@ class Game:
                         self.__board.tiles[player_position[1]][player_position[0] + 1].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
+                        self.__check_key(self.__player.position())
+                        self.__check_item(self.__player.position())
+                        self.__check_things()
 
             case "left":
                 if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
@@ -731,6 +734,9 @@ class Game:
                         self.__board.tiles[player_position[1]][player_position[0] - 1].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
+                        self.__check_key(self.__player.position())
+                        self.__check_item(self.__player.position())
+                        self.__check_things()
 
             case "up":
                 if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
@@ -765,6 +771,9 @@ class Game:
                         self.__board.tiles[player_position[1] - 1][player_position[0]].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
+                        self.__check_key(self.__player.position())
+                        self.__check_item(self.__player.position())
+                        self.__check_things()
 
             case "down":
                 if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
@@ -798,6 +807,9 @@ class Game:
                         self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
+                        self.__check_key(self.__player.position())
+                        self.__check_item(self.__player.position())
+                        self.__check_things()
 
         player_position = self.__player.position()
         if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
@@ -805,6 +817,9 @@ class Game:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
             self.__torch_extinguished += 1
             self.__board.torch_check()
+            self.__check_key(self.__player.position())
+            self.__check_item(self.__player.position())
+            self.__check_things()
 
     # not done
     def __move_guards(self):
@@ -936,6 +951,9 @@ class Game:
             self.__board.tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.orig_tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.torch_check()
+            self.__check_key(self.__player.position())
+            self.__check_item(self.__player.position())
+            self.__check_things()
             self.__board.unlock()
             self.__player.key = True
             self.__screen.update()
@@ -955,6 +973,9 @@ class Game:
             self.__board.tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.orig_tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.torch_check()
+            self.__check_key(self.__player.position())
+            self.__check_item(self.__player.position())
+            self.__check_things()
             self.__screen.update()
             return True
         return False
@@ -1006,6 +1027,17 @@ class Game:
                 if self.__guard_tracking:
                     self.__alert_mode_on()
             else:
+                self.__level += 1
+                self.__board.unload()
+                self.__player_spawn, self.__guard_routes = self.__load_game()
+                self.__set_player_and_guards()
+                if self.__guard_tracking:
+                    self.__alert_mode_off()
+
+
+    def __check_things(self):
+        if self.__check_next_level(self.__player.position()):
+            if self.__level != 3:
                 self.__level += 1
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
@@ -1226,6 +1258,9 @@ class Game:
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
                                                  self.__board.tiles[self.__guards[x].y][self.__guards[x].x].image)
             self.__board.torch_check()
+            self.__check_key(self.__player.position())
+            self.__check_item(self.__player.position())
+            self.__check_things()
             self.__turn_counter[x] = self.__turn_counter[x] + 1
             if self.__guard_returning[x]:
                 if (self.__guards[x].x, self.__guards[x].y) == self.__guard_position_before_tracking[x]:
