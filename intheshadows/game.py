@@ -146,7 +146,7 @@ class Game:
                             else:
                                 self.__music.toggle()
                                 self.__play_music = False
-                        case 6: # water
+                        case 6:  # water
                             self.__num_water = int(line)
                         case 7:
                             self.__num_smoke = int(line)
@@ -180,7 +180,7 @@ class Game:
             self.__guard_predetermine_holder.append(())
             self.__turn_counter.append(0)
             self.__guard_position_before_tracking.append((int(self.__guard_routes[x][0][0]),
-                      int(self.__guard_routes[x][0][1])))
+                                                          int(self.__guard_routes[x][0][1])))
 
     # Changes states when escape is pressed
     def __escape_state(self):
@@ -275,7 +275,7 @@ class Game:
                                 else:
                                     self.__player.dash = False
                             case pygame.K_1:
-                                if self.__num_water> 0:
+                                if self.__num_water > 0:
                                     self.__player.extinguish = True
                                     self.__num_water -= 1
                                     self.__items_used += 1
@@ -517,7 +517,7 @@ class Game:
                         tempY = player_position[1] - 1
                         while tempY >= 0:
                             self.__screen.foreground_surface.blit(self.__water_flask, (
-                            player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
+                                player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
                             self.__screen.update()
                             self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
                             time.sleep(water_flask_speed)
@@ -558,7 +558,7 @@ class Game:
                         tempY = player_position[1] + 1
                         while tempY <= 15:
                             self.__screen.foreground_surface.blit(self.__water_flask, (
-                            player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
+                                player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution))
                             self.__screen.update()
                             self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
                             time.sleep(water_flask_speed)
@@ -692,7 +692,7 @@ class Game:
                         player_position[0] + 2].type == "w":
                         step_size = self.__resolution * self.__resolution
                     # draw background
-                    #self.__board.draw_level()
+                    # self.__board.draw_level()
                     self.__screen.clear()
                     # draw animation frame
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0],
@@ -864,14 +864,14 @@ class Game:
                         player_pos = (self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
                 try:
                     move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                      player_pos)
+                                                          player_pos)
                 except Exception as e:
                     move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                           self.__player.position())
             elif self.__guard_returning[x]:
                 try:
                     move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                        self.__guard_position_before_tracking[x])
+                                                          self.__guard_position_before_tracking[x])
                 except:
                     continue
             if self.__check_guard_path(self.__guards[x], move_direction) is False:
@@ -920,7 +920,7 @@ class Game:
         # for resetting animation
         if self.__anim_counter >= 4:
             self.__anim_counter = 0
-        #self.__screen.update()
+        # self.__screen.update()
 
     def __get_spawns(self):
         player_spawn, guards = self.__board.load_level(self.__level)
@@ -939,18 +939,18 @@ class Game:
         height = len(self.__board.tiles)
         for i, mains in enumerate(self.__board.tiles):
             for j, nexts in enumerate(mains):
-                if nexts.type != 'w':
+                if nexts.type in ['o', 'p', 't']:
                     if j != 0:
-                        if self.__board.tiles[i][j - 1].type != 'w':
+                        if self.__board.tiles[i][j - 1].type in ['o', 'p', 't']:
                             self.__vertices.add_edge(j + (i * width), (j - 1) + (i * width))
                     if j != (width - 1):
-                        if self.__board.tiles[i][j + 1].type != 'w':
+                        if self.__board.tiles[i][j + 1].type in ['o', 'p', 't']:
                             self.__vertices.add_edge(j + (i * width), (j + 1) + (i * width))
                     if i != 0:
-                        if self.__board.tiles[i - 1][j].type != 'w':
+                        if self.__board.tiles[i - 1][j].type in ['o', 'p', 't']:
                             self.__vertices.add_edge(j + (i * width), j + ((i - 1) * width))
                     if i != (height - 1):
-                        if self.__board.tiles[i + 1][j].type != 'w':
+                        if self.__board.tiles[i + 1][j].type in ['o', 'p', 't']:
                             self.__vertices.add_edge(j + (i * width), j + ((i + 1) * width))
         self.__vertices = self.__vertices.simplify()
         return player_spawn, guards
@@ -1053,7 +1053,6 @@ class Game:
                 if self.__guard_tracking:
                     self.__alert_mode_off()
 
-
     def __check_things(self):
         if self.__check_next_level(self.__player.position()):
             if self.__level != 3:
@@ -1124,7 +1123,6 @@ class Game:
 
     def __check_guard_vision(self, player_pos):
         player_position = player_pos
-        print(player_position)
         for x in range(len(self.__guards)):
             guard_x = self.__guards[x].x
             guard_y = self.__guards[x].y
@@ -1183,7 +1181,8 @@ class Game:
                 try:
                     if self.__board.tiles[guard_y + dy[i]][guard_x + dx[i]].type == 'w':
                         blocked_views.append(i)
-                    if guard_y + dy[i] == player_position[1] and guard_x + dx[i] == player_position[0] and i % 3 not in blocked_views:
+                    if guard_y + dy[i] == player_position[1] and guard_x + dx[i] == player_position[
+                        0] and i % 3 not in blocked_views:
                         self.__alert_mode_on()
                         break
                 except:
@@ -1199,7 +1198,7 @@ class Game:
                                 if self.__board.tiles[guard_y][guard_x + dx[i]].type == 'w':
                                     blocked_views.append(i)
                                 if self.__board.tiles[guard_y][guard_x + dx[i]].lit and guard_y == player_position[1] \
-                                        and guard_x + dx[i] == player_position[0]  and i not in blocked_views:
+                                        and guard_x + dx[i] == player_position[0] and i not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
@@ -1228,8 +1227,9 @@ class Game:
                             try:
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].type == 'w':
                                     blocked_views.append(i)
-                                if self.__board.tiles[guard_y + dy[i]][guard_x].lit and guard_y + dy[i] == player_position[
-                                    1] and guard_x == player_position[0]  and i not in blocked_views:
+                                if self.__board.tiles[guard_y + dy[i]][guard_x].lit and guard_y + dy[i] == \
+                                        player_position[
+                                            1] and guard_x == player_position[0] and i not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
@@ -1244,7 +1244,7 @@ class Game:
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].type == 'w':
                                     blocked_views.append(i)
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].lit and guard_y + dy[i] == \
-                                        player_position[1] and guard_x == player_position[0]  and i not in blocked_views:
+                                        player_position[1] and guard_x == player_position[0] and i not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
@@ -1309,7 +1309,8 @@ class Game:
             match self.__state:
                 case 'load':
                     pygame.mouse.set_visible(False)
-                    loading_screen(self.__width, self.__height, self.__screen, self.__level, self.__torch_extinguished, self.__items_used, self.__turns_passed)
+                    loading_screen(self.__width, self.__height, self.__screen, self.__level, self.__torch_extinguished,
+                                   self.__items_used, self.__turns_passed)
                 case 'menu':
                     pygame.mouse.set_visible(True)
                     self.__music.play_music('menu')
@@ -1378,13 +1379,17 @@ class Game:
                             self.__step_dist = 2
                         match self.__move_direction:
                             case 'left':
-                                player_pos = (self.__player.position()[0] - self.__step_dist, self.__player.position()[1])
+                                player_pos = (
+                                self.__player.position()[0] - self.__step_dist, self.__player.position()[1])
                             case 'up':
-                                player_pos = (self.__player.position()[0], self.__player.position()[1] - self.__step_dist)
+                                player_pos = (
+                                self.__player.position()[0], self.__player.position()[1] - self.__step_dist)
                             case 'down':
-                                player_pos = (self.__player.position()[0], self.__player.position()[1] + self.__step_dist)
+                                player_pos = (
+                                self.__player.position()[0], self.__player.position()[1] + self.__step_dist)
                             case 'right':
-                                player_pos = (self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
+                                player_pos = (
+                                self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
                         try:
                             self.__check_guard_vision(player_pos)
                         except:
