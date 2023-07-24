@@ -1371,7 +1371,6 @@ class Game:
                             if self.__guard_tracking:
                                 self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
                             elif self.__guard_returning[x]:
-                                print(f"{self.__guards[x].x}, {self.__guards[x].y},{self.__guard_position_before_tracking[x]}")
                                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                                       self.__guard_position_before_tracking[x])
                             match move_direction:
