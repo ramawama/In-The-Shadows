@@ -57,9 +57,11 @@ Every time any coordinates are called, they are wrapped in a try/except clause t
 Additionally, we leveraged the use of predefined levels which are designed to be impossible to break because they are surrounded by walls which cannot be passed.
 This results in a game where any user input cannot result in a crash from the users actions, there may be bugs from other functions that are out of the control of the player.
 
-Consistency: We believe our game is consistent because
+Consistency: We believe our game is consistent because we used a consistent naming scheme for all of our variables and functions.
+These rules were enforced by a GitHub task on push so every coder had to conform to using the same scheme.
 
-Aesthetic Rigor: We believe our game is aesthetically rigorous because
+Aesthetic Rigor: We believe our game is aesthetically rigorous because we developed every single asset by hand without the use of any tools or libraries.
+The animations are all done by hand as well so this is an entirely student-designed game which took an extreme amount of effort.
 
 
 ### FEATURES ###
