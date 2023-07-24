@@ -6,15 +6,21 @@ Below are the reasonings for why we believe our code deserves points for each ca
 
 ### INTERFACE ###
 
-Element Visibility: We believe all of the elements
+Element Visibility: We believe all of the elements are clearly visible because we used high contrast colors and large text so that all of the intractable elements are clearly visible.
+Additionally, all of the tile designs for the game are designed to be easily distinguishable from each other so players cannot get certain type of tiles confused with each other.
+The items and instructions are displayed with enough spacing between them so that they are not cluttered and easily read.
 
-Element Usability: We believe all of the elements are usable
+Element Usability: We believe all of the elements are usable because all of the buttons that can be clicked  light up when the mouse hovers over them so the user know which elements are usable and which ones are not.
+Additionally, the controls are displayed on the screen so the user knows how to interact with the game and the items are displayed on the screen so the user knows what items they have available to them.
 
-Intuitiveness: We believe all of the elements are intuitive
+Intuitiveness: We believe all of the elements are intuitive because our game has no special controls that are unique to it so the user can use the same controls they would use in any other game.
+Additionally, the controls are all displayed on the screen which the option to use WASD or the arrow keys, which allows the user to use whatever they're most comfortable with.
 
-Consistency: We believe all of the elements are consistent
+Consistency: We believe all of the elements are consistent because every graphic was designed by the same person so the art style is consistent throughout the game.
+Additionally, every text box uses the same font and color so the game has a uniform and consistent feel.
 
-Status Visibility: We believe all of the elements are visible
+Status Visibility: We believe all of the elements are visible because we implemented a HUD at the bottom of the screen when the player is in the game.
+The HUD is designed to display all of the things the player needs to know while they are playing the game.
 
 
 ### NAVIGATION ###
