@@ -4,7 +4,7 @@ import time
 
 
 def game_over(width, height, screen, board):
-    pygame.mixer.Sound.play(pygame.mixer.Sound("./assets/sounds/death.wav"))
+    pygame.mixer.Sound.play(pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/death.wav"))
     time.sleep(0.5)
     board.unload()
     level = 1
