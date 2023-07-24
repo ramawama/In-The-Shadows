@@ -1138,11 +1138,11 @@ class Game:
         return 'H'
 
     def __alert_mode_on(self):
-        self.__guard_tracking = True
-        self.__music.play_music('alert')
-        self.__guard_position_before_tracking = []
-        for i in range(0, len(self.__guards)):
-            self.__guard_position_before_tracking.append((self.__guards[i].x, self.__guards[i].y))
+        if not self.__player.smoke:
+            self.__guard_tracking = True
+            self.__music.play_music('alert')
+            for i in range(0, len(self.__guards)):
+                self.__turn_counter[i] = 0
 
     def __alert_mode_off(self):
         self.__guard_tracking = False
@@ -1371,6 +1371,7 @@ class Game:
                             if self.__guard_tracking:
                                 self.__shortest_path((self.__guards[x].x, self.__guards[x].y), self.__player.position())
                             elif self.__guard_returning[x]:
+                                print(f"{self.__guards[x].x}, {self.__guards[x].y},{self.__guard_position_before_tracking[x]}")
                                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                                       self.__guard_position_before_tracking[x])
                             match move_direction:
