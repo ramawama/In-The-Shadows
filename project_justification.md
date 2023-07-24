@@ -115,7 +115,18 @@ The front end of our game
 
 ## Data Store
 
-The data storage within our game
+For each of our game features, such as item count, difficulty selection,
+turns passed, torches extinguished, and level selection,
+we stored these values as object variables to keep track of their values and continuously update the game state.
+These connect to the front and back end through our persistent state.
+For example, when picking up a smoke bomb or water flask,
+it will immediately update the user inventory or the user HUD and the game's persistent state.
+Our persistent state includes music selection, turns passed, current level,
+items possessed, items used, difficulty selection, and torches extinguished.
+We store these in a text file unique to every user that loads
+and saves the user's progress at the start and end of the program,
+respectively.
+These are appropriately connected, as when items are interacted with, they are constantly updated in the back end.
 
 ## Back-End
 
