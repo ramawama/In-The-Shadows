@@ -41,13 +41,15 @@ General Usability: We believe our game is generally usable because
 
 ### RESPONSIVENESS ###
 
-Action Indications / Non-Blocking: We believe our game is responsive because
+Action Indications / Non-Blocking: We believe our game has a clear indicator of the action going on in the game.
+This is because of the HUD we have on the bottom of out screen. The left side of the HUD tells the player if they have any abilities or items readied for them to use.
 
-State Indications: We believe
+State Indications: We believe that our game has a clear indication of the state because the HUD on the bottom of the screen tells the player what state the game is in.
+The right side of the HUD tells the player what the current object is and changes based on what step and level the character is on.
 
-Task Success: We believe
+Task Success: We believe that our game makes it extremely clear when the player has won because the game will stop and display a message saying "You Win!".
 
-Task failure: We believe
+Task failure: We believe that our game makes it extremely clear when the player has lost because the game will stop and display a message saying "Game Over".
 
 
 ### BUILD QUALITY ###
