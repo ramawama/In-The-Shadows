@@ -1117,7 +1117,6 @@ class Game:
 
     def __check_guard_vision(self, player_pos):
         player_position = player_pos
-        print(player_position)
         for x in range(len(self.__guards)):
             guard_x = self.__guards[x].x
             guard_y = self.__guards[x].y
@@ -1328,9 +1327,6 @@ class Game:
                             self.__player_spawn, self.__guard_routes = self.__get_spawns()
                             self.__set_player_and_guards()
                             continue
-                        self.__update_guards()
-                        if self.__guard_tracking is False:
-                            self.__check_guard_vision(self.__player.position())
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][
                                 (self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
@@ -1349,6 +1345,7 @@ class Game:
                                 case 'D':
                                     self.__guards[x].direction = 'down'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
+                        self.__update_guards()
                         if self.__guard_tracking is False:
                             self.__check_guard_vision(self.__player.position())
                     self.__allow_movement = True
