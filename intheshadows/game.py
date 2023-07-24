@@ -1,4 +1,3 @@
-import queue
 from pathlib import Path
 import pygame
 import os
@@ -28,7 +27,7 @@ class Game:
 
         # Initialize Music
         self.__music = Music()
-        self.__play_music = True
+        self.__play_music = None
 
         # Load difficulty
         self.__difficulty = "EASY"
@@ -82,9 +81,11 @@ class Game:
         self.__water_flask = pygame.transform.scale(
             pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png").convert_alpha(),
             (self.__resolution * 32, self.__resolution * 32))
-        self.__smoke_image = pygame.transform.scale(
+        self.__smoke_images = [pygame.transform.scale(
             pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke.png").convert_alpha(),
-            (32 * self.__resolution, 32 * self.__resolution))
+            (32 * self.__resolution, 32 * self.__resolution)), pygame.transform.scale(
+            pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke_small.png").convert_alpha(),
+            (32 * self.__resolution, 32 * self.__resolution))]
 
         self.loaded = False
 
@@ -103,9 +104,9 @@ class Game:
                 case "HARD":
                     file.write('3\n')
             if self.__play_music:
-                file.write('True\n')
+                file.write('True' + '\n')
             else:
-                file.write('False\n')
+                file.write('False' + '\n')
             file.write(str(self.__num_water) + '\n')
             file.write(str(self.__num_smoke))
 
@@ -139,9 +140,9 @@ class Game:
                                 self.__difficulty = "HARD"
                                 self.__guard_difficulty = 3
                         case 5:
-                            if line == 'True':
+                            if str(line) == "True\n":
                                 self.__play_music = True
-                            else:
+                            elif str(line) == "False\n":
                                 self.__music.toggle()
                                 self.__play_music = False
                         case 6: # water
@@ -465,15 +466,20 @@ class Game:
                 result.append(box)
         return result
 
-    def __draw_smoke(self, player_box):
+    def __draw_smoke(self, player_box, frame):
         for coord in player_box:
-            self.__screen.smoke_surface.blit(self.__smoke_image,
+            self.__screen.smoke_surface.blit(self.__smoke_images[frame],
                                              (coord[0] * 32 * self.__resolution, coord[1] * 32 * self.__resolution))
 
     def check_smoke(self):
         if self.__state != 'menu' and self.__state != 'game_over' and self.__state != 'win':
             if self.__player.smoke:
-                self.__draw_smoke(self.__smoke_location)
+                if self.__anim_torches:
+                    self.__screen.smoke_surface.fill((0, 0, 0, 0))
+                    self.__draw_smoke(self.__smoke_location, 0)
+                else:
+                    self.__screen.smoke_surface.fill((0, 0, 0, 0))
+                    self.__draw_smoke(self.__smoke_location, 1)
             if self.__smoke_turn_counter >= 3:
                 self.__smoke_turn_counter = 0
                 self.__player.smoke = False
@@ -1014,7 +1020,7 @@ class Game:
     # Runs the actual game
     def __run_game(self):
         self.__board.draw_level()
-        self.__board.display_hud(self.__player)
+        self.__board.display_hud(self.__player, self.__guard_tracking)
         self.__player.draw()
         self.__draw_guards()
         if self.__check_game_over(self.__player.position()):

@@ -1,17 +1,14 @@
 import pygame
 from pathlib import Path
 
+
 def display_item(width, height, screen, water, smoke):
-    # background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/hud_background.png")
-    # background = pygame.transform.scale(background, (width // 2, height // 2))
-    # font = pygame.font.Font(Path(__file__).parent / 'assets/fonts/Minecraftia-Regular.ttf', int(height // 2 * 0.05))
-    # screen.help_surface.blit(background, (0, 0))
     if water:
-        background = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png")
+        background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/flask_popup.png")
         background = pygame.transform.scale(background, (width // 2, height // 2))
         screen.help_surface.blit(background, (0, 0))
     elif smoke:
-        background = pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke_bomb.png")
+        background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/smoke_popup.png")
         background = pygame.transform.scale(background, (width // 2, height // 2))
         screen.help_surface.blit(background, (0, 0))
 
@@ -52,6 +49,7 @@ def display_info(width, height, screen, level, num_torches, num_items, turns_pas
     screen.help_surface.blit(num_turns, num_turns_rect)
     screen.help_surface.blit(num_water_bottles, num_water_bottles_rect)
     screen.help_surface.blit(num_smoke_bombs, num_smoke_bombs_rect)
+
 
 def run_menu(width, height, rects, screen, anim_torches):
     # animates torches
