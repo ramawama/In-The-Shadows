@@ -1063,21 +1063,55 @@ class Game:
             if self.__smoke_turn_counter > 0 and self.__smoke_location is not None:
                 if (guard_x, guard_y) in self.__smoke_location:
                     continue
+            dx = []
+            dy = []
             match self.__guards[x].direction:
                 case "up":
-                    dx = [-1, 0, 1, -1, 0, 1]
-                    dy = [-1, -1, -1, -2, -2, -2]
+                    match self.__guards[x].difficulty:
+                        case 1:
+                            dx = [-1, 0, 1, -1, 0, 1]
+                            dy = [-1, -1, -1, -2, -2, -2]
+                        case 2:
+                            dx = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dy = [-1, -1, -1, -2, -2, -2, -3, -3, -3]
+                        case 3:
+                            dx = [-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dy = [-1, -1, -1, -2, -2, -2, -3, -3, -3, -4, -4, -4]
                 case "down":
-                    dx = [-1, 0, 1, -1, 0, 1]
-                    dy = [1, 1, 1, 2, 2, 2]
+                    match self.__guards[x].difficulty:
+                        case 1:
+                            dx = [-1, 0, 1, -1, 0, 1]
+                            dy = [1, 1, 1, 2, 2, 2]
+                        case 2:
+                            dx = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dy = [1, 1, 1, 2, 2, 2, 3, 3, 3]
+                        case 3:
+                            dx = [-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dy = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4]
                 case "right":
-                    dx = [1, 1, 1, 2, 2, 2]
-                    dy = [-1, 0, 1, -1, 0, 1]
+                    match self.__guards[x].difficulty:
+                        case 1:
+                            dy = [-1, 0, 1, -1, 0, 1]
+                            dx = [1, 1, 1, 2, 2, 2]
+                        case 2:
+                            dy = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dx = [1, 1, 1, 2, 2, 2, 3, 3, 3]
+                        case 3:
+                            dy = [-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dx = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4]
                 case "left":
-                    dx = [-1, -1, -1, -2, -2, -2]
-                    dy = [-1, 0, 1, -1, 0, 1]
+                    match self.__guards[x].difficulty:
+                        case 1:
+                            dy = [-1, 0, 1, -1, 0, 1]
+                            dx = [-1, -1, -1, -2, -2, -2]
+                        case 2:
+                            dy = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dx = [-1, -1, -1, -2, -2, -2, -3, -3, -3]
+                        case 3:
+                            dy = [-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dx = [-1, -1, -1, -2, -2, -2, -3, -3, -3, -4, -4, -4]
             blocked_views = []
-            for i in range(0, 6):
+            for i in range(0, len(dy)):
                 try:
                     if self.__board.tiles[guard_y + dy[i]][guard_x + dx[i]].type == 'w':
                         blocked_views.append(i)
