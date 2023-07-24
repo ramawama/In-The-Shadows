@@ -40,6 +40,8 @@ class Game:
         self.__level = 0
         self.__num_water = 0
         self.__num_smoke = 0
+        self.__level_water = 0
+        self.__level_smoke = 0
         self.load_level()
         self.__torch_counter = 0
         self.__move_counter = 0
@@ -108,8 +110,8 @@ class Game:
                 file.write('True' + '\n')
             else:
                 file.write('False' + '\n')
-            file.write(str(self.__num_water) + '\n')
-            file.write(str(self.__num_smoke))
+            file.write(str(self.__level_water) + '\n')
+            file.write(str(self.__level_smoke))
 
     def load_level(self):
         # edit this and user_progress.txt to save future info like torches lit and moves etc
@@ -324,6 +326,9 @@ class Game:
                                 else:
                                     self.__alert_mode_on()
                             case pygame.K_ESCAPE:
+                                self.__num_water = self.__level_water
+                                self.__num_smoke = self.__level_smoke
+                                print(self.__level_smoke)
                                 self.__escape_state()
                             case pygame.K_w | pygame.K_UP:
                                 if self.__allow_movement is False:
@@ -407,6 +412,8 @@ class Game:
                             self.__turns_passed = 0
                             self.__num_water = 0
                             self.__num_smoke = 0
+                            self.__level_water = 0
+                            self.__level_smoke = 0
                             self.save_level()
                         elif ev.key == pygame.K_ESCAPE:
                             self.__escape_state()
@@ -1065,6 +1072,8 @@ class Game:
         self.__check_key(self.__player.position())  # change to if statement if you want to do hud stuff
         self.__check_item(self.__player.position())
 
+
+    def __check_things(self):
         if self.__check_next_level(self.__player.position()):
             if self.__level == 3:
                 self.__board.unload()
@@ -1076,16 +1085,8 @@ class Game:
                 if self.__guard_tracking:
                     self.__alert_mode_on()
             else:
-                self.__level += 1
-                self.__board.unload()
-                self.__player_spawn, self.__guard_routes = self.__load_game()
-                self.__set_player_and_guards()
-                if self.__guard_tracking:
-                    self.__alert_mode_off()
-
-    def __check_things(self):
-        if self.__check_next_level(self.__player.position()):
-            if self.__level != 3:
+                self.__level_smoke = self.__num_smoke
+                self.__level_water = self.__num_water
                 self.__level += 1
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
