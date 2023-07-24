@@ -1,4 +1,3 @@
-import queue
 from pathlib import Path
 import pygame
 import os
@@ -28,7 +27,7 @@ class Game:
 
         # Initialize Music
         self.__music = Music()
-        self.__play_music = True
+        self.__play_music = None
 
         # Load difficulty
         self.__difficulty = "EASY"
@@ -103,9 +102,9 @@ class Game:
                 case "HARD":
                     file.write('3\n')
             if self.__play_music:
-                file.write('True\n')
+                file.write('True' + '\n')
             else:
-                file.write('False\n')
+                file.write('False' + '\n')
             file.write(str(self.__num_water) + '\n')
             file.write(str(self.__num_smoke))
 
@@ -139,9 +138,9 @@ class Game:
                                 self.__difficulty = "HARD"
                                 self.__guard_difficulty = 3
                         case 5:
-                            if line == 'True':
+                            if str(line) == "True\n":
                                 self.__play_music = True
-                            else:
+                            elif str(line) == "False\n":
                                 self.__music.toggle()
                                 self.__play_music = False
                         case 6: # water
