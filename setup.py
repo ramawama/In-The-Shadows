@@ -3,14 +3,14 @@ from setuptools import setup
 
 setup(
      name='intheshadows',
-     version='0.1.0',
+     version='1.0.0',
      packages=['intheshadows',],
      url='https://github.com/ramawama/In-The-Shadows',
      license='GPL 3',
      author='Carson Sobolewski',
      author_email='csobolewski@ufl.edu',
      description='Turn-based stealth game written in pygame!',
-     install_requires=['pygame>=2.4.0', 'numpy'],
+     install_requires=['pygame>=2.4.0', 'numpy', 'igraphs', 'texttable'],
 
      entry_points =
      {  "console_scripts":

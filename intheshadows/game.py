@@ -4,7 +4,7 @@ import pygame
 import os
 import igraph as ig
 import time
-from intheshadows.print import run_menu, run_options, display_info, loading_screen
+from intheshadows.print import run_menu, run_options, display_info, loading_screen, display_item
 from intheshadows.events import game_over, win
 from intheshadows.guard import Guard
 from intheshadows.tile import Tile
@@ -175,6 +175,10 @@ class Game:
     # Changes states when escape is pressed
     def __escape_state(self):
         match self.__state:
+            case 'smoke':
+                self.__state = 'game'
+            case 'water':
+                self.__state = 'game'
             case 'load':
                 self.__state = 'menu'
             case 'options':
@@ -349,6 +353,14 @@ class Game:
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
                                 self.__turns_passed += 1
+        elif self.__state == 'smoke' or self.__state == 'water':
+            for ev in pygame.event.get():
+                if ev.type == pygame.QUIT:
+                    self.__screen.help_surface.fill((0, 0, 0, 0))
+                    self.__running = False
+                elif ev.type == pygame.KEYDOWN:
+                    self.__screen.help_surface.fill((0, 0, 0, 0))
+                    self.__escape_state()
         elif self.__state == 'load':
             for ev in pygame.event.get():
                 if ev.type == pygame.QUIT:
@@ -693,6 +705,9 @@ class Game:
                         self.__board.tiles[player_position[1]][player_position[0] + 1].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
+                        self.__check_key(self.__player.position())
+                        self.__check_item(self.__player.position())
+                        self.__check_things()
 
             case "left":
                 if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
@@ -726,6 +741,9 @@ class Game:
                         self.__board.tiles[player_position[1]][player_position[0] - 1].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
+                        self.__check_key(self.__player.position())
+                        self.__check_item(self.__player.position())
+                        self.__check_things()
 
             case "up":
                 if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
@@ -760,6 +778,9 @@ class Game:
                         self.__board.tiles[player_position[1] - 1][player_position[0]].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
+                        self.__check_key(self.__player.position())
+                        self.__check_item(self.__player.position())
+                        self.__check_things()
 
             case "down":
                 if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
@@ -793,6 +814,9 @@ class Game:
                         self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
+                        self.__check_key(self.__player.position())
+                        self.__check_item(self.__player.position())
+                        self.__check_things()
 
         player_position = self.__player.position()
         if self.__board.tiles[player_position[1]][player_position[0]].type == "t" and \
@@ -800,6 +824,9 @@ class Game:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
             self.__torch_extinguished += 1
             self.__board.torch_check()
+            self.__check_key(self.__player.position())
+            self.__check_item(self.__player.position())
+            self.__check_things()
 
     # not done
     def __move_guards(self):
@@ -931,6 +958,9 @@ class Game:
             self.__board.tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.orig_tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.torch_check()
+            self.__check_key(self.__player.position())
+            self.__check_item(self.__player.position())
+            self.__check_things()
             self.__board.unlock()
             self.__player.key = True
             self.__screen.update()
@@ -940,12 +970,19 @@ class Game:
     def __check_item(self, player_position):
         if self.__board.tiles[player_position[1]][player_position[0]].type in ["b", "s"]:
             if self.__board.tiles[player_position[1]][player_position[0]].type == "b":
+                display_item(self.__width, self.__height, self.__screen, True, False)
+                self.__state = "water"
                 self.__player.num_water += 3
             else:
+                display_item(self.__width, self.__height, self.__screen, False, True)
+                self.__state = "smoke"
                 self.__player.num_smoke += 1
             self.__board.tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.orig_tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.torch_check()
+            self.__check_key(self.__player.position())
+            self.__check_item(self.__player.position())
+            self.__check_things()
             self.__screen.update()
             return True
         return False
@@ -986,6 +1023,9 @@ class Game:
         self.__check_key(self.__player.position())  # change to if statement if you want to do hud stuff
         self.__check_item(self.__player.position())
 
+        self.__check_things()
+
+    def __check_things(self):
         if self.__check_next_level(self.__player.position()):
             if self.__level == 3:
                 self.__board.unload()
@@ -1070,21 +1110,55 @@ class Game:
             if self.__smoke_turn_counter > 0 and self.__smoke_location is not None:
                 if (guard_x, guard_y) in self.__smoke_location:
                     continue
+            dx = []
+            dy = []
             match self.__guards[x].direction:
                 case "up":
-                    dx = [-1, 0, 1, -1, 0, 1]
-                    dy = [-1, -1, -1, -2, -2, -2]
+                    match self.__guards[x].difficulty:
+                        case 1:
+                            dx = [-1, 0, 1, -1, 0, 1]
+                            dy = [-1, -1, -1, -2, -2, -2]
+                        case 2:
+                            dx = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dy = [-1, -1, -1, -2, -2, -2, -3, -3, -3]
+                        case 3:
+                            dx = [-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dy = [-1, -1, -1, -2, -2, -2, -3, -3, -3, -4, -4, -4]
                 case "down":
-                    dx = [-1, 0, 1, -1, 0, 1]
-                    dy = [1, 1, 1, 2, 2, 2]
+                    match self.__guards[x].difficulty:
+                        case 1:
+                            dx = [-1, 0, 1, -1, 0, 1]
+                            dy = [1, 1, 1, 2, 2, 2]
+                        case 2:
+                            dx = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dy = [1, 1, 1, 2, 2, 2, 3, 3, 3]
+                        case 3:
+                            dx = [-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dy = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4]
                 case "right":
-                    dx = [1, 1, 1, 2, 2, 2]
-                    dy = [-1, 0, 1, -1, 0, 1]
+                    match self.__guards[x].difficulty:
+                        case 1:
+                            dy = [-1, 0, 1, -1, 0, 1]
+                            dx = [1, 1, 1, 2, 2, 2]
+                        case 2:
+                            dy = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dx = [1, 1, 1, 2, 2, 2, 3, 3, 3]
+                        case 3:
+                            dy = [-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dx = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4]
                 case "left":
-                    dx = [-1, -1, -1, -2, -2, -2]
-                    dy = [-1, 0, 1, -1, 0, 1]
+                    match self.__guards[x].difficulty:
+                        case 1:
+                            dy = [-1, 0, 1, -1, 0, 1]
+                            dx = [-1, -1, -1, -2, -2, -2]
+                        case 2:
+                            dy = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dx = [-1, -1, -1, -2, -2, -2, -3, -3, -3]
+                        case 3:
+                            dy = [-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1]
+                            dx = [-1, -1, -1, -2, -2, -2, -3, -3, -3, -4, -4, -4]
             blocked_views = []
-            for i in range(0, 6):
+            for i in range(0, len(dy)):
                 try:
                     if self.__board.tiles[guard_y + dy[i]][guard_x + dx[i]].type == 'w':
                         blocked_views.append(i)
@@ -1183,6 +1257,9 @@ class Game:
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
                                                  self.__board.tiles[self.__guards[x].y][self.__guards[x].x].image)
             self.__board.torch_check()
+            self.__check_key(self.__player.position())
+            self.__check_item(self.__player.position())
+            self.__check_things()
             self.__turn_counter[x] = self.__turn_counter[x] + 1
             if self.__guard_returning[x]:
                 if (self.__guards[x].x, self.__guards[x].y) == self.__guard_position_before_tracking[x]:

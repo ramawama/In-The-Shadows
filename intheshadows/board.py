@@ -210,7 +210,7 @@ class Board:
         (instructions_width, instructions_height) = (self.__screen_width - 0.01 * self.__screen_width - instructions_rect.width, status_height)
         instructions_rect.x, instructions_rect.y = (instructions_width, instructions_height)
 
-        self.__screen.background_surface.blit(hud_background, (0, 0.20 * self.__screen_height))
+        self.__screen.background_surface.blit(hud_background, (0, 0.16 * self.__screen_height))
         self.__screen.background_surface.blit(status_text, status_rect)
         self.__screen.background_surface.blit(curr_level, curr_level_rect)
         self.__screen.background_surface.blit(info_text, info_text_rect)

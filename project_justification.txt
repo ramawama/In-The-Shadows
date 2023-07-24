@@ -1,0 +1,68 @@
+In The Shadows
+By Rama Janco, Deven Ellis, Ryan Lewis, Jason Baron, and Carson Sobolewski
+
+Below are the reasonings for why we believe our code deserves points for each category in the rubric.
+
+
+### INTERFACE ###
+
+Element Visibility: We believe all of the elements
+
+Element Usability: We believe all of the elements are usable
+
+Intuitiveness: We believe all of the elements are intuitive
+
+Consistency: We believe all of the elements are consistent
+
+Status Visibility: We believe all of the elements are visible
+
+
+### NAVIGATION ###
+
+Mechanics / API: We believe all of the elements are findable because
+
+Tested / Not Buggy: We believe all of the elements are thoroughly and not buggy tested because
+
+Minimal Acclimation: We believe the elements in our game require minimal acclimation because
+
+Predictability: We believe the elements in our game are predictable because
+
+Discoverability: We believe the elements in our game are discoverable because
+
+
+### USER PERCEPTION ###
+
+Enjoyability: We believe our game is enjoyable because
+
+Minimal Frustration: We believe our game is minimally frustrating because
+
+General Usability: We believe our game is generally usable because
+
+
+### RESPONSIVENESS ###
+
+Action Indications / Non-Blocking: We believe our game is responsive because
+
+State Indications: We believe
+
+Task Success: We believe
+
+Task failure: We believe
+
+
+### BUILD QUALITY ###
+
+Robustness: We believe our game is robust because
+
+Consistency: We believe our game is consistent because
+
+Aesthetic Rigor: We believe our game is aesthetically rigorous because
+
+
+### FEATURES ###
+
+Front-End: The front end of our game
+
+Data Store: The data storage within our game
+
+Back-End: The back end of our game
