@@ -1094,29 +1094,28 @@ class Game:
                     self.__alert_mode_off()
 
     def __check_guard_path(self, guard, direction):
+        match direction:
+            case 'R':
+                if guard.x + 1 > 27:
+                    return False
+                if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 'p', 't', 'g', '!', 'k', 'b', 's']:
+                    return False
+            case 'L':
+                if guard.x - 1 < 1:
+                    return False
+                if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 'p', 't', 'g', '!', 'k', 'b', 's']:
+                    return False
+            case 'U':
+                if guard.y - 1 < 1:
+                    return False
+                if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 'p', 't', 'g', '!', 'k', 'b', 's']:
+                    return False
+            case 'D':
+                if guard.y + 1 > 27:
+                    return False
+                if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 'p', 't', 'g', '!', 'k', 'b', 's']:
+                    return False
         return True
-        # match direction:
-        #     case 'R':
-        #         if guard.x + 1 > 27:
-        #             return False
-        #         if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p', 'g']:
-        #             return False
-        #     case 'L':
-        #         if guard.x - 1 < 1:
-        #             return False
-        #         if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p', 'g']:
-        #             return False
-        #     case 'U':
-        #         if guard.y - 1 < 1:
-        #             return False
-        #         if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p', 'g']:
-        #             return False
-        #     case 'D':
-        #         if guard.y + 1 > 27:
-        #             return False
-        #         if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p', 'g']:
-        #             return False
-        # return True
 
     def __shortest_path(self, start, end):
         width = len(self.__board.tiles[0])
