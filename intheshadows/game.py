@@ -28,6 +28,7 @@ class Game:
         # Initialize Music
         self.__music = Music()
         self.__play_music = None
+        self.__ext_flag = True
 
         # Load difficulty
         self.__difficulty = "EASY"
@@ -232,6 +233,17 @@ class Game:
                     self.__set_player_and_guards()
                     pygame.display.toggle_fullscreen()
                     self.__fullscreen = False
+                    self.__smoke_images = [pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/smoke.png").convert_alpha(),
+                        (32 * self.__resolution, 32 * self.__resolution)), pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/smoke_small.png").convert_alpha(),
+                        (32 * self.__resolution, 32 * self.__resolution))]
+                    self.__water_flask = pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png").convert_alpha(),
+                        (self.__resolution * 32, self.__resolution * 32))
             elif self.__rects['resolution_2_rect'].collidepoint(mouse_pos):
                 if not self.__fullscreen:
                     (self.__width, self.__height) = (64 * 28, 64 * 16)
@@ -240,6 +252,17 @@ class Game:
                     self.__board.resize_board(self.__screen, self.__width, self.__height)
                     self.__set_player_and_guards()
                     self.__fullscreen = True
+                    self.__smoke_images = [pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/smoke.png").convert_alpha(),
+                        (32 * self.__resolution, 32 * self.__resolution)), pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/smoke_small.png").convert_alpha(),
+                        (32 * self.__resolution, 32 * self.__resolution))]
+                    self.__water_flask = pygame.transform.scale(
+                        pygame.image.load(
+                            Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png").convert_alpha(),
+                        (self.__resolution * 32, self.__resolution * 32))
             elif self.__rects['options_back_button'].collidepoint(mouse_pos):
                 self.__state = 'menu'
 
@@ -537,6 +560,8 @@ class Game:
                             self.__screen.update()
                             tempY -= 1
                         self.__player.extinguish = False
+                        self.__state = 'game'
+                        self.__move_flag = False
                     elif self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1] - 2][
                             player_position[0]].type != "w":
@@ -578,6 +603,8 @@ class Game:
                             self.__screen.update()
                             tempY += 1
                         self.__player.extinguish = False
+                        self.__state = 'game'
+                        self.__move_flag = False
                     elif self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1] + 2][
                             player_position[0]].type != "w":
@@ -619,6 +646,8 @@ class Game:
                             self.__screen.update()
                             tempX -= 1
                         self.__player.extinguish = False
+                        self.__state = 'game'
+                        self.__move_flag = False
                     elif self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1]][
                             player_position[0] - 2].type != "w":
@@ -660,6 +689,8 @@ class Game:
                             self.__screen.update()
                             tempX += 1
                         self.__player.extinguish = False
+                        self.__state = 'game'
+                        self.__move_flag = False
                     elif self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1]][
                             player_position[0] + 2].type != "w":
@@ -683,7 +714,6 @@ class Game:
         step_size = 1 * self.__resolution * self.__resolution
         if self.__player.dash:
             step_size = 2 * self.__resolution * self.__resolution
-        anim_spd = 4 // self.__resolution
         match self.__move_direction:
             case "right":
                 if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
@@ -999,8 +1029,6 @@ class Game:
         return False
 
     def __draw_guards(self):
-        for x in range(len(self.__guards)):
-            self.__guards[x].draw()
 
         width_scale = self.__width // len(self.__board.tiles[0])
         # have to use 15/16 because tiles are scaled for the 15 rows. The 16th is the HUD
@@ -1016,6 +1044,8 @@ class Game:
                         self.__screen.foreground_surface.blit(big_torch, (
                             self.__board.tiles[x][y].pos[0] * width_scale,
                             self.__board.tiles[x][y].pos[1] * height_scale))
+        for x in range(len(self.__guards)):
+            self.__guards[x].draw()
 
     # Runs the actual game
     def __run_game(self):
@@ -1262,6 +1292,7 @@ class Game:
                 self.__turn_counter[x] = self.__turn_counter[x] - 1
                 move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                       self.__guard_position_before_tracking[x])
+
             match move_direction:
                 case 'R':
                     if self.__check_guard_path(self.__guards[x], 'R'):
@@ -1354,11 +1385,13 @@ class Game:
                                 case 'D':
                                     self.__guards[x].direction = 'down'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
-                        self.__update_guards()
+                        if self.__ext_flag:
+                            self.__update_guards()
                         if self.__guard_tracking is False:
                             self.__check_guard_vision(self.__player.position())
                     self.__allow_movement = True
                     self.__move_flag = False
+                    self.__ext_flag = True
                     try:
                         self.__run_game()
                     except Exception as E:
@@ -1393,7 +1426,10 @@ class Game:
                         except:
                             pass
                         self.__move_flag = True
-                    self.__move_guards()
+                    if not self.__player.extinguish:
+                        self.__move_guards()
+                    else:
+                        self.__ext_flag = False
             self.check_smoke()
             self.__screen.update()
         self.save_level()
