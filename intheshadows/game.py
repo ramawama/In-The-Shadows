@@ -380,6 +380,8 @@ class Game:
                             self.__torch_extinguished = 0
                             self.__items_used = 0
                             self.__turns_passed = 0
+                            self.__num_water = 0
+                            self.__num_smoke = 0
                             self.save_level()
                         elif ev.key == pygame.K_ESCAPE:
                             self.__escape_state()
