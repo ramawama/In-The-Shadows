@@ -142,7 +142,7 @@ def run_options(width, height, rects, screen, anim_torches, difficulty):
         screen.background_surface.blit(highlight, (0, 0))
 
 
-def loading_screen(width, height, screen, level, num_torches, num_items, turns_passed):
+def loading_screen(width, height, screen, level):
     screen.foreground_surface.fill((0, 0, 0))
     pre_game_screen = pygame.transform.scale(
         pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/Pre_game_screen.png"), (width, height))
@@ -152,20 +152,5 @@ def loading_screen(width, height, screen, level, num_torches, num_items, turns_p
     curr_level_rect = curr_level.get_rect()
     curr_level_rect.x, curr_level_rect.y = (9.9 * width // 11, 0.95 * height // 8)
 
-    torches_unlit = font.render(str(num_torches), True, (255, 255, 255))
-    torches_unlit_rect = torches_unlit.get_rect()
-    torches_unlit_rect.x, torches_unlit_rect.y = (9.9 * width // 11, 1.48 * height // 8)
-
-    items_used = font.render(str(num_items), True, (255, 255, 255))
-    items_used_rect = items_used.get_rect()
-    items_used_rect.x, items_used_rect.y = (9.18 * width // 11, 2.02 * height // 8)
-
-    num_turns = font.render(str(turns_passed), True, (255, 255, 255))
-    num_turns_rect = num_turns.get_rect()
-    num_turns_rect.x, num_turns_rect.y = (9.65 * width // 11, 2.55 * height // 8)
-
     screen.foreground_surface.blit(pre_game_screen, (0, 0))
     screen.foreground_surface.blit(curr_level, curr_level_rect)
-    screen.foreground_surface.blit(torches_unlit, torches_unlit_rect)
-    screen.foreground_surface.blit(items_used, items_used_rect)
-    screen.foreground_surface.blit(num_turns, num_turns_rect)
