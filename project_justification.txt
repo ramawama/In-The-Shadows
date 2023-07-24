@@ -66,6 +66,7 @@ Robustness: We believe our game is robust because our code was written with erro
 Every time any coordinates are called, they are wrapped in a try/except clause to make sure there is no way an out-of-bounds error can crash the game.
 Additionally, we leveraged the use of predefined levels which are designed to be impossible to break because they are surrounded by walls which cannot be passed.
 This results in a game where any user input cannot result in a crash from the user's actions, there may be bugs from other functions that are out of the control of the player.
+The game was also tested on all 3 major operating systems (Windows, Mac, and Linux) to ensure that it would run on any system.
 
 Consistency: We believe our game is consistent because we used a consistent naming scheme for all of our variables and functions.
 These rules were enforced by a GitHub task on push, so every coder had to conform to using the same scheme.
