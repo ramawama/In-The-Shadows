@@ -38,6 +38,8 @@ class Game:
         self.__items_used = 0
         self.__turns_passed = 0
         self.__level = 0
+        self.__num_water = 0
+        self.__num_smoke = 0
         self.load_level()
         self.__torch_counter = 0
         self.__move_counter = 0
@@ -80,9 +82,11 @@ class Game:
         self.__water_flask = pygame.transform.scale(
             pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/water_flask.png").convert_alpha(),
             (self.__resolution * 32, self.__resolution * 32))
-        self.__smoke_image = pygame.transform.scale(
+        self.__smoke_images = [pygame.transform.scale(
             pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke.png").convert_alpha(),
-            (32 * self.__resolution, 32 * self.__resolution))
+            (32 * self.__resolution, 32 * self.__resolution)), pygame.transform.scale(
+            pygame.image.load(Path(__file__).parent / "assets/graphics/Level Elements/smoke_small.png").convert_alpha(),
+            (32 * self.__resolution, 32 * self.__resolution))]
 
         self.loaded = False
 
@@ -101,9 +105,11 @@ class Game:
                 case "HARD":
                     file.write('3\n')
             if self.__play_music:
-                file.write('True')
+                file.write('True\n')
             else:
-                file.write('False')
+                file.write('False\n')
+            file.write(str(self.__num_water) + '\n')
+            file.write(str(self.__num_smoke))
 
     def load_level(self):
         # edit this and user_progress.txt to save future info like torches lit and moves etc
@@ -140,12 +146,18 @@ class Game:
                             else:
                                 self.__music.toggle()
                                 self.__play_music = False
+                        case 6: # water
+                            self.__num_water = int(line)
+                        case 7:
+                            self.__num_smoke = int(line)
                     counter += 1
         else:
             self.__level = 1
             self.__torch_extinguished = 0
             self.__items_used = 0
             self.__turns_passed = 0
+            self.__num_smoke = 0
+            self.__num_water = 0
             self.__play_music = True
 
     def __set_player_and_guards(self):
@@ -263,18 +275,18 @@ class Game:
                                 else:
                                     self.__player.dash = False
                             case pygame.K_1:
-                                if self.__player.num_water > 0:
+                                if self.__num_water> 0:
                                     self.__player.extinguish = True
-                                    self.__player.num_water -= 1
+                                    self.__num_water -= 1
                                     self.__items_used += 1
                             case pygame.K_2:
-                                if self.__player.num_smoke > 0:
+                                if self.__num_smoke > 0:
                                     self.__player.smoke = True
                                     self.__smoke_location = self.calc_smoke_location()
                                     self.__smoke_turn_counter = 0
                                     if self.__guard_tracking:
                                         self.__alert_mode_off()
-                                    self.__player.num_smoke -= 1
+                                    self.__num_smoke -= 1
                                     self.__items_used += 1
                             case pygame.K_i:
                                 self.__state = 'inventory'
@@ -370,6 +382,8 @@ class Game:
                             self.__torch_extinguished = 0
                             self.__items_used = 0
                             self.__turns_passed = 0
+                            self.__num_water = 0
+                            self.__num_smoke = 0
                             self.save_level()
                         elif ev.key == pygame.K_ESCAPE:
                             self.__escape_state()
@@ -453,15 +467,20 @@ class Game:
                 result.append(box)
         return result
 
-    def __draw_smoke(self, player_box):
+    def __draw_smoke(self, player_box, frame):
         for coord in player_box:
-            self.__screen.smoke_surface.blit(self.__smoke_image,
+            self.__screen.smoke_surface.blit(self.__smoke_images[frame],
                                              (coord[0] * 32 * self.__resolution, coord[1] * 32 * self.__resolution))
 
     def check_smoke(self):
         if self.__state != 'menu' and self.__state != 'game_over' and self.__state != 'win':
             if self.__player.smoke:
-                self.__draw_smoke(self.__smoke_location)
+                if self.__anim_torches:
+                    self.__screen.smoke_surface.fill((0, 0, 0, 0))
+                    self.__draw_smoke(self.__smoke_location, 0)
+                else:
+                    self.__screen.smoke_surface.fill((0, 0, 0, 0))
+                    self.__draw_smoke(self.__smoke_location, 1)
             if self.__smoke_turn_counter >= 3:
                 self.__smoke_turn_counter = 0
                 self.__player.smoke = False
@@ -965,11 +984,11 @@ class Game:
             if self.__board.tiles[player_position[1]][player_position[0]].type == "b":
                 display_item(self.__width, self.__height, self.__screen, True, False)
                 self.__state = "water"
-                self.__player.num_water += 3
+                self.__num_water += 3
             else:
                 display_item(self.__width, self.__height, self.__screen, False, True)
                 self.__state = "smoke"
-                self.__player.num_smoke += 1
+                self.__num_smoke += 1
             self.__board.tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.orig_tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.torch_check()
@@ -1002,7 +1021,7 @@ class Game:
     # Runs the actual game
     def __run_game(self):
         self.__board.draw_level()
-        self.__board.display_hud(self.__player)
+        self.__board.display_hud(self.__player, self.__guard_tracking)
         self.__player.draw()
         self.__draw_guards()
         if self.__check_game_over(self.__player.position()):
@@ -1346,12 +1365,7 @@ class Game:
                         print("Attempted to load a game asset but failed (this try/except is in run(self) method):", E)
                 case 'inventory':
                     display_info(self.__width, self.__height, self.__screen, self.__level, self.__torch_extinguished,
-                                 self.__items_used, self.__turns_passed, self.__player.num_water,
-                                 self.__player.num_smoke)
-                    '''
-                    TODO: Add some sort of data structure to store player inventory and pass it to display_inventory
-                    also have it track what items are used etc
-                    '''
+                                 self.__items_used, self.__turns_passed, self.__num_water, self.__num_smoke)
                 case 'game_over':
                     pass
                 case 'move':

@@ -162,7 +162,7 @@ class Board:
         self.__orig_tiles = []
 
     # pass in more parameters like a list of items a player has to display on the HUD
-    def display_hud(self, player):
+    def display_hud(self, player, chase):
         self.__screen.background_surface.fill((0, 0, 0), pygame.Rect(0, self.__screen_height,
                                                                      self.__screen_width, 128))
         hud_background = pygame.image.load(Path(__file__).parent / "assets/graphics/Backgrounds/hud_background.png")
@@ -205,6 +205,9 @@ class Board:
                 instructions = text_font.render('COLLECT THE TREASURE!', True, white)
             else:
                 instructions = text_font.render('ESCAPE TO THE NEXT LEVEL!', True, white)
+
+        if chase:
+            instructions = text_font.render('YOU HAVE BEEN SPOTTED! RUN AWAY!', True, (255, 255, 255))
 
         instructions_rect = instructions.get_rect()
         (instructions_width, instructions_height) = (self.__screen_width - 0.01 * self.__screen_width - instructions_rect.width, status_height)

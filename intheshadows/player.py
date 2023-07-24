@@ -34,28 +34,9 @@ class Player:
         self.__items = []
         self.__key = False
         self.__dash = False
-        self.__num_smoke = 0
-        self.__num_water = 0
 
     def draw(self):
         self.__screen.blit(self.__curr_sprites[0], (self.__x * 32 * self.__resolution, self.__y * 32 * self.__resolution))
-
-    @property
-    def num_smoke(self):
-        return self.__num_smoke
-
-    @num_smoke.setter
-    def num_smoke(self, num_smoke):
-        self.__num_smoke = num_smoke
-
-    @property
-    def num_water(self):
-        return self.__num_water
-
-    @num_water.setter
-    def num_water(self, num_water):
-        self.__num_water = num_water
-
 
     @property
     def dash(self):
