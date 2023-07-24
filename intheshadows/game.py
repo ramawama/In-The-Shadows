@@ -1002,22 +1002,22 @@ class Game:
             case 'R':
                 if guard.x + 1 > 27:
                     return False
-                if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p']:
+                if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p', 'g']:
                     return False
             case 'L':
                 if guard.x - 1 < 1:
                     return False
-                if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p']:
+                if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p', 'g']:
                     return False
             case 'U':
                 if guard.y - 1 < 1:
                     return False
-                if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p']:
+                if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p', 'g']:
                     return False
             case 'D':
                 if guard.y + 1 > 27:
                     return False
-                if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p']:
+                if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p', 'g']:
                     return False
         return True
 
@@ -1055,8 +1055,8 @@ class Game:
         for i in range(0, len(self.__guards)):
             self.__guard_returning.append(True)
 
-    def __check_guard_vision(self):
-        player_position = self.__player.position()
+    def __check_guard_vision(self, player_pos):
+        player_position = player_pos
         for x in range(len(self.__guards)):
             guard_x = self.__guards[x].x
             guard_y = self.__guards[x].y
@@ -1231,7 +1231,7 @@ class Game:
                             self.__set_player_and_guards()
                             continue
                         if self.__guard_tracking is False:
-                            self.__check_guard_vision()
+                            self.__check_guard_vision(self.__player.position())
                         for x in range(len(self.__guards)):
                             move_direction = self.__guard_routes[x][1][
                                 (self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
@@ -1252,7 +1252,7 @@ class Game:
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
                         self.__update_guards()
                         if self.__guard_tracking is False:
-                            self.__check_guard_vision()
+                            self.__check_guard_vision(self.__player.position())
                     self.__allow_movement = True
                     self.__move_flag = False
                     try:
@@ -1286,7 +1286,7 @@ class Game:
                             case 'right':
                                 player_pos = (self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
                         try:
-                            self.__check_guard_vision()
+                            self.__check_guard_vision(player_pos)
                         except:
                             pass
                         self.__move_flag = True
