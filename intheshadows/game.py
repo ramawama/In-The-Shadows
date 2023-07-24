@@ -391,6 +391,7 @@ class Game:
                     self.__screen.help_surface.fill((0, 0, 0, 0))
                     self.__running = False
                 elif ev.type == pygame.KEYDOWN:
+                    time.sleep(0.3)
                     self.__screen.help_surface.fill((0, 0, 0, 0))
                     self.__escape_state()
         elif self.__state == 'load':
@@ -1216,7 +1217,6 @@ class Game:
                         break
                 except:
                     pass
-            block_views = []
             match self.__guards[x].direction:
                 case "up":
                     dx = [-2, -1, 0, 1, 2]
@@ -1339,8 +1339,7 @@ class Game:
             match self.__state:
                 case 'load':
                     pygame.mouse.set_visible(False)
-                    loading_screen(self.__width, self.__height, self.__screen, self.__level, self.__torch_extinguished,
-                                   self.__items_used, self.__turns_passed)
+                    loading_screen(self.__width, self.__height, self.__screen, self.__level)
                 case 'menu':
                     pygame.mouse.set_visible(True)
                     self.__music.play_music('menu')
