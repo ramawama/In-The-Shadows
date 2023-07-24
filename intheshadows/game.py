@@ -4,7 +4,7 @@ import pygame
 import os
 import igraph as ig
 import time
-from intheshadows.print import run_menu, run_options, display_info, loading_screen
+from intheshadows.print import run_menu, run_options, display_info, loading_screen, display_item
 from intheshadows.events import game_over, win
 from intheshadows.guard import Guard
 from intheshadows.tile import Tile
@@ -173,6 +173,10 @@ class Game:
     # Changes states when escape is pressed
     def __escape_state(self):
         match self.__state:
+            case 'smoke':
+                self.__state = 'game'
+            case 'water':
+                self.__state = 'game'
             case 'load':
                 self.__state = 'menu'
             case 'options':
@@ -347,6 +351,14 @@ class Game:
                                         self.__guards[x].position()[0] * 32 * self.__resolution,
                                         self.__guards[x].position()[1] * 32 * self.__resolution)
                                 self.__turns_passed += 1
+        elif self.__state == 'smoke' or self.__state == 'water':
+            for ev in pygame.event.get():
+                if ev.type == pygame.QUIT:
+                    self.__screen.help_surface.fill((0, 0, 0, 0))
+                    self.__running = False
+                elif ev.type == pygame.KEYDOWN:
+                    self.__screen.help_surface.fill((0, 0, 0, 0))
+                    self.__escape_state()
         elif self.__state == 'load':
             for ev in pygame.event.get():
                 if ev.type == pygame.QUIT:
@@ -933,8 +945,12 @@ class Game:
     def __check_item(self, player_position):
         if self.__board.tiles[player_position[1]][player_position[0]].type in ["b", "s"]:
             if self.__board.tiles[player_position[1]][player_position[0]].type == "b":
+                display_item(self.__width, self.__height, self.__screen, True, False)
+                self.__state = "water"
                 self.__player.num_water += 3
             else:
+                display_item(self.__width, self.__height, self.__screen, False, True)
+                self.__state = "smoke"
                 self.__player.num_smoke += 1
             self.__board.tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
             self.__board.orig_tiles[player_position[1]][player_position[0]] = Tile(randomize=False)
