@@ -1282,39 +1282,40 @@ class Game:
 
     def __update_guards(self):
         for x in range(len(self.__guards)):
-            move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
-            if self.__guard_tracking:
-                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                      self.__player.position())
-                self.__turn_counter[x] = self.__turn_counter[x] - 1
-            elif self.__guard_returning[x]:
-                self.__turn_counter[x] = self.__turn_counter[x] - 1
-                move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                      self.__guard_position_before_tracking[x])
-
-            match move_direction:
-                case 'R':
-                    if self.__check_guard_path(self.__guards[x], 'R'):
-                        self.__guards[x].moveRight()
-                case 'L':
-                    if self.__check_guard_path(self.__guards[x], 'L'):
-                        self.__guards[x].moveLeft()
-                case 'U':
-                    if self.__check_guard_path(self.__guards[x], 'U'):
-                        self.__guards[x].moveUp()
-                case 'D':
-                    if self.__check_guard_path(self.__guards[x], 'D'):
-                        self.__guards[x].moveDown()
+            if self.__ext_flag:
+                move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
+                if self.__guard_tracking:
+                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                          self.__player.position())
+                    self.__turn_counter[x] = self.__turn_counter[x] - 1
+                elif self.__guard_returning[x]:
+                    self.__turn_counter[x] = self.__turn_counter[x] - 1
+                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                          self.__guard_position_before_tracking[x])
+                match move_direction:
+                    case 'R':
+                        if self.__check_guard_path(self.__guards[x], 'R'):
+                            self.__guards[x].moveRight()
+                    case 'L':
+                        if self.__check_guard_path(self.__guards[x], 'L'):
+                            self.__guards[x].moveLeft()
+                    case 'U':
+                        if self.__check_guard_path(self.__guards[x], 'U'):
+                            self.__guards[x].moveUp()
+                    case 'D':
+                        if self.__check_guard_path(self.__guards[x], 'D'):
+                            self.__guards[x].moveDown()
             self.__board.replace_tile_with_guard(self.__guards[x].y, self.__guards[x].x,
                                                  self.__board.tiles[self.__guards[x].y][self.__guards[x].x].image)
-            self.__board.torch_check()
-            self.__check_key(self.__player.position())
-            self.__check_item(self.__player.position())
-            self.__check_things()
-            self.__turn_counter[x] = self.__turn_counter[x] + 1
-            if self.__guard_returning[x]:
-                if (self.__guards[x].x, self.__guards[x].y) == self.__guard_position_before_tracking[x]:
-                    self.__guard_returning[x] = False
+            if self.__ext_flag:
+                self.__board.torch_check()
+                self.__check_key(self.__player.position())
+                self.__check_item(self.__player.position())
+                self.__check_things()
+                self.__turn_counter[x] = self.__turn_counter[x] + 1
+                if self.__guard_returning[x]:
+                    if (self.__guards[x].x, self.__guards[x].y) == self.__guard_position_before_tracking[x]:
+                        self.__guard_returning[x] = False
 
     # Main execution loop
     def run(self):
@@ -1383,8 +1384,7 @@ class Game:
                                 case 'D':
                                     self.__guards[x].direction = 'down'
                             self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
-                        if self.__ext_flag:
-                            self.__update_guards()
+                        self.__update_guards()
                         if self.__guard_tracking is False:
                             self.__check_guard_vision(self.__player.position())
                     self.__allow_movement = True
