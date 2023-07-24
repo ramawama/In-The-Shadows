@@ -938,18 +938,18 @@ class Game:
         height = len(self.__board.tiles)
         for i, mains in enumerate(self.__board.tiles):
             for j, nexts in enumerate(mains):
-                if nexts.type in ['o', 'p', 't']:
+                if nexts.type in ['o', 'p', 't', '!', 'k', 'b', 's']:
                     if j != 0:
-                        if self.__board.tiles[i][j - 1].type in ['o', 'p', 't']:
+                        if self.__board.tiles[i][j - 1].type in ['o', 'p', 't', '!', 'k', 'b', 's']:
                             self.__vertices.add_edge(j + (i * width), (j - 1) + (i * width))
                     if j != (width - 1):
-                        if self.__board.tiles[i][j + 1].type in ['o', 'p', 't']:
+                        if self.__board.tiles[i][j + 1].type in ['o', 'p', 't', '!', 'k', 'b', 's']:
                             self.__vertices.add_edge(j + (i * width), (j + 1) + (i * width))
                     if i != 0:
-                        if self.__board.tiles[i - 1][j].type in ['o', 'p', 't']:
+                        if self.__board.tiles[i - 1][j].type in ['o', 'p', 't', '!', 'k', 'b', 's']:
                             self.__vertices.add_edge(j + (i * width), j + ((i - 1) * width))
                     if i != (height - 1):
-                        if self.__board.tiles[i + 1][j].type in ['o', 'p', 't']:
+                        if self.__board.tiles[i + 1][j].type in ['o', 'p', 't', '!', 'k', 'b', 's']:
                             self.__vertices.add_edge(j + (i * width), j + ((i + 1) * width))
         self.__vertices = self.__vertices.simplify()
         return player_spawn, guards
@@ -1063,28 +1063,29 @@ class Game:
                     self.__alert_mode_off()
 
     def __check_guard_path(self, guard, direction):
-        match direction:
-            case 'R':
-                if guard.x + 1 > 27:
-                    return False
-                if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p', 'g']:
-                    return False
-            case 'L':
-                if guard.x - 1 < 1:
-                    return False
-                if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p', 'g']:
-                    return False
-            case 'U':
-                if guard.y - 1 < 1:
-                    return False
-                if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p', 'g']:
-                    return False
-            case 'D':
-                if guard.y + 1 > 27:
-                    return False
-                if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p', 'g']:
-                    return False
         return True
+        # match direction:
+        #     case 'R':
+        #         if guard.x + 1 > 27:
+        #             return False
+        #         if self.__board.tiles[guard.y][guard.x + 1].type not in ['o', 't', 'p', 'g']:
+        #             return False
+        #     case 'L':
+        #         if guard.x - 1 < 1:
+        #             return False
+        #         if self.__board.tiles[guard.y][guard.x - 1].type not in ['o', 't', 'p', 'g']:
+        #             return False
+        #     case 'U':
+        #         if guard.y - 1 < 1:
+        #             return False
+        #         if self.__board.tiles[guard.y - 1][guard.x].type not in ['o', 't', 'p', 'g']:
+        #             return False
+        #     case 'D':
+        #         if guard.y + 1 > 27:
+        #             return False
+        #         if self.__board.tiles[guard.y + 1][guard.x].type not in ['o', 't', 'p', 'g']:
+        #             return False
+        # return True
 
     def __shortest_path(self, start, end):
         width = len(self.__board.tiles[0])
