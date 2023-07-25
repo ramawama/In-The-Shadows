@@ -50,6 +50,7 @@ class Game:
         self.__guard_tracking = False
         self.__smoke_location = None
         self.__smoke_turn_counter = 0
+        self.__curr_direction = 'right'
 
         self.__resolution = 2  # resolution option for scaling
 
@@ -164,7 +165,7 @@ class Game:
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
-                               self.__resolution)
+                               self.__resolution, self.__curr_direction)
         self.__guards = []
         self.__guard_positions.clear()
         self.__guard_returning = []
@@ -1100,6 +1101,7 @@ class Game:
                     self.__alert_mode_on()
             else:
                 self.__level += 1
+                self.__curr_direction = self.__player.direction
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
                 self.__set_player_and_guards()
@@ -1111,6 +1113,7 @@ class Game:
         if self.__check_next_level(self.__player.position()):
             if self.__level != 3:
                 self.__level += 1
+                self.__curr_direction = self.__player.direction
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
                 self.__set_player_and_guards()
