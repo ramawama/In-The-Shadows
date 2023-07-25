@@ -1,18 +1,16 @@
-name: "tagged-release"
+name: "Release on Tag"
 
 on:
   push:
     tags:
-      - "v*"
-      
-permissions:
-  contents: read
+      - '*'
 
 jobs:
   tagged-release:
     name: "Tagged Release"
     runs-on: "ubuntu-latest"
-
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -33,9 +31,7 @@ jobs:
     - name: Build package
       run: |
         python setup.py sdist
-    - uses: "marvinpinto/action-automatic-releases@latest"
+    - uses: ncipollo/release-action@v1
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        prerelease: false
-        files: |
-          dist/*.tar.gz
+        artifacts: "dist/*.tar.gz"
+        bodyFile: "README.md"
