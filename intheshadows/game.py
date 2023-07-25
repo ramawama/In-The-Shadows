@@ -50,6 +50,7 @@ class Game:
         self.__guard_tracking = False
         self.__smoke_location = None
         self.__smoke_turn_counter = 0
+        self.__curr_direction = 'right'
 
         self.__resolution = 2  # resolution option for scaling
 
@@ -164,7 +165,7 @@ class Game:
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
-                               self.__resolution)
+                               self.__resolution, self.__curr_direction)
         self.__guards = []
         self.__guard_positions.clear()
         self.__guard_returning = []
@@ -571,6 +572,8 @@ class Game:
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect((player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution),
+                                                                                         (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[tempY][player_position[0]].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
                                                                   (32 * self.__resolution, 32 * self.__resolution))
@@ -620,6 +623,9 @@ class Game:
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect(
+                                (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution),
+                                (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[tempY][player_position[0]].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
                                                                   (32 * self.__resolution, 32 * self.__resolution))
@@ -669,6 +675,9 @@ class Game:
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect(
+                                (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution),
+                                (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[player_position[1]][tempX].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
                                                                   (32 * self.__resolution, 32 * self.__resolution))
@@ -718,6 +727,9 @@ class Game:
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect(
+                                (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution),
+                                (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[player_position[1]][tempX].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
                                                                   (32 * self.__resolution, 32 * self.__resolution))
@@ -947,7 +959,9 @@ class Game:
                 except:
                     continue
             if move_direction == 'H' or self.__check_guard_path(self.__guards[x], move_direction) is False:
-                self.__guards[x].draw()
+                self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
+                                                      (self.__guard_positions[x][0],
+                                                       self.__guard_positions[x][1]))
                 continue
             self.__guards[x].direction = move_direction
             self.__guards[x].update_sprites()
@@ -1119,6 +1133,7 @@ class Game:
                     self.__alert_mode_on()
             else:
                 self.__level += 1
+                self.__curr_direction = self.__player.direction
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
                 self.__set_player_and_guards()
@@ -1130,6 +1145,7 @@ class Game:
         if self.__check_next_level(self.__player.position()):
             if self.__level != 3:
                 self.__level += 1
+                self.__curr_direction = self.__player.direction
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
                 self.__set_player_and_guards()
