@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 class Player:
-    def __init__(self, screen, x, y, resolution):
+    def __init__(self, screen, x, y, resolution, direction='right'):
         self.__extinguish = False
         self.__smoke = False
         self.__resolution = resolution
@@ -25,9 +25,17 @@ class Player:
                     pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd_walk_1.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
                     pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd_walk_2.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32)),
                     pygame.transform.scale(pygame.image.load(Path(__file__).parent / "assets/graphics/Rogue/Rogue_fwd_walk_3.png").convert_alpha(), (self.__resolution * 32, self.__resolution * 32))]
-        self.__curr_sprites = self.__right
+        match direction:
+            case 'right':
+                self.__curr_sprites = self.__right
+            case 'left':
+                self.__curr_sprites = self.__left
+            case 'down':
+                self.__curr_sprites = self.__down
+            case 'up':
+                self.__curr_sprites = self.__up
         self.__dash_sprites = [self.__curr_sprites[0], self.__curr_sprites[1], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[2], self.__curr_sprites[3]]
-        self.__direction = "right"
+        self.__direction = direction
         self.__dash_cooldown = 0
         self.__x = x
         self.__y = y
