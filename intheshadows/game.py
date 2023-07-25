@@ -50,6 +50,7 @@ class Game:
         self.__guard_tracking = False
         self.__smoke_location = None
         self.__smoke_turn_counter = 0
+        self.__curr_direction = 'right'
 
         self.__resolution = 2  # resolution option for scaling
 
@@ -164,7 +165,7 @@ class Game:
 
     def __set_player_and_guards(self):
         self.__player = Player(self.__screen.foreground_surface, self.__player_spawn[0], self.__player_spawn[1],
-                               self.__resolution)
+                               self.__resolution, self.__curr_direction)
         self.__guards = []
         self.__guard_positions.clear()
         self.__guard_returning = []
@@ -529,6 +530,12 @@ class Game:
         self.__player.direction = self.__move_direction
         self.__player.update_sprites()
 
+        # plays dash sound once
+        if self.__player.dash and self.__move_counter == 0:
+            if self.__play_music:
+                pygame.mixer.Sound.play(
+                    pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/dash.mp3"))
+
         if self.__move_counter == 31 // self.__resolution:
             # self.__state = 'move_guard'
             self.__smoke_turn_counter += 1
@@ -551,14 +558,22 @@ class Game:
                             self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
                             time.sleep(water_flask_speed)
                             if self.__board.tiles[tempY][player_position[0]].type == "w":
+                                if self.__play_music:
+                                    pygame.mixer.Sound.play(
+                                        pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/flask_break.mp3"))
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
+                                if self.__play_music:
+                                    pygame.mixer.Sound.play(
+                                        pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                                 self.__board.tiles[tempY][player_position[0]].unlight()
                                 self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect((player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution),
+                                                                                         (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[tempY][player_position[0]].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
                                                                   (32 * self.__resolution, 32 * self.__resolution))
@@ -594,14 +609,23 @@ class Game:
                             self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
                             time.sleep(water_flask_speed)
                             if self.__board.tiles[tempY][player_position[0]].type == "w":
+                                if self.__play_music:
+                                    pygame.mixer.Sound.play(
+                                        pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/flask_break.mp3"))
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "t":
+                                if self.__play_music:
+                                    pygame.mixer.Sound.play(
+                                        pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                                 self.__board.tiles[tempY][player_position[0]].unlight()
                                 self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect(
+                                (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution),
+                                (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[tempY][player_position[0]].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
                                                                   (32 * self.__resolution, 32 * self.__resolution))
@@ -637,14 +661,23 @@ class Game:
                             self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
                             time.sleep(water_flask_speed)
                             if self.__board.tiles[player_position[1]][tempX].type == "w":
+                                if self.__play_music:
+                                    pygame.mixer.Sound.play(
+                                        pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/flask_break.mp3"))
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
+                                if self.__play_music:
+                                    pygame.mixer.Sound.play(
+                                        pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                                 self.__board.tiles[player_position[1]][tempX].unlight()
                                 self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect(
+                                (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution),
+                                (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[player_position[1]][tempX].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
                                                                   (32 * self.__resolution, 32 * self.__resolution))
@@ -680,14 +713,23 @@ class Game:
                             self.__water_flask = pygame.transform.rotate(self.__water_flask, 90)
                             time.sleep(water_flask_speed)
                             if self.__board.tiles[player_position[1]][tempX].type == "w":
+                                if self.__play_music:
+                                    pygame.mixer.Sound.play(
+                                        pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/flask_break.mp3"))
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "t":
+                                if self.__play_music:
+                                    pygame.mixer.Sound.play(
+                                        pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                                 self.__board.tiles[player_position[1]][tempX].unlight()
                                 self.__torch_extinguished += 1
                                 break
                             if self.__board.tiles[player_position[1]][tempX].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect(
+                                (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution),
+                                (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[player_position[1]][tempX].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
                                                                   (32 * self.__resolution, 32 * self.__resolution))
@@ -871,6 +913,9 @@ class Game:
                 self.__board.tiles[player_position[1]][player_position[0]].lit:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
             self.__torch_extinguished += 1
+            if self.__play_music:
+                pygame.mixer.Sound.play(
+                    pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
             self.__board.torch_check()
             self.__check_key(self.__player.position())
             self.__check_item(self.__player.position())
@@ -1078,7 +1123,7 @@ class Game:
         self.__check_item(self.__player.position())
 
         if self.__check_next_level(self.__player.position()):
-            if self.__level == 3:
+            if self.__level == 4:
                 self.__board.unload()
                 self.__level, self.__state = win(self.__width, self.__height, self.__screen, self.__black,
                                                  self.__torch_extinguished, self.__items_used, self.__turns_passed)
@@ -1089,6 +1134,7 @@ class Game:
                     self.__alert_mode_on()
             else:
                 self.__level += 1
+                self.__curr_direction = self.__player.direction
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
                 self.__set_player_and_guards()
@@ -1100,6 +1146,7 @@ class Game:
         if self.__check_next_level(self.__player.position()):
             if self.__level != 3:
                 self.__level += 1
+                self.__curr_direction = self.__player.direction
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
                 self.__set_player_and_guards()
@@ -1400,7 +1447,7 @@ class Game:
                                     self.__guards[x].direction = 'up'
                                 case 'D':
                                     self.__guards[x].direction = 'down'
-                            self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x)
+                            self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x, self.__play_music)
                         self.__update_guards()
                         if self.__guard_tracking is False:
                             self.__check_guard_vision(self.__player.position())

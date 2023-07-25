@@ -78,13 +78,16 @@ class Board:
             except IOError:
                 print("Error from load_tiles function!")
 
-    def replace_tile_with_original(self, x, y):
+    def replace_tile_with_original(self, x, y, play_music):
         if self.__tiles[x][y].lit:
             self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image, self.__orig_tiles[x][y].floor_type)
             self.__tiles[x][y].light()
         else:
             self.__tiles[x][y] = Tile(self.__orig_tiles[x][y].type, self.__tiles[x][y].lit, y, x, self.__orig_tiles[x][y].image, self.__orig_tiles[x][y].floor_type)
             if self.__tiles[x][y].type == 't':
+                if play_music:
+                    pygame.mixer.Sound.play(
+                        pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/light_torch.mp3"))
                 self.__tiles[x][y].light()
         self.torch_check()
 
