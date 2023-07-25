@@ -1144,7 +1144,7 @@ class Game:
 
     def __check_things(self):
         if self.__check_next_level(self.__player.position()):
-            if self.__level != 3:
+            if self.__level != 5:
                 self.__level += 1
                 self.__curr_direction = self.__player.direction
                 self.__board.unload()
