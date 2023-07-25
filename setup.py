@@ -10,7 +10,7 @@ setup(
      author='Carson Sobolewski',
      author_email='csobolewski@ufl.edu',
      description='Turn-based stealth game written in pygame!',
-     install_requires=['pygame>=2.4.0', 'numpy', 'igraphs', 'texttable'],
+     install_requires=['pygame>=2.4.0', 'numpy>=1.25.0', 'igraph>=0.10.5', 'texttable>=1.6.7'],
 
      entry_points =
      {  "console_scripts":
