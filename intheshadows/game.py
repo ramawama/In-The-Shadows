@@ -911,7 +911,7 @@ class Game:
                                                           self.__guard_position_before_tracking[x])
                 except:
                     continue
-            if move_direction is 'H' or self.__check_guard_path(self.__guards[x], move_direction) is False:
+            if move_direction == 'H' or self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
             self.__guards[x].direction = move_direction
