@@ -559,6 +559,8 @@ class Game:
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
                                 break
+                            self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect((player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution),
+                                                                                         (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[tempY][player_position[0]].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
                                                                   (32 * self.__resolution, 32 * self.__resolution))
