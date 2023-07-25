@@ -328,7 +328,6 @@ class Game:
                             case pygame.K_ESCAPE:
                                 self.__num_water = self.__level_water
                                 self.__num_smoke = self.__level_smoke
-                                print(self.__level_smoke)
                                 self.__escape_state()
                             case pygame.K_w | pygame.K_UP:
                                 if self.__allow_movement is False:
@@ -976,18 +975,18 @@ class Game:
         height = len(self.__board.tiles)
         for i, mains in enumerate(self.__board.tiles):
             for j, nexts in enumerate(mains):
-                if nexts.type in ['o', 'p', 't', '!', 'k', 'b', 's']:
+                if nexts.type in ['o', 'p', 't', '!', 'k', 'b', 's', 'e']:
                     if j != 0:
-                        if self.__board.tiles[i][j - 1].type in ['o', 'p', 't', '!', 'k', 'b', 's']:
+                        if self.__board.tiles[i][j - 1].type in ['o', 'p', 't', '!', 'k', 'b', 's', 'e']:
                             self.__vertices.add_edge(j + (i * width), (j - 1) + (i * width))
                     if j != (width - 1):
-                        if self.__board.tiles[i][j + 1].type in ['o', 'p', 't', '!', 'k', 'b', 's']:
+                        if self.__board.tiles[i][j + 1].type in ['o', 'p', 't', '!', 'k', 'b', 's', 'e']:
                             self.__vertices.add_edge(j + (i * width), (j + 1) + (i * width))
                     if i != 0:
-                        if self.__board.tiles[i - 1][j].type in ['o', 'p', 't', '!', 'k', 'b', 's']:
+                        if self.__board.tiles[i - 1][j].type in ['o', 'p', 't', '!', 'k', 'b', 's', 'e']:
                             self.__vertices.add_edge(j + (i * width), j + ((i - 1) * width))
                     if i != (height - 1):
-                        if self.__board.tiles[i + 1][j].type in ['o', 'p', 't', '!', 'k', 'b', 's']:
+                        if self.__board.tiles[i + 1][j].type in ['o', 'p', 't', '!', 'k', 'b', 's', 'e']:
                             self.__vertices.add_edge(j + (i * width), j + ((i + 1) * width))
         self.__vertices = self.__vertices.simplify()
         return player_spawn, guards
@@ -1125,9 +1124,9 @@ class Game:
         end_num = (end[1] * width) + end[0]
         try:
             shortest = self.__vertices.get_shortest_paths(start_num, end_num)
+            dist = shortest[0][1] - shortest[0][0]
         except:
-            pass
-        dist = shortest[0][1] - shortest[0][0]
+            dist = -1000
         if dist == 1:
             return 'R'
         elif dist == -1:
