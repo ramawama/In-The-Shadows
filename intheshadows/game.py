@@ -1272,7 +1272,7 @@ class Game:
             for i in range(0, len(dy)):
                 try:
                     if self.__board.tiles[guard_y + dy[i]][guard_x + dx[i]].type == 'w':
-                        blocked_views.append(i)
+                        blocked_views.append(i % 3)
                     if guard_y + dy[i] == player_position[1] and guard_x + dx[i] == player_position[
                         0] and i % 3 not in blocked_views:
                         self.__alert_mode_on()
@@ -1287,9 +1287,9 @@ class Game:
                         for i in range(0, 5):
                             try:
                                 if self.__board.tiles[guard_y][guard_x + dx[i]].type == 'w':
-                                    blocked_views.append(i)
+                                    blocked_views.append(i % 3)
                                 if self.__board.tiles[guard_y][guard_x + dx[i]].lit and guard_y == player_position[1] \
-                                        and guard_x + dx[i] == player_position[0] and i not in blocked_views:
+                                        and guard_x + dx[i] == player_position[0] and i % 3 not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
@@ -1302,9 +1302,9 @@ class Game:
                         for i in range(0, 5):
                             try:
                                 if self.__board.tiles[guard_y][guard_x + dx[i]].type == 'w':
-                                    blocked_views.append(i)
+                                    blocked_views.append(i % 3)
                                 if self.__board.tiles[guard_y][guard_x + dx[i]].lit and guard_y == player_position[
-                                    1] and guard_x + dx[i] == player_position[0] and i not in blocked_views:
+                                    1] and guard_x + dx[i] == player_position[0] and i % 3 not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
@@ -1317,10 +1317,10 @@ class Game:
                         for i in range(0, 5):
                             try:
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].type == 'w':
-                                    blocked_views.append(i)
+                                    blocked_views.append(i % 3)
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].lit and guard_y + dy[i] == \
                                         player_position[
-                                            1] and guard_x == player_position[0] and i not in blocked_views:
+                                            1] and guard_x == player_position[0] and i % 3 not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
@@ -1333,9 +1333,9 @@ class Game:
                         for i in range(0, 5):
                             try:
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].type == 'w':
-                                    blocked_views.append(i)
+                                    blocked_views.append(i % 3)
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].lit and guard_y + dy[i] == \
-                                        player_position[1] and guard_x == player_position[0] and i not in blocked_views:
+                                        player_position[1] and guard_x == player_position[0] and i % 3 not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
