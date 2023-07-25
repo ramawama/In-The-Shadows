@@ -911,7 +911,7 @@ class Game:
                                                           self.__guard_position_before_tracking[x])
                 except:
                     continue
-            if self.__check_guard_path(self.__guards[x], move_direction) is False:
+            if move_direction is -1 or self.__check_guard_path(self.__guards[x], move_direction) is False:
                 self.__guards[x].draw()
                 continue
             self.__guards[x].direction = move_direction
@@ -1294,6 +1294,8 @@ class Game:
                     move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                           self.__guard_position_before_tracking[x])
                 match move_direction:
+                    case -1:
+                        continue
                     case 'R':
                         if self.__check_guard_path(self.__guards[x], 'R'):
                             self.__guards[x].moveRight()
