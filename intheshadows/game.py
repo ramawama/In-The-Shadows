@@ -1141,7 +1141,6 @@ class Game:
                 if self.__guard_tracking:
                     self.__alert_mode_off()
 
-
     def __check_things(self):
         if self.__check_next_level(self.__player.position()):
             if self.__level != 5:
