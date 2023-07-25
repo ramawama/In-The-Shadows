@@ -1275,7 +1275,6 @@ class Game:
                         blocked_views.append(i % 3)
                     if guard_y + dy[i] == player_position[1] and guard_x + dx[i] == player_position[
                         0] and i % 3 not in blocked_views:
-                        print(i, *blocked_views)
                         self.__alert_mode_on()
                         break
                 except:
@@ -1322,7 +1321,6 @@ class Game:
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].lit and guard_y + dy[i] == \
                                         player_position[
                                             1] and guard_x == player_position[0] and i % 3 not in blocked_views:
-                                    print(i, *blocked_views)
                                     self.__alert_mode_on()
                                     break
                             except:
