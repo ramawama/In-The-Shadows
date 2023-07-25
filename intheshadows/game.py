@@ -285,8 +285,8 @@ class Game:
                 elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
                     pygame.event.post(
                         pygame.event.Event(pygame.KEYDOWN, unicode="d", key=pygame.K_d, mod=pygame.KMOD_NONE))
-
             for ev in pygame.event.get():
+                pygame.event.clear(pygame.KEYDOWN, pygame.KEYUP)
                 match ev.type:
                     case pygame.QUIT:
                         self.__running = False
@@ -899,8 +899,12 @@ class Game:
                     case 'right':
                         player_pos = (self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
                 try:
-                    move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                    if self.__board.tiles[player_pos[1]][player_pos[0]].type != "w":
+                        move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                           player_pos)
+                    else:
+                        move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
+                                                          self.__player.position())
                 except Exception as e:
                     move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                           self.__player.position())
@@ -1422,7 +1426,10 @@ class Game:
                                 player_pos = (
                                 self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
                         try:
-                            self.__check_guard_vision(player_pos)
+                            if self.__board.tiles[player_pos[1]][player_pos[0]].type != "w":
+                                self.__check_guard_vision(player_pos)
+                            else:
+                                self.__check_guard_vision(self.__player.position())
                         except:
                             pass
                         self.__move_flag = True
