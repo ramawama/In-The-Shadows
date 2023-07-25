@@ -1101,6 +1101,8 @@ class Game:
                 self.__board.unload()
                 self.__player_spawn, self.__guard_routes = self.__load_game()
                 self.__set_player_and_guards()
+                self.__level_smoke = self.__num_smoke
+                self.__level_water = self.__num_water
                 if self.__guard_tracking:
                     self.__alert_mode_off()
 
