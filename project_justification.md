@@ -111,7 +111,9 @@ The animations are all done by hand as well, so this is an entirely student-desi
 
 ## Front-End
 
-The front end of our game
+The front end of our game is the user interface that the player interacts with. We have done work to ensure that the user experience is as smooth as possible.
+This includes the use of a persistent state to keep track of the user's progress, a HUD to display the user's current state, and a menu that is easy to follow and interact with.
+The menu, player inventory, and player stats are all stored in a file saved to the user's computer, so their experience is consistent every time they play the game.
 
 ## Data Store
 
@@ -130,4 +132,6 @@ These are appropriately connected, as when items are interacted with, they are c
 
 ## Back-End
 
-The back end of our game
+The back end of our game is the code that runs the game and handles all the logic.
+It takes the settings stored in the persistent state to display and set up the game for the user to play.
+Once the user inputs a command, the back end handles the logic of the game and updates the persistent state accordingly.
