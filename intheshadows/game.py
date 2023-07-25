@@ -18,6 +18,7 @@ class Game:
         # Create global variables for height, width, and black and white colors
         self.__move_flag = False
         self.__dashing = False
+        self.__extinguishing = False
         self.__step_dist = 1
         self.__anim_counter = None
         self.__player_cant_move = False
@@ -1420,6 +1421,7 @@ class Game:
                 case 'game':
                     pygame.mouse.set_visible(False)
                     self.__dashing = False
+                    self.__extinguishing = False
                     self.__step_dist = 1
                     # Update the Player and Guard Locations
                     if self.__move_flag is True:
@@ -1468,6 +1470,8 @@ class Game:
                 case 'move':
                     if self.__player.dash:
                         self.__dashing = True
+                    if self.__player.extinguish:
+                        self.__extinguishing = True
                     self.__move_player()
                     if self.__move_flag is False:
                         if self.__dashing:
@@ -1486,7 +1490,7 @@ class Game:
                                 player_pos = (
                                 self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
                         try:
-                            if self.__board.tiles[player_pos[1]][player_pos[0]].type != "w":
+                            if not self.__extinguishing and self.__board.tiles[player_pos[1]][player_pos[0]].type != "w":
                                 self.__check_guard_vision(player_pos)
                             else:
                                 self.__check_guard_vision(self.__player.position())
