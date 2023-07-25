@@ -651,7 +651,7 @@ class Game:
                                 self.__alert_mode_on()
                                 break
                             self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect(
-                                (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution),
+                                (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution),
                                 (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[player_position[1]][tempX].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
@@ -697,7 +697,7 @@ class Game:
                                 self.__alert_mode_on()
                                 break
                             self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect(
-                                (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution),
+                                (tempX * 32 * self.__resolution, player_position[1] * 32 * self.__resolution),
                                 (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[player_position[1]][tempX].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
