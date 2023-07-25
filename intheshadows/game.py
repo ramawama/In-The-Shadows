@@ -913,8 +913,9 @@ class Game:
                 self.__board.tiles[player_position[1]][player_position[0]].lit:
             self.__board.tiles[player_position[1]][player_position[0]].unlight()
             self.__torch_extinguished += 1
-            pygame.mixer.Sound.play(
-                pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
+            if self.__play_music:
+                pygame.mixer.Sound.play(
+                    pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
             self.__board.torch_check()
             self.__check_key(self.__player.position())
             self.__check_item(self.__player.position())
