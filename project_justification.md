@@ -34,23 +34,32 @@ The HUD is designed to display all the things the player needs to know while the
 
 ## Mechanics / API
 
-We believe all the elements are findable because
+We believe all the elements and mechanics are intuitive because we used the same controls as any other game
+and explain how to use the objects in our game when the user picks them up.
+Additionally, the controls are displayed on the screen so the user knows how to interact with the game
+and the items are displayed on the screen so the user knows what items they have available to them.
 
 ## Tested / Not Buggy
 
-We believe all the elements are thorough and not buggy tested because
+We believe all the elements are thorough and not buggy tested because we have most,
+if not all the code that can cause a crash in the game wrapped with a try except clause to ensure a consistent experience for the user.
+Additionally, we have play tested the game multiple times in various, unorthodox, edge cases to ensure that the game is not buggy and that the user can play the game without any issues.
 
 ## Minimal Acclimation
 
-We believe the elements in our game require minimal acclimation because
+We believe the elements in our game require minimal acclimation because the controls for the game are exactly what anybody would expect.
+We use the arrow keys for people to assume to use but also allow for WASD input for people more accustomed to other PC games.
+The mechanics of the game do not require the most acclimation either because they are explained in simple terms and the concept behind all of them is simple.
 
 ## Predictability
 
-We believe the elements in our game are predictable because
+We believe the elements in our game are predictable because the guard paths and levels are all predefined so the levels will react the same exact way every single play through.
+The user input can be changed to whatever the player wants, and the guards pathing and actions will still be the same for any repeated input.
 
 ## Discoverability
 
-We believe the elements in our game are discoverable because
+We believe the elements in our game are discoverable because the items are very easily accessible to the player, and the instructions on how to use them are shown to the player every time they pick one up.
+Additionally, levels increase in difficulty and require the usage of different items and techniques in order to complete the level, so the player is forced to discover how to use the items in order to complete the level.
 
 
 # USER PERCEPTION 
