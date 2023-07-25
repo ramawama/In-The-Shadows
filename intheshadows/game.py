@@ -1124,6 +1124,7 @@ class Game:
 
         if self.__check_next_level(self.__player.position()):
             if self.__level == 4:
+                self.__screen.smoke_surface.fill((0, 0, 0, 0))
                 self.__board.unload()
                 self.__level, self.__state = win(self.__width, self.__height, self.__screen, self.__black,
                                                  self.__torch_extinguished, self.__items_used, self.__turns_passed)
@@ -1133,6 +1134,7 @@ class Game:
                 if self.__guard_tracking:
                     self.__alert_mode_on()
             else:
+                self.__screen.smoke_surface.fill((0, 0, 0, 0))
                 self.__level += 1
                 self.__curr_direction = self.__player.direction
                 self.__board.unload()
@@ -1145,6 +1147,7 @@ class Game:
     def __check_things(self):
         if self.__check_next_level(self.__player.position()):
             if self.__level != 5:
+                self.__screen.smoke_surface.fill((0, 0, 0, 0))
                 self.__level += 1
                 self.__curr_direction = self.__player.direction
                 self.__board.unload()
