@@ -916,7 +916,7 @@ class Game:
                 except:
                     continue
             if move_direction == 'H' or self.__check_guard_path(self.__guards[x], move_direction) is False:
-                self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[self.__anim_counter],
+                self.__screen.foreground_surface.blit(self.__guards[x].currSprites()[0],
                                                       (self.__guard_positions[x][0],
                                                        self.__guard_positions[x][1]))
                 continue
