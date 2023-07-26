@@ -572,8 +572,9 @@ class Game:
                             if self.__board.tiles[tempY][player_position[0]].type == "g":
                                 self.__alert_mode_on()
                                 break
-                            self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect((player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution),
-                                                                                         (32 * self.__resolution, 32 * self.__resolution)))
+                            self.__screen.foreground_surface.fill((0, 0, 0, 0), pygame.Rect(
+                                (player_position[0] * 32 * self.__resolution, tempY * 32 * self.__resolution),
+                                (32 * self.__resolution, 32 * self.__resolution)))
                             replace_tile = self.__board.tiles[tempY][player_position[0]].image
                             replace_tile = pygame.transform.scale(replace_tile.convert_alpha(),
                                                                   (32 * self.__resolution, 32 * self.__resolution))
@@ -586,7 +587,8 @@ class Game:
                         self.__move_flag = False
                     elif self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1] - 2][
-                            player_position[0]].type != "w":
+                        player_position[0]].type != "w" and self.__board.tiles[player_position[1] - 1][
+                        player_position[0]].type not in ["s", "b"]:
                             self.__player.moveUp()
                             self.__check_key(self.__player.position())
                             self.__check_item(self.__player.position())
@@ -638,7 +640,8 @@ class Game:
                         self.__move_flag = False
                     elif self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1] + 2][
-                            player_position[0]].type != "w":
+                        player_position[0]].type != "w" and self.__board.tiles[player_position[1] + 1][
+                        player_position[0]].type not in ["s", "b"]:
                             self.__player.moveDown()
                             self.__check_key(self.__player.position())
                             self.__check_item(self.__player.position())
@@ -690,7 +693,8 @@ class Game:
                         self.__move_flag = False
                     elif self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1]][
-                            player_position[0] - 2].type != "w":
+                        player_position[0] - 2].type != "w" and self.__board.tiles[player_position[1]][
+                        player_position[0] - 1].type not in ["s", "b"]:
                             self.__player.moveLeft()
                             self.__check_key(self.__player.position())
                             self.__check_item(self.__player.position())
@@ -742,7 +746,8 @@ class Game:
                         self.__move_flag = False
                     elif self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
                         if self.__player.dash and self.__board.tiles[player_position[1]][
-                            player_position[0] + 2].type != "w":
+                            player_position[0] + 2].type != "w" and self.__board.tiles[player_position[1]][
+                            player_position[0] + 1].type not in ["s", "b"]:
                             self.__player.moveRight()
                             self.__check_key(self.__player.position())
                             self.__check_item(self.__player.position())
@@ -766,8 +771,12 @@ class Game:
         match self.__move_direction:
             case "right":
                 if self.__board.tiles[player_position[1]][player_position[0] + 1].type != "w":
-                    if self.__player.dash and self.__board.tiles[player_position[1]][
-                        player_position[0] + 2].type == "w":
+                    if self.__player.dash and (self.__board.tiles[player_position[1]][
+                    player_position[0] + 2].type == "w" or self.__board.tiles[player_position[1]][
+                    player_position[0] + 1].type in ["s", "b"]):
+                        if self.__board.tiles[player_position[1]][
+                        player_position[0] + 1].type in ["s", "b"]:
+                            self.__player.dash_cooldown = 0
                         step_size = self.__resolution * self.__resolution
                     # draw background
                     self.__screen.clear()
@@ -782,6 +791,9 @@ class Game:
                 if dashed:
                     if self.__board.tiles[player_position[1]][player_position[0] + 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] + 1].lit:
+                        if self.__play_music:
+                            pygame.mixer.Sound.play(
+                                pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                         self.__board.tiles[player_position[1]][player_position[0] + 1].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
@@ -791,8 +803,12 @@ class Game:
 
             case "left":
                 if self.__board.tiles[player_position[1]][player_position[0] - 1].type != "w":
-                    if self.__player.dash and self.__board.tiles[player_position[1]][
-                        player_position[0] - 2].type == "w":
+                    if self.__player.dash and (self.__board.tiles[player_position[1]][
+                    player_position[0] - 2].type == "w" or self.__board.tiles[player_position[1]][
+                    player_position[0] - 1].type in ["s", "b"]):
+                        if self.__board.tiles[player_position[1]][
+                            player_position[0] - 1].type in ["s", "b"]:
+                            self.__player.dash_cooldown = 0
                         step_size = self.__resolution * self.__resolution
                     # draw animation frame
                     self.__screen.clear()
@@ -807,6 +823,9 @@ class Game:
                 if dashed:
                     if self.__board.tiles[player_position[1]][player_position[0] - 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] - 1].lit:
+                        if self.__play_music:
+                            pygame.mixer.Sound.play(
+                                pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                         self.__board.tiles[player_position[1]][player_position[0] - 1].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
@@ -816,8 +835,12 @@ class Game:
 
             case "up":
                 if self.__board.tiles[player_position[1] - 1][player_position[0]].type != "w":
-                    if self.__player.dash and self.__board.tiles[player_position[1] - 2][
-                        player_position[0]].type == "w":
+                    if self.__player.dash and (self.__board.tiles[player_position[1] - 2][
+                    player_position[0]].type == "w" or self.__board.tiles[player_position[1] - 2][
+                    player_position[0]].type in ["s", "b"]):
+                        if self.__board.tiles[player_position[1] - 1][
+                    player_position[0]].type in ["s", "b"]:
+                            self.__player.dash_cooldown = 0
                         step_size = self.__resolution * self.__resolution
                     # draw animation frame
                     self.__screen.clear()
@@ -833,6 +856,9 @@ class Game:
                 if dashed:
                     if self.__board.tiles[player_position[1] - 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] - 1][player_position[0]].lit:
+                        if self.__play_music:
+                            pygame.mixer.Sound.play(
+                                pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                         self.__board.tiles[player_position[1] - 1][player_position[0]].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
@@ -843,7 +869,11 @@ class Game:
             case "down":
                 if self.__board.tiles[player_position[1] + 1][player_position[0]].type != "w":
                     if self.__player.dash and self.__board.tiles[player_position[1] + 2][
-                        player_position[0]].type == "w":
+                    player_position[0]].type == "w" or (self.__board.tiles[player_position[1] + 1][
+                    player_position[0]].type in ["s", "b"]):
+                        if self.__board.tiles[player_position[1] + 1][
+                    player_position[0]].type in ["s", "b"]:
+                            self.__player.dash_cooldown = 0
                         step_size = self.__resolution * self.__resolution
                     # draw animation frame
                     self.__screen.clear()
@@ -858,6 +888,9 @@ class Game:
                 if dashed:
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] + 1][player_position[0]].lit:
+                        if self.__play_music:
+                            pygame.mixer.Sound.play(
+                                pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                         self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
@@ -902,10 +935,10 @@ class Game:
                 try:
                     if self.__board.tiles[player_pos[1]][player_pos[0]].type != "w":
                         move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                          player_pos)
+                                                              player_pos)
                     else:
                         move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
-                                                          self.__player.position())
+                                                              self.__player.position())
                 except Exception as e:
                     move_direction = self.__shortest_path((self.__guards[x].x, self.__guards[x].y),
                                                           self.__player.position())
@@ -1304,7 +1337,8 @@ class Game:
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].type == 'w':
                                     blocked_views.append(i % 3)
                                 if self.__board.tiles[guard_y + dy[i]][guard_x].lit and guard_y + dy[i] == \
-                                        player_position[1] and guard_x == player_position[0] and i % 3 not in blocked_views:
+                                        player_position[1] and guard_x == player_position[
+                                    0] and i % 3 not in blocked_views:
                                     self.__alert_mode_on()
                                     break
                             except:
@@ -1425,7 +1459,8 @@ class Game:
                                     self.__guards[x].direction = 'up'
                                 case 'D':
                                     self.__guards[x].direction = 'down'
-                            self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x, self.__play_music)
+                            self.__board.replace_tile_with_original(self.__guards[x].y, self.__guards[x].x,
+                                                                    self.__play_music)
                         self.__update_guards()
                         if self.__guard_tracking is False:
                             self.__check_guard_vision(self.__player.position())
@@ -1453,18 +1488,19 @@ class Game:
                         match self.__move_direction:
                             case 'left':
                                 player_pos = (
-                                self.__player.position()[0] - self.__step_dist, self.__player.position()[1])
+                                    self.__player.position()[0] - self.__step_dist, self.__player.position()[1])
                             case 'up':
                                 player_pos = (
-                                self.__player.position()[0], self.__player.position()[1] - self.__step_dist)
+                                    self.__player.position()[0], self.__player.position()[1] - self.__step_dist)
                             case 'down':
                                 player_pos = (
-                                self.__player.position()[0], self.__player.position()[1] + self.__step_dist)
+                                    self.__player.position()[0], self.__player.position()[1] + self.__step_dist)
                             case 'right':
                                 player_pos = (
-                                self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
+                                    self.__player.position()[0] + self.__step_dist, self.__player.position()[1])
                         try:
-                            if not self.__extinguishing and self.__board.tiles[player_pos[1]][player_pos[0]].type != "w":
+                            if not self.__extinguishing and self.__board.tiles[player_pos[1]][
+                                player_pos[0]].type != "w":
                                 self.__check_guard_vision(player_pos)
                             else:
                                 self.__check_guard_vision(self.__player.position())
