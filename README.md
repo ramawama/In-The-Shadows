@@ -7,7 +7,7 @@ A 2D stealth game where you play as a famous thief. Tasked with crawling a multi
   1. Clone the repository
   2. Run `pip install .` in the directory with setup.py
   3. Run `intheshadows` from the command line (if it doesn't work, try from a different directory because one of our folders is called the same thing).
-  4. Program script files will be installed in the python/lib/site-packages folder, and executable will be in eitjer python/bin or python/Scripts (where python is your python install directory).
+  4. Program script files will be installed in the python/lib/site-packages folder, and executable will be in either python/bin or python/Scripts (where python is your python install directory).
 
 ## Dev Environment Instructions
   **Requires Python 3.10 to Run**
