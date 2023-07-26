@@ -323,8 +323,8 @@ class Game:
                                     self.__play_music = True
                                 self.__music.toggle()
                             case pygame.K_ESCAPE:
-                                self.__num_water = self.__level_water
                                 self.__num_smoke = self.__level_smoke
+                                self.__num_water = self.__level_water
                                 self.__escape_state()
                             case pygame.K_w | pygame.K_UP:
                                 if self.__allow_movement is False:
@@ -1066,9 +1066,19 @@ class Game:
         self.__player.draw()
         self.__draw_guards()
         if self.__check_game_over(self.__player.position()):
+            self.__level = 1
+            self.__torch_extinguished = 0
+            self.__items_used = 0
+            self.__turns_passed = 0
+            self.__num_water = 0
+            self.__num_smoke = 0
+            self.__level_water = 0
+            self.__level_smoke = 0
+            self.save_level()
             self.__music.play_music("game_over")
             self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
                                                    self.__board)
+
             self.__player_spawn, self.__guard_routes = self.__get_spawns()
             self.__set_player_and_guards()
             self.__guard_tracking = False
@@ -1077,7 +1087,7 @@ class Game:
         self.__check_item(self.__player.position())
 
         if self.__check_next_level(self.__player.position()):
-            if self.__level == 4:
+            if self.__level == 5:
                 self.__screen.smoke_surface.fill((0, 0, 0, 0))
                 self.__board.unload()
                 self.__level, self.__state = win(self.__width, self.__height, self.__screen, self.__black,
@@ -1379,6 +1389,15 @@ class Game:
                     if self.__move_flag is True:
                         self.__player_cant_move = False
                         if self.__check_game_over(self.__player.position()):
+                            self.__level = 1
+                            self.__torch_extinguished = 0
+                            self.__items_used = 0
+                            self.__turns_passed = 0
+                            self.__num_water = 0
+                            self.__num_smoke = 0
+                            self.__level_water = 0
+                            self.__level_smoke = 0
+                            self.save_level()
                             self.__music.play_music("game_over")
                             self.__level, self.__state = game_over(self.__width, self.__height, self.__screen,
                                                                    self.__board)
