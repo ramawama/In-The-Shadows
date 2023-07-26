@@ -774,7 +774,9 @@ class Game:
                     if self.__player.dash and (self.__board.tiles[player_position[1]][
                     player_position[0] + 2].type == "w" or self.__board.tiles[player_position[1]][
                     player_position[0] + 1].type in ["s", "b"]):
-                        print(15)
+                        if self.__board.tiles[player_position[1]][
+                        player_position[0] + 1].type in ["s", "b"]:
+                            self.__player.dash_cooldown = 0
                         step_size = self.__resolution * self.__resolution
                     # draw background
                     self.__screen.clear()
@@ -801,6 +803,9 @@ class Game:
                     if self.__player.dash and (self.__board.tiles[player_position[1]][
                     player_position[0] - 2].type == "w" or self.__board.tiles[player_position[1]][
                     player_position[0] - 1].type in ["s", "b"]):
+                        if self.__board.tiles[player_position[1]][
+                            player_position[0] - 1].type in ["s", "b"]:
+                            self.__player.dash_cooldown = 0
                         step_size = self.__resolution * self.__resolution
                     # draw animation frame
                     self.__screen.clear()
@@ -827,6 +832,9 @@ class Game:
                     if self.__player.dash and (self.__board.tiles[player_position[1] - 2][
                     player_position[0]].type == "w" or self.__board.tiles[player_position[1] - 2][
                     player_position[0]].type in ["s", "b"]):
+                        if self.__board.tiles[player_position[1] - 1][
+                    player_position[0]].type in ["s", "b"]:
+                            self.__player.dash_cooldown = 0
                         step_size = self.__resolution * self.__resolution
                     # draw animation frame
                     self.__screen.clear()
@@ -854,7 +862,9 @@ class Game:
                     if self.__player.dash and self.__board.tiles[player_position[1] + 2][
                     player_position[0]].type == "w" or (self.__board.tiles[player_position[1] + 1][
                     player_position[0]].type in ["s", "b"]):
-
+                        if self.__board.tiles[player_position[1] + 1][
+                    player_position[0]].type in ["s", "b"]:
+                            self.__player.dash_cooldown = 0
                         step_size = self.__resolution * self.__resolution
                     # draw animation frame
                     self.__screen.clear()
