@@ -791,6 +791,9 @@ class Game:
                 if dashed:
                     if self.__board.tiles[player_position[1]][player_position[0] + 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] + 1].lit:
+                        if self.__play_music:
+                            pygame.mixer.Sound.play(
+                                pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                         self.__board.tiles[player_position[1]][player_position[0] + 1].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
@@ -820,6 +823,9 @@ class Game:
                 if dashed:
                     if self.__board.tiles[player_position[1]][player_position[0] - 1].type == "t" and \
                             self.__board.tiles[player_position[1]][player_position[0] - 1].lit:
+                        if self.__play_music:
+                            pygame.mixer.Sound.play(
+                                pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                         self.__board.tiles[player_position[1]][player_position[0] - 1].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
@@ -850,6 +856,9 @@ class Game:
                 if dashed:
                     if self.__board.tiles[player_position[1] - 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] - 1][player_position[0]].lit:
+                        if self.__play_music:
+                            pygame.mixer.Sound.play(
+                                pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                         self.__board.tiles[player_position[1] - 1][player_position[0]].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
@@ -879,6 +888,9 @@ class Game:
                 if dashed:
                     if self.__board.tiles[player_position[1] + 1][player_position[0]].type == "t" and \
                             self.__board.tiles[player_position[1] + 1][player_position[0]].lit:
+                        if self.__play_music:
+                            pygame.mixer.Sound.play(
+                                pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/unlight_flame.mp3"))
                         self.__board.tiles[player_position[1] + 1][player_position[0]].unlight()
                         self.__torch_extinguished += 1
                         self.__board.torch_check()
