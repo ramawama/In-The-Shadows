@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 class Guard:
-    def __init__(self, screen, resolution, x, y, path="LR", difficulty="EASY", width=32, height=32):
+    def __init__(self, screen, resolution, x, y, path="LR", difficulty="EASY"):
         self.__alive = True
         self.__screen = screen
         self.__resolution = resolution

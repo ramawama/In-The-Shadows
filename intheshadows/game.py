@@ -524,7 +524,6 @@ class Game:
 
     def __move_player(self):
         dashed = False  # if player dashed, torch will be lit, conditional at end of function
-        extinguished = False
         water_flask_speed = 0.15
         player_position = self.__player.position()
 
@@ -539,7 +538,6 @@ class Game:
                     pygame.mixer.Sound(Path(__file__).parent / "./assets/sounds/dash.mp3"))
 
         if self.__move_counter == 31 // self.__resolution:
-            # self.__state = 'move_guard'
             self.__smoke_turn_counter += 1
 
             replace_tile = self.__board.tiles[player_position[1]][player_position[0]].image
@@ -772,22 +770,12 @@ class Game:
                         player_position[0] + 2].type == "w":
                         step_size = self.__resolution * self.__resolution
                     # draw background
-                    # self.__board.draw_level()
                     self.__screen.clear()
                     # draw animation frame
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter], (self.__position[0],
                                                                                          self.__position[1]))
-                    # self.__screen.update()
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0] + step_size, self.__position[1])
-                    # if not (self.__move_counter % anim_spd):
-                    #     self.__anim_counter += 1
-
-                    # for resetting animation
-                    # if self.__anim_counter >= len(sprites):
-                    #     self.__anim_counter = 0
-
-                    # self.__screen.update()
                     # update player location internally
                 else:
                     self.__player_cant_move = True
@@ -806,9 +794,6 @@ class Game:
                     if self.__player.dash and self.__board.tiles[player_position[1]][
                         player_position[0] - 2].type == "w":
                         step_size = self.__resolution * self.__resolution
-                    # draw background
-                    # self.__board.draw_level()
-                    # self.__draw_guards()
                     # draw animation frame
                     self.__screen.clear()
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
@@ -816,14 +801,6 @@ class Game:
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0] - step_size, self.__position[1])
-                    # if not (self.__move_counter % anim_spd):
-                    #     # self.__anim_counter += 1
-
-                    # for resetting animation
-                    # if self.__anim_counter >= len(sprites):
-                    #     self.__anim_counter = 0
-
-                    # self.__screen.update()
                     # update player location internally
                 else:
                     self.__player_cant_move = True
@@ -842,9 +819,6 @@ class Game:
                     if self.__player.dash and self.__board.tiles[player_position[1] - 2][
                         player_position[0]].type == "w":
                         step_size = self.__resolution * self.__resolution
-                    # draw background
-                    # self.__board.draw_level()
-                    # self.__draw_guards()
                     # draw animation frame
                     self.__screen.clear()
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
@@ -852,14 +826,6 @@ class Game:
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0], self.__position[1] - step_size)
-                    # if not (self.__move_counter % anim_spd):
-                    #     self.__anim_counter += 1
-
-                    # for resetting animation
-                    # if self.__anim_counter >= len(sprites):
-                    #     self.__anim_counter = 0
-
-                    # self.__screen.update()
                     # update player location internally
 
                 else:
@@ -879,9 +845,6 @@ class Game:
                     if self.__player.dash and self.__board.tiles[player_position[1] + 2][
                         player_position[0]].type == "w":
                         step_size = self.__resolution * self.__resolution
-                    # draw background
-                    # self.__board.draw_level()
-                    # self.__draw_guards()
                     # draw animation frame
                     self.__screen.clear()
                     self.__screen.foreground_surface.blit(sprites[self.__anim_counter],
@@ -889,14 +852,6 @@ class Game:
 
                     # slight movement + decrement distance left to travel
                     self.__position = (self.__position[0], self.__position[1] + step_size)
-                    # if not (self.__move_counter % anim_spd):
-                    #     self.__anim_counter += 1
-
-                    # for resetting animation
-                    # if self.__anim_counter >= len(sprites):
-                    #     self.__anim_counter = 0
-
-                    # self.__screen.update()
                     # update player location internally
                 else:
                     self.__player_cant_move = True
@@ -930,7 +885,6 @@ class Game:
             self.__player.draw()
         if self.__move_counter == 31 // self.__resolution:
             self.__state = 'game'
-        # self.__player.draw()
         for x in range(len(self.__guards)):
             step_size = 1 * self.__resolution * self.__resolution
             move_direction = self.__guard_routes[x][1][(self.__turn_counter[x] % len(self.__guard_routes[x][1]))]
@@ -1009,7 +963,6 @@ class Game:
         # for resetting animation
         if self.__anim_counter >= 4:
             self.__anim_counter = 0
-        # self.__screen.update()
 
     def __get_spawns(self):
         player_spawn, guards = self.__board.load_level(self.__level)
@@ -1098,7 +1051,6 @@ class Game:
             big_torch = pygame.transform.scale(big_torch, (width_scale, height_scale))
             for x in range(len(self.__board.tiles)):
                 for y in range(len(self.__board.tiles[0])):
-                    # print(self.__board.tiles[x][y].type, end='')
                     if self.__board.tiles[x][y].type == 't' and self.__board.tiles[x][y].lit:
                         # not correct position
                         self.__screen.foreground_surface.blit(big_torch, (
@@ -1393,7 +1345,6 @@ class Game:
         self.__torch_counter = 0
         while self.__running:
             clock.tick(60)
-            # print(clock.get_fps())
 
             self.__move_counter += 1
             if self.__move_counter >= 32 // self.__resolution:
