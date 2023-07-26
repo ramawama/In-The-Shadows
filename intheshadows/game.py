@@ -322,11 +322,6 @@ class Game:
                                 else:
                                     self.__play_music = True
                                 self.__music.toggle()
-                            case pygame.K_k:
-                                if self.__guard_tracking:
-                                    self.__alert_mode_off()
-                                else:
-                                    self.__alert_mode_on()
                             case pygame.K_ESCAPE:
                                 self.__num_water = self.__level_water
                                 self.__num_smoke = self.__level_smoke
@@ -416,6 +411,12 @@ class Game:
                             self.__level_water = 0
                             self.__level_smoke = 0
                             self.save_level()
+                        elif ev.key == pygame.K_m:
+                            if self.__play_music:
+                                self.__play_music = False
+                            else:
+                                self.__play_music = True
+                            self.__music.toggle()
                         elif ev.key == pygame.K_ESCAPE:
                             self.__escape_state()
                         else:
