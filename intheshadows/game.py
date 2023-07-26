@@ -1177,7 +1177,10 @@ class Game:
         self.__music.play_music('game')
         self.__guard_returning = []
         for i in range(0, len(self.__guards)):
-            self.__guard_returning.append(True)
+            if (self.__guards[i].x, self.__guards[i].y) != self.__guard_position_before_tracking[i]:
+                self.__guard_returning.append(True)
+            else:
+                self.__guard_returning.append(False)
 
     def __check_guard_vision(self, player_pos):
         player_position = player_pos
